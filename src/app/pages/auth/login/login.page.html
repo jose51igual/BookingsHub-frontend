@@ -1,0 +1,94 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="navigateToHome()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Iniciar Sesión</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <app-error-alert 
+    [error]="errorMessage()" 
+    [floating]="true" 
+    (dismissed)="clearError()">
+  </app-error-alert>
+
+  <div class="login-container">
+    <div class="logo-container">
+      <img src="assets/images/logo.png" alt="Bookings Hub Logo" class="logo-image" onerror="this.src='assets/icon/favicon.png'; this.onerror=null;">
+      <h1 class="app-title">Bookings Hub</h1>
+      <p class="app-slogan">Tu plataforma de reservas favorita</p>
+    </div>
+    
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
+      <div class="form-header">
+        <h2>¡Bienvenido de nuevo!</h2>
+        <p>Accede a tu cuenta para continuar</p>
+      </div>
+      
+      <ion-item class="custom-input">
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
+        <ion-label position="floating">Correo electrónico</ion-label>
+        <ion-input type="email" formControlName="email"></ion-input>
+      </ion-item>
+      <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)" class="error-message">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span *ngIf="loginForm.get('email')?.errors?.['required']">El correo es obligatorio</span>
+        <span *ngIf="loginForm.get('email')?.errors?.['email']">Formato de correo inválido</span>
+      </div>
+
+      <ion-item class="custom-input">
+        <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input type="password" formControlName="password"></ion-input>
+      </ion-item>
+      <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)" class="error-message">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es obligatoria</span>
+        <span *ngIf="loginForm.get('password')?.errors?.['minlength']">La contraseña debe tener al menos 6 caracteres</span>
+      </div>
+
+      <ion-button expand="block" type="submit" [disabled]="loginForm.invalid" class="login-button">
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
+        Iniciar Sesión
+      </ion-button>
+      
+      <div class="social-login">
+        <div class="divider">
+          <span class="divider-line"></span>
+          <span class="divider-text">O inicia sesión con</span>
+          <span class="divider-line"></span>
+        </div>
+        
+        <ion-button expand="block" (click)="loginWithGoogle()" class="google-button">
+          <ion-icon name="logo-google" slot="start"></ion-icon>
+          Google
+        </ion-button>
+      </div>
+    </form>
+
+    <div class="signup-link">
+      <p>¿No tienes una cuenta?</p>
+      <ion-button expand="block" fill="solid" class="register-button" (click)="navigateToRegister()">
+        Regístrate ahora
+        <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+    
+    <div class="home-link">
+      <ion-button fill="outline" color="medium" (click)="navigateToHome()" class="home-button">
+        <ion-icon name="home-outline" slot="start"></ion-icon>
+        Volver al inicio
+      </ion-button>
+    </div>
+  </div>
+  
+  <div class="shape-bottom">
+    <svg viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#1EAEDB" fill-opacity="0.8" d="M0,96L48,112C96,128,192,160,288,165.3C384,171,480,149,576,149.3C672,149,768,171,864,165.3C960,160,1056,128,1152,117.3C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </div>
+</ion-content>

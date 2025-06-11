@@ -1,0 +1,237 @@
+ion-header ion-toolbar {
+  --background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+}
+
+ion-content {
+  --background: #f9f9f9;
+}
+
+.profile-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-avatar ion-icon {
+  font-size: 32px;
+  color: white;
+}
+
+.profile-info h2 {
+  margin: 0 0 4px 0;
+  color: var(--ion-color-dark);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.profile-info p {
+  margin: 0;
+  color: var(--ion-color-medium);
+  font-size: 14px;
+}
+
+.loading-section {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.loading-section ion-spinner {
+  --color: var(--ion-color-primary);
+  margin-bottom: 16px;
+}
+
+.info-section {
+  margin-bottom: 24px;
+}
+
+.info-section h3 {
+  color: var(--ion-color-dark);
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.info-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-item ion-icon {
+  font-size: 20px;
+  color: var(--ion-color-primary);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.info-content label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-content span {
+  font-size: 14px;
+  color: var(--ion-color-dark);
+  line-height: 1.4;
+}
+
+.actions-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-section {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.form-section h3 {
+  color: var(--ion-color-dark);
+  margin: 0 0 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.form-section ion-item {
+  margin-bottom: 16px;
+  --background: var(--ion-color-light);
+  --border-radius: 8px;
+}
+
+.error-text {
+  font-size: 12px;
+  margin: 4px 0 0 0;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .profile-container {
+    padding: 12px;
+  }
+}
+
+/* Legacy form styles */
+ion-content form {
+  padding: 20px;
+}
+
+ion-content form ion-item {
+  --background: white;
+  --border-color: #ddd;
+  --border-radius: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  --padding-start: 15px;
+}
+
+ion-content form ion-item ion-label {
+  color: #666;
+  font-weight: 500;
+}
+
+ion-content form ion-item ion-input,
+ion-content form ion-item ion-textarea {
+  --color: #333;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+}
+
+ion-content form ion-text[color="danger"] {
+  display: block;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  padding-left: 15px;
+  font-size: 0.8rem;
+}
+
+ion-content form ion-button {
+  --background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  --border-radius: 25px;
+  height: 50px;
+  margin-top: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  --box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+}
+
+ion-content form ion-button:hover {
+  --background: linear-gradient(90deg, #5a71d6 0%, #6a438f 100%);
+}
+
+.ion-text-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+}
+
+.ion-text-center ion-spinner {
+  width: 50px;
+  height: 50px;
+  --color: #764ba2;
+}
+
+.ion-text-center p {
+  margin-top: 20px;
+  color: #666;
+  font-size: 1rem;
+}

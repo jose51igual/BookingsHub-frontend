@@ -1,0 +1,424 @@
+/* Landing Page Styles */
+.landing-content {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Container utility */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    var(--ion-color-primary) 0%,
+    var(--ion-color-secondary) 50%,
+    var(--ion-color-tertiary) 100%);
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1000px; /* Aumentar el ancho máximo para dar más espacio al texto */
+  padding: 40px 20px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-title {
+  font-size: 7.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  line-height: 1.2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1200px) {
+  .hero-title {
+    font-size: 6rem; /* Reducir un poco en pantallas medianas */
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 3.8rem; /* Reducir más para tablets */
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2.8rem; /* Tamaño para móviles */
+  }
+}
+
+.hero-highlight {
+  color: var(--ion-color-warning);
+  display: block; /* Hace que "Servicios Increíbles" vaya en su propia línea */
+  text-align: center; /* Asegurar que esté centrado */
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  margin-bottom: 40px;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+}
+
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.primary-cta {
+  --background: var(--ion-color-warning);
+  --color: var(--ion-color-warning-contrast);
+  font-weight: 600;
+  font-size: 1.1rem;
+  height: 56px;
+  border-radius: 28px;
+  box-shadow: 0 8px 24px rgba(255, 193, 7, 0.3);
+  transition: all 0.3s ease;
+}
+
+.primary-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(255, 193, 7, 0.4);
+}
+
+.auth-actions {
+  display: flex;
+  gap: 16px;
+}
+
+@media (max-width: 480px) {
+  .auth-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+.auth-actions ion-button {
+  height: 48px;
+  border-radius: 24px;
+  font-weight: 500;
+}
+
+.welcome-message {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px 24px;
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.welcome-message p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Sections */
+.features-section {
+  padding-bottom: 60px;
+  padding-top: 20px;
+}
+
+.business-section,
+.cta-section {
+  padding: 80px 0;
+}
+
+@media (max-width: 768px) {
+  .business-section,
+  .cta-section {
+    padding: 60px 0;
+  }
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 60px;
+  color: var(--ion-color-dark);
+}
+
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 40px;
+  }
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Forzar 4 columnas iguales */
+  gap: 30px; /* Reducir gap para que quepan mejor */
+  margin-top: 40px;
+}
+
+@media (max-width: 1200px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablets grandes */
+    gap: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr; /* 1 columna en móviles */
+    gap: 24px;
+  }
+}
+
+.feature-card {
+  text-align: center;
+  padding: 30px 15px; /* Reducir padding horizontal para que quepan mejor */
+  border-radius: 20px;
+  background: var(--ion-color-light);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 1200px) {
+  .feature-card {
+    padding: 35px 20px; /* Más padding en tablets */
+  }
+}
+
+@media (max-width: 768px) {
+  .feature-card {
+    padding: 40px 20px; /* Padding completo en móviles */
+  }
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--ion-color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.feature-icon ion-icon {
+  font-size: 2.5rem;
+  color: white;
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--ion-color-dark);
+}
+
+.feature-card p {
+  color: var(--ion-color-medium);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* Business Section */
+.business-section {
+  background: var(--ion-color-light);
+}
+
+.business-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.business-content {
+  padding: 40px;
+  text-align: center;
+}
+
+.business-content h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--ion-color-dark);
+}
+
+.business-content p {
+  color: var(--ion-color-medium);
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.business-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 480px) {
+  .business-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.business-actions ion-button {
+  height: 48px;
+  border-radius: 24px;
+  font-weight: 500;
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, 
+    var(--ion-color-primary) 15%,
+    var(--ion-color-secondary) 60%);
+  color: white;
+  text-align: center;
+}
+
+.cta-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cta-content h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .cta-content h2 {
+    font-size: 2rem;
+  }
+}
+
+.cta-content p {
+  font-size: 1.2rem;
+  margin-bottom: 40px;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.cta-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.cta-actions ion-button {
+  height: 56px;
+  border-radius: 28px;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.cta-actions ion-button[fill="outline"] {
+  --border-color: rgba(255, 255, 255, 0.5);
+  --color: white;
+}
+
+.cta-actions ion-button[fill="outline"]:hover {
+  --background: rgba(255, 255, 255, 0.1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .feature-card,
+  .business-card {
+    background: var(--ion-color-step-50);
+  }
+  
+  .features-section,
+  .business-section {
+    background: var(--ion-color-step-100);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .feature-card {
+    padding: 24px 16px;
+  }
+  
+  .business-content {
+    padding: 24px;
+  }
+}
+
+/* Animation utilities */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feature-card {
+  animation: fadeInUp 0.6s ease-out;
+}

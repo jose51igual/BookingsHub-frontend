@@ -1,0 +1,211 @@
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()" defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ service()?.name || 'Detalle del Servicio' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Indicador de Carga -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando detalles del servicio...</p>
+    </div>
+  }
+
+  <!-- Mensaje de Error -->
+  @if (error() && !isLoading()) {
+    <div class="error-container">
+      <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+      <p>{{ error() }}</p>
+      <ion-button (click)="loadServiceData()" fill="outline" color="medium">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Reintentar
+      </ion-button>
+    </div>
+  }
+
+  <!-- Contenido Principal del Servicio -->
+  @if (!isLoading() && !error() && service()) {
+    <div class="service-content">
+        <div class="business-header" (click)="navigateToBusinessDetail()">
+          <ion-icon name="storefront-outline" color="tertiary"></ion-icon>
+          <span>{{ business()?.name }}</span>
+        </div>
+
+      <!-- Información del Servicio -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ service()?.name }}</ion-card-title>
+        </ion-card-header>
+        
+        <ion-card-content>
+          <!-- Descripción -->
+          @if (service()?.description) {
+            <p class="service-description">{{ service()?.description }}</p>
+          }
+
+          <!-- Detalles -->
+          <div class="service-details">
+            <div class="detail-item">
+              <ion-icon name="time-outline" color="secondary"></ion-icon>
+              <span>Duración: {{ formatDuration(service()?.duration) }}</span>
+            </div>
+            <div class="detail-item">
+              <ion-icon name="cash-outline" color="success"></ion-icon>
+              <span>Precio: {{ formatPrice(service()?.price) }}</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Formulario de Reserva (solo para clientes autenticados) -->
+      @if (isAuthenticated() && currentUser()?.role === 'cliente') {
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Reservar Cita</ion-card-title>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <!-- Selector de Empleado (solo si hay empleados) -->
+            @if (hasEmployees()) {
+              <div class="employee-selector">
+                <ion-label>Selecciona un empleado:</ion-label>
+                <ion-select
+                  [value]="selectedEmployee()?.id"
+                  placeholder="Elige un empleado"
+                  interface="popover"
+                  (ionChange)="onEmployeeChange($event)">
+                  @for (employee of employees(); track employee.id) {
+                    <ion-select-option [value]="employee.id">
+                      {{ employee.name }}
+                      @if (employee.position) {
+                        <span class="employee-position"> - {{ employee.position }}</span>
+                      }
+                    </ion-select-option>
+                  }
+                </ion-select>
+              </div>
+            }
+
+            <!-- Selector de Fecha con Disponibilidad -->
+            <div class="date-selector">
+              <ion-label>Selecciona una fecha:</ion-label>
+              @if (isLoadingAvailability()) {
+                <div class="loading-availability">
+                  <ion-spinner name="crescent"></ion-spinner>
+                  <span>Cargando disponibilidad...</span>
+                </div>
+              }
+              <ion-datetime
+                presentation="date"
+                [min]="minDateTime"
+                [max]="maxDateTime"
+                [value]="selectedDate()"
+                [isDateEnabled]="isDateEnabled"
+                locale="es-ES"
+                [showDefaultButtons]="true"
+                [showClearButton]="true"
+                cancelText="Cancelar"
+                doneText="Confirmar"
+                (ionChange)="onDateChange($event)"
+                >
+              </ion-datetime>
+              
+              <!-- Leyenda de disponibilidad -->
+              <div class="availability-legend">
+                <div class="legend-item">
+                  <div class="legend-dot available"></div>
+                  <span>Días disponibles</span>
+                </div>
+                <div class="legend-item">
+                  <div class="legend-dot unavailable"></div>
+                  <span>Días no disponibles</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Selector de Hora Predefinida (solo si hay fecha seleccionada) -->
+            @if (selectedDate()) {
+              <div class="time-selector">
+                <ion-label>Selecciona una hora:</ion-label>
+                  <div class="time-slots-grid">
+                    @for (hour of hours; track hour) {
+                      <ion-button
+                        [fill]="selectedTime() === hour ? 'solid' : 'outline'"
+                        [color]="selectedTime() === hour ? 'primary' : (isSlotAvailable(hour) ? 'success' : 'danger')"
+                        [disabled]="!isAvailable(hour)"
+                        [class]="isAvailable(hour) ? 'available-slot' : 'unavailable-slot'"
+                        (click)="onTimeSelect(hour)"
+                        size="small">
+                        @if (isHourAvailable(hour)) {
+                          {{ hour }}
+                        } @else {
+                          <s>{{ hour }}</s>
+                        }
+                      </ion-button>
+                    }
+                  </div>
+              </div>
+            }
+
+            <!-- Notas Adicionales -->
+            <div class="notes-container">
+              <ion-item>
+                <ion-label position="stacked">Notas adicionales (opcional)</ion-label>
+                <ion-textarea
+                  [value]="notes()"
+                  (ionInput)="onNotesChange($event)"
+                  rows="3"
+                  placeholder="Especifica algún detalle o preferencia para tu cita">
+                </ion-textarea>
+              </ion-item>
+            </div>
+
+            <!-- Botón de Confirmar Reserva -->
+            <ion-button 
+              expand="block" 
+              (click)="confirmBooking()" 
+              [disabled]="!canBook() || isLoading()"
+              class="confirm-button">
+              <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+              Confirmar Reserva
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      } 
+      
+      <!-- Mensaje para usuarios no autenticados -->
+      @else if (!isAuthenticated()) {
+        <ion-card>
+          <ion-card-content>
+            <div class="login-prompt">
+              <ion-icon name="log-in-outline" color="secondary"></ion-icon>
+              <p>Debes iniciar sesión para reservar este servicio.</p>
+              <ion-button (click)="navigateToLogin()" fill="outline">
+                Iniciar Sesión
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+      
+      <!-- Mensaje para otros roles -->
+      @else if (currentUser()?.role !== 'cliente') {
+        <ion-card>
+          <ion-card-content>
+            <div class="info-message">
+              <ion-icon name="information-circle-outline" color="primary"></ion-icon>
+              <p>Las reservas solo pueden ser realizadas por clientes.</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+      
+    </div>
+  }
+</ion-content>

@@ -1,0 +1,69 @@
+<!-- Diseño moderno con navegación superior -->
+<div class="modern-app-container">
+  <!-- Barra de navegación superior -->
+  <header class="top-nav-bar">
+    <div class="nav-brand">
+      <ion-icon name="calendar-outline" class="brand-icon"></ion-icon>
+      <span class="brand-text">BookingsHub</span>
+    </div>
+    
+    <nav class="nav-tabs">
+      <a 
+        [routerLink]="['/inicio']" 
+        routerLinkActive="active" 
+        class="nav-tab"
+        [routerLinkActiveOptions]="{exact: false}">
+        <ion-icon name="home-outline" class="nav-icon"></ion-icon>
+        <span class="nav-label">Inicio</span>
+      </a>
+      
+      <a 
+        [routerLink]="['/negocios']" 
+        routerLinkActive="active" 
+        class="nav-tab"
+        [routerLinkActiveOptions]="{exact: false}">
+        <ion-icon name="storefront-outline" class="nav-icon"></ion-icon>
+        <span class="nav-label">Negocios</span>
+      </a>
+      
+      <!-- Mis Reservas solo visible si está autenticado -->
+      @if (isAuthenticated()) {
+        <a 
+          [routerLink]="['/mis-reservas']" 
+          routerLinkActive="active" 
+          class="nav-tab"
+          [routerLinkActiveOptions]="{exact: false}">
+          <ion-icon name="calendar-outline" class="nav-icon"></ion-icon>
+          <span class="nav-label">Mis Reservas</span>
+        </a>
+      }
+      
+      <!-- Perfil/Login condicional -->
+      @if (isAuthenticated()) {
+        <a 
+          [routerLink]="['/perfil']" 
+          routerLinkActive="active" 
+          class="nav-tab"
+          [routerLinkActiveOptions]="{exact: false}">
+          <ion-icon name="person-outline" class="nav-icon"></ion-icon>
+          <span class="nav-label">Perfil</span>
+        </a>
+      } @else {
+        <a 
+          [routerLink]="['/iniciar-sesion']" 
+          class="nav-tab login-tab">
+          <ion-icon name="log-in-outline" class="nav-icon"></ion-icon>
+          <span class="nav-label">Iniciar Sesión</span>
+        </a>
+      }
+    </nav>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+  
+  <!-- Footer -->
+  <app-footer></app-footer>
+</div>

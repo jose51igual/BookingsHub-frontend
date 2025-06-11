@@ -1,0 +1,139 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button (click)="goBack()" defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Reseñas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="onRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading state -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <ion-icon name="hourglass-outline"></ion-icon>
+      <p>Cargando reseñas...</p>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error() && !isLoading()) {
+    <div class="error-container">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <h3>Error</h3>
+      <p>{{ error() }}</p>
+      <ion-button fill="clear" (click)="loadData()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Reintentar
+      </ion-button>
+    </div>
+  }
+
+  <!-- Content -->
+  @if (!isLoading() && !error()) {
+    <div class="reviews-container">
+      <!-- Business header -->
+      @if (business(); as businessData) {
+        <div class="business-header">
+          <h2>{{ businessData.name }}</h2>
+          <div class="business-rating">
+            <div class="stars">
+              @for (star of getStarArray(+(businessData.rating || 0)); track $index) {
+                <ion-icon 
+                  [name]="star ? 'star' : 'star-outline'"
+                  [class.filled]="star">
+                </ion-icon>
+              }
+            </div>
+            <span class="rating-text">{{ formatRating(businessData.rating) }} ({{ filteredReviews().length }} reseñas)</span>
+          </div>
+        </div>
+      }
+
+      <!-- Filters and search -->
+      <div class="filters-section">
+        <ion-searchbar 
+          [value]="searchTerm()" 
+          (ionInput)="onSearchInput($event)"
+          placeholder="Buscar en reseñas...">
+        </ion-searchbar>
+        
+        <div class="filter-controls">
+          <ion-item>
+            <ion-label>Ordenar por:</ion-label>
+            <ion-select [value]="sortBy()" (ionChange)="onSortChange($event.detail.value)">
+              <ion-select-option value="newest">Más recientes</ion-select-option>
+              <ion-select-option value="oldest">Más antiguas</ion-select-option>
+              <ion-select-option value="highest">Mayor calificación</ion-select-option>
+              <ion-select-option value="lowest">Menor calificación</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label>Filtrar por:</ion-label>
+            <ion-select [value]="filterRating()" (ionChange)="onFilterChange($event.detail.value)">
+              <ion-select-option value="all">Todas las estrellas</ion-select-option>
+              <ion-select-option value="5">5 estrellas</ion-select-option>
+              <ion-select-option value="4">4 estrellas</ion-select-option>
+              <ion-select-option value="3">3 estrellas</ion-select-option>
+              <ion-select-option value="2">2 estrellas</ion-select-option>
+              <ion-select-option value="1">1 estrella</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+      </div>
+
+      <!-- Reviews list -->
+      <div class="reviews-list">
+        @for (review of filteredReviews(); track review.id) {
+          <ion-card class="review-card">
+            <ion-card-header>
+              <div class="review-header">
+                <div class="reviewer-info">
+                  <div class="reviewer-avatar">
+                    <ion-icon name="person-circle-outline"></ion-icon>
+                  </div>
+                  <div class="reviewer-details">
+                    <h4>{{ review.user_name || 'Usuario anónimo' }}</h4>
+                    <div class="review-rating">
+                      <div class="stars">
+                        @for (star of getStarArray(review.rating || 0); track $index) {
+                          <ion-icon 
+                            [name]="star ? 'star' : 'star-outline'"
+                            [class.filled]="star">
+                          </ion-icon>
+                        }
+                      </div>
+                      <span class="review-date">{{ getRelativeTime(review.created_at || '') }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ion-card-header>
+            
+            <ion-card-content>
+              @if (review.comment) {
+                <p class="review-comment">{{ review.comment }}</p>
+              } @else {
+                <p class="no-comment">Sin comentarios adicionales</p>
+              }
+            </ion-card-content>
+          </ion-card>
+        }
+
+        <!-- Empty state -->
+        @if (filteredReviews().length === 0) {
+          <div class="empty-state">
+            <ion-icon name="chatbubbles-outline"></ion-icon>
+            <h3>Sin reseñas</h3>
+            <p>Este negocio aún no tiene reseñas.</p>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</ion-content>

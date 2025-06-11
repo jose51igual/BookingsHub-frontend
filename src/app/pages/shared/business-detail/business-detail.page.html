@@ -1,0 +1,240 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ business()?.name || 'Cargando...' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [scrollEvents]="true">
+  <!-- Estado de carga -->
+  <div *ngIf="!business()" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando información del negocio...</p>
+  </div>
+
+  <!-- Contenido del negocio -->
+  <div *ngIf="business()" class="business-content">
+      <!-- Imagen de cabecera -->
+      <div class="header-image-container">
+        <img [src]="business()?.image || 'https://source.unsplash.com/random/800x500?salon'" alt="{{ business()?.name }}" />
+        <div class="overlay-gradient"></div>
+      </div>
+
+    <!-- Layout flexible para contenido y mapa -->
+    <div class="business-layout">
+      <!-- Columna principal con información del negocio -->
+      <div class="business-main-column">
+        <!-- Información principal del negocio -->
+        <div class="business-info-card">
+          <div class="business-name-container">
+            <h1>{{ business()?.name }}</h1>
+            <div class="rating-container">
+              <ion-icon name="star"></ion-icon>
+              <span class="rating">{{ formatRating(business()?.rating) }}</span>
+              <span class="reviews">({{ business()?.reviewCount || '124' }} reseñas)</span>
+            </div>
+          </div>
+
+          <div class="business-details">
+            <div class="detail-item">
+              <ion-icon name="location-outline"></ion-icon>
+              <p>{{ business()?.address }}</p>
+            </div>
+            <div class="detail-item" *ngIf="business()?.phone">
+              <ion-icon name="call-outline"></ion-icon>
+              <p>{{ business()?.phone }}</p>
+            </div>
+          </div>
+
+          <div class="business-description">
+            <p>{{ business()?.description }}</p>
+          </div>
+              
+          <div class="business-actions" *ngIf="isOwner()">
+            <ion-button expand="block" [routerLink]="['/business-profile', businessId()]">
+              <ion-icon name="create-outline" slot="start"></ion-icon>
+              Editar Negocio
+            </ion-button>
+          </div>
+        </div>
+
+        <!-- Sección de servicios -->
+        <div class="services-section">
+          <div class="section-header">
+            <h2>Servicios</h2>
+            <ion-button *ngIf="isOwner()" fill="clear" (click)="addService()">
+              <ion-icon name="add-circle" slot="start"></ion-icon>
+              Añadir
+            </ion-button>
+          </div>
+
+          <div class="services-list">
+            <div *ngFor="let service of services()" class="service-item">
+              <ion-item detail="false">
+                <div class="service-info">
+                  <h3>{{ service.name }}</h3>
+                  <div class="service-details">
+                    <span class="duration">
+                      <ion-icon name="time-outline"></ion-icon>
+                      {{ service.duration }} min
+                    </span>
+                    <span class="price">${{ service.price }}</span>
+                  </div>
+                </div>
+                <ion-button 
+                  class="booking-button" 
+                  (click)="handleBookingClick(service.id)"
+                  slot="end">
+                  <ion-icon name="calendar" slot="start"></ion-icon>
+                  Reservar
+                </ion-button>
+              </ion-item>
+            </div>
+
+            <div *ngIf="services().length === 0" class="empty-services">
+              <ion-icon name="storefront-outline"></ion-icon>
+              <p>No hay servicios disponibles en este momento</p>
+              <small>Los servicios serán añadidos pronto</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección de reseñas -->
+        <div class="reviews-section">
+          <div class="section-header">
+            <h2>Reseñas</h2>
+            <a (click)="viewAllReviews()">Ver todas</a>
+          </div>
+
+          <div class="reviews-overview">
+            <div class="rating-big">
+              <span>{{ formatRating(business()?.rating) }}</span>
+              <div class="stars">
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star"></ion-icon>
+                <ion-icon name="star-half"></ion-icon>
+              </div>
+              <p>{{ business()?.reviewCount || '124' }} reseñas</p>
+            </div>
+          </div>
+
+          <div class="reviews-list">
+            <div class="review-item" *ngFor="let review of mockReviews()">
+              <div class="review-header">
+                <img [src]="review.profileImage" alt="Avatar" class="reviewer-image" />
+                <div class="reviewer-info">
+                  <h4>{{ review.name }}</h4>
+                  <div class="review-rating">
+                    <div class="stars">
+                      <ion-icon name="star" *ngFor="let star of [1,2,3,4,5].slice(0, review.rating)"></ion-icon>
+                    </div>
+                    <span class="review-date">{{ review.date }}</span>
+                  </div>
+                </div>
+              </div>
+              <p class="review-text">{{ review.comment }}</p>
+            </div>
+          </div>
+
+          <div class="show-more-reviews">
+            <ion-button fill="clear" color="primary">
+              Ver más reseñas
+            </ion-button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Columna del mapa (visible en desktop, oculta en móvil) -->
+      <div class="map-column desktop-only">
+        <!-- Sección del mapa y ubicación -->
+        <div class="map-section">
+          <div class="section-header">
+            <h2>Ubicación</h2>
+            <ion-button fill="clear" (click)="openInMaps()" *ngIf="business()?.address">
+              <ion-icon name="navigate-outline" slot="start"></ion-icon>
+              Cómo llegar
+            </ion-button>
+          </div>
+          
+          <div class="map-container">
+            <!-- Indicador de carga del mapa -->
+            <div *ngIf="isMapLoading()" class="map-loading">
+              <ion-spinner name="dots"></ion-spinner>
+              <p>Cargando mapa...</p>
+            </div>
+            
+            <!-- Mostrar mapa si hay coordenadas -->
+            <ng-container *ngIf="!isMapLoading()">
+              <app-map 
+                [lat]="mapLat()" 
+                [lng]="mapLng()" 
+                [title]="business()?.name || ''" 
+                height="300px"
+                (mapLoadError)="onMapLoadError($event)"
+                (mapLoaded)="onMapLoaded($event)">
+              </app-map>
+            </ng-container>
+            
+            <!-- Dirección completa bajo el mapa -->
+            <div class="address-detail" *ngIf="business()?.address">
+              <ion-icon name="location"></ion-icon>
+              <p>{{ business()?.address }}</p>
+              <!-- Botón para ver en Google Maps incluso si el mapa no se carga -->
+              <ion-button color="primary" fill="clear" (click)="openInMaps()" *ngIf="mapError()">
+                Ver en Google Maps
+              </ion-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mapa en versión móvil (oculto en desktop) -->
+    <div class="mobile-only">
+      <!-- Sección del mapa y ubicación -->
+      <div class="map-section">
+        <div class="section-header">
+          <h2>Ubicación</h2>
+          <ion-button fill="clear" (click)="openInMaps()" *ngIf="business()?.address">
+            <ion-icon name="navigate-outline" slot="start"></ion-icon>
+            Cómo llegar
+          </ion-button>
+        </div>
+        
+        <div class="map-container">
+          <!-- Indicador de carga del mapa -->
+          <div *ngIf="isMapLoading()" class="map-loading">
+            <ion-spinner name="dots"></ion-spinner>
+            <p>Cargando mapa...</p>
+          </div>
+          
+          <!-- Mostrar mapa si hay coordenadas -->
+          <ng-container *ngIf="!isMapLoading()">
+            <app-map 
+              [lat]="mapLat()" 
+              [lng]="mapLng()" 
+              [title]="business()?.name || ''" 
+              height="200px"
+              (mapLoadError)="onMapLoadError($event)"
+              (mapLoaded)="onMapLoaded($event)">
+            </app-map>
+          </ng-container>
+          
+          <!-- Dirección completa bajo el mapa -->
+          <div class="address-detail" *ngIf="business()?.address">
+            <ion-icon name="location"></ion-icon>
+            <p>{{ business()?.address }}</p>
+            <!-- Botón para ver en Google Maps incluso si el mapa no se carga -->
+            <ion-button color="primary" fill="clear" (click)="openInMaps()" *ngIf="mapError()">
+              Ver en Google Maps
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

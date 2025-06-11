@@ -1,0 +1,202 @@
+
+<ion-content>
+  <div class="bookings-container">
+    
+    <!-- Filters Section -->
+    <div class="filters-section">
+      <div class="main-filters">
+        <ion-searchbar
+          [ngModel]="searchTerm()"
+          (ionInput)="onSearchChange($event)"
+          placeholder="Buscar por cliente o servicio..."
+          show-clear-button="focus"
+          class="search-bar">
+        </ion-searchbar>
+        
+        <div class="filter-controls">
+          <ion-item class="status-filter">
+            <ion-label>Estado:</ion-label>
+            <ion-select 
+              [ngModel]="selectedStatus()" 
+              (ionChange)="onStatusChange($event)"
+              interface="popover">
+              @for (option of availableStatuses; track option.value) {
+                <ion-select-option [value]="option.value">
+                  {{option.label}}
+                </ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+          
+          <ion-item class="date-filter">
+            <ion-label>Fecha:</ion-label>
+            <ion-datetime 
+              [ngModel]="selectedDate()"
+              (ionChange)="onDateChange($event)"
+              presentation="date"
+              display-format="DD/MM/YYYY"
+              [highlightedDates]="getHighlightedDates()">
+            </ion-datetime>
+            @if (selectedDate()) {
+              <ion-button 
+                fill="clear" 
+                size="small"
+                (click)="clearDateFilter()"
+                slot="end">
+                <ion-icon name="close-outline"></ion-icon>
+              </ion-button>
+            }
+          </ion-item>
+        </div>
+        
+        <!-- Botón para limpiar todos los filtros -->
+        @if (selectedStatus() !== 'all' || searchTerm() || selectedDate()) {
+          <div class="filter-actions">
+            <ion-button 
+              fill="outline" 
+              size="small" 
+              (click)="clearAllFilters()">
+              <ion-icon name="refresh-outline" slot="start"></ion-icon>
+              Limpiar Filtros
+            </ion-button>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+      <div class="summary-card today">
+        <div class="card-icon">
+          <ion-icon name="today-outline"></ion-icon>
+        </div>
+        <div class="card-content">
+          <h3>Hoy</h3>
+          <p class="count">{{todaysBookings().length}}</p>
+          <span class="label">reservas</span>
+        </div>
+      </div>
+      
+      <div class="summary-card pending">
+        <div class="card-icon">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+        </div>
+        <div class="card-content">
+          <h3>Confirmadas</h3>
+          <p class="count">{{confirmedBookings()}}</p>
+          <span class="label">reservas</span>
+        </div>
+      </div>
+      
+      <div class="summary-card completed">
+        <div class="card-icon">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+        </div>
+        <div class="card-content">
+          <h3>Completadas</h3>
+          <p class="count">{{completedBookings()}}</p>
+          <span class="label">reservas</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando reservas...</p>
+      </div>
+    }
+
+    <!-- Bookings List -->
+    @if (!isLoading()) {
+      <div class="bookings-list">
+        
+        <!-- Results Counter -->
+        <div class="results-info">
+          <p class="results-count">
+            Mostrando {{filteredBookings().length}} de {{bookings().length}} reservas
+          </p>
+        </div>
+        
+        <!-- No Results -->
+        @if (filteredBookings().length === 0 && bookings().length > 0) {
+          <div class="no-results">
+            <ion-icon name="calendar-clear-outline"></ion-icon>
+            <h3>No se encontraron reservas</h3>
+            <p>Intenta cambiar los filtros de búsqueda</p>
+          </div>
+        }
+        
+        <!-- No Bookings at all -->
+        @if (bookings().length === 0) {
+          <div class="no-results">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <h3>No hay reservas registradas</h3>
+            <p>Cuando recibas tu primera reserva, aparecerá aquí</p>
+          </div>
+        }
+
+        <!-- Booking Cards -->
+        @for (booking of filteredBookings(); track booking.id) {
+          <div class="booking-card">
+        <div class="booking-header">
+          <div class="customer-info">
+            <h3>{{booking.customer_name}}</h3>
+            <p>{{booking.customer_email}}</p>
+          </div>
+          <div class="booking-status">
+            <ion-chip [color]="getStatusColor(booking.status)">
+              {{getStatusLabel(booking.status)}}
+            </ion-chip>
+          </div>
+        </div>
+        
+        <div class="booking-details">
+          <div class="detail-item">
+            <ion-icon name="construct-outline"></ion-icon>
+            <span>{{booking.service_name}}</span>
+          </div>
+          
+          <div class="detail-item">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{booking.booking_date | date:'dd/MM/yyyy'}}</span>
+          </div>
+          
+          <div class="detail-item">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{booking.booking_time}}</span>
+          </div>
+          
+          <div class="detail-item">
+            <ion-icon name="cash-outline"></ion-icon>
+            <span>${{booking.total_price | number:'1.2-2'}}</span>
+          </div>
+        </div>
+        
+        @if (booking.notes) {
+          <div class="booking-notes">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <span>{{booking.notes}}</span>
+          </div>
+        }
+        
+        <div class="booking-actions">
+          @if (booking.status === 'confirmada') {
+            <ion-button 
+              fill="outline" 
+              size="small"
+              color="danger"
+              (click)="cancelBooking(booking)">
+              <ion-icon name="close-outline" slot="start"></ion-icon>
+              Cancelar
+            </ion-button>
+          }
+        </div>
+      </div>
+        }
+      </div>
+    }
+
+  </div>
+</ion-content>

@@ -1,0 +1,775 @@
+/* ===== BUSINESS DETAIL - DISEÑO MODERNO ULTRACONTEMPORÁNEO ===== */
+
+/* Variables modernas */
+:root {
+  --gradient-primary-start: #3b82f6;
+  --gradient-primary-end: #8b5cf6;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-light: #9ca3af;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --border-radius: 1rem;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --success-gradient: linear-gradient(90deg, #10b981, #34d399);
+  --background-light: #ffffff;
+  --background-secondary: #f8fafc;
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --accent-green: #10b981;
+}
+
+/* Configuración base */
+ion-content {
+  --background: #ffffff;
+}
+
+.business-detail-page {
+  min-height: 100vh;
+  background: var(--background-light);
+}
+
+
+
+/* ===== HEADER TRANSPARENTE MODERNO ===== */
+/* Comentado para usar header estándar
+ion-header.transparent-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+ion-header.transparent-header ion-toolbar {
+  --background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%);
+  --color: white;
+  backdrop-filter: blur(15px);
+  border: none;
+}
+
+ion-header.transparent-header ion-toolbar ion-back-button {
+  --color: white;
+  --background: rgba(255, 255, 255, 0.15);
+  --border-radius: 12px;
+  backdrop-filter: blur(10px);
+  margin: 8px;
+}
+
+ion-header.transparent-header ion-toolbar ion-back-button:hover {
+  --background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+ion-header.transparent-header ion-toolbar ion-title {
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+ion-header.transparent-header ion-toolbar ion-buttons ion-button {
+  --color: white;
+  --background: rgba(255, 255, 255, 0.15);
+  --border-radius: 12px;
+  backdrop-filter: blur(10px);
+  margin: 4px;
+}
+
+ion-header.transparent-header ion-toolbar ion-buttons ion-button:hover {
+  --background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+*/
+
+/* ===== ESTADOS DE CARGA ===== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  min-height: 50vh;
+}
+
+.loading-container ion-spinner {
+  --color: var(--accent-blue);
+  margin-bottom: 20px;
+  scale: 1.5;
+}
+
+.loading-container p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* ===== CONTENIDO PRINCIPAL ===== */
+.business-content {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* ===== IMAGEN DE CABECERA HERO ===== */
+.header-image-container {
+  position: relative;
+  height: 50vh;
+  min-height: 400px;
+  overflow: hidden;
+}
+
+.header-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: brightness(0.85) saturate(1.1);
+}
+
+.header-image-container .overlay-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.1) 40%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  z-index: 2;
+}
+
+/* ===== LAYOUT PRINCIPAL ===== */
+.business-layout {
+  display: flex;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+.business-layout .business-main-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.business-layout .map-column {
+  flex: 0 0 380px;
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+}
+
+/* ===== CARD BASE MODERNA ===== */
+.modern-card,
+.business-info-card,
+.services-section,
+.reviews-section,
+.map-section {
+  background: var(--background-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--card-shadow);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: var(--transition);
+  margin-bottom: 1.5rem;
+}
+
+/* ===== INFORMACIÓN PRINCIPAL DEL NEGOCIO ===== */
+.business-info-card .business-name-container {
+  margin-bottom: 1.5rem;
+}
+
+.business-info-card .business-name-container h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+
+.business-info-card .business-name-container .rating-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.business-info-card .business-name-container .rating-container ion-icon {
+  color: #f59e0b;
+  font-size: 1.2rem;
+}
+
+.business-info-card .business-name-container .rating-container .rating {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.business-info-card .business-name-container .rating-container .reviews {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.business-info-card .business-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.business-info-card .business-details .detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.business-info-card .business-details .detail-item ion-icon {
+  color: var(--accent-blue);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.business-info-card .business-details .detail-item p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.business-info-card .business-description {
+  margin-bottom: 1.5rem;
+}
+
+.business-info-card .business-description p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.business-info-card .business-actions ion-button {
+  --background: linear-gradient(135deg, var(--gradient-primary-start) 0%, var(--gradient-primary-end) 100%);
+  --color: white;
+  --border-radius: 12px;
+  font-weight: 600;
+  height: 48px;
+}
+
+/* ===== SECCIONES CON HEADERS MODERNOS ===== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  position: relative;
+}
+
+.section-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  border-radius: 2px;
+}
+
+.section-header ion-button {
+  --color: var(--accent-blue);
+  font-weight: 600;
+}
+
+.section-header ion-button:hover {
+  transform: scale(1.05);
+}
+
+.section-header a {
+  color: var(--accent-blue);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ===== SECCIÓN DE SERVICIOS ===== */
+.services-section .services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.services-section .service-item {
+  background: var(--background-secondary);
+  border-radius: 12px;
+  border: 2px solid transparent;
+  transition: var(--transition);
+  overflow: hidden;
+}
+
+.services-section .service-item ion-item {
+  --background: transparent;
+  --border-color: transparent;
+  --padding-start: 1.5rem;
+  --padding-end: 1.5rem;
+  --min-height: 80px;
+}
+
+.services-section .service-item ion-item .service-info {
+  flex: 1;
+}
+
+.services-section .service-item ion-item .service-info h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.services-section .service-item ion-item .service-info .service-details {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.services-section .service-item ion-item .service-info .service-details .duration {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.services-section .service-item ion-item .service-info .service-details .duration ion-icon {
+  font-size: 1rem;
+}
+
+.services-section .service-item ion-item .service-info .service-details .price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-green);
+}
+
+.services-section .service-item ion-item .booking-button {
+  --background: linear-gradient(135deg, var(--gradient-primary-start) 0%, var(--gradient-primary-end) 100%);
+  --color: black;
+  --border-radius: 10px;
+  font-weight: 600;
+  margin-left: 1rem;
+}
+
+.services-section .service-item ion-item .booking-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+}
+
+.services-section .empty-services {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-light);
+}
+
+.services-section .empty-services ion-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.services-section .empty-services p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.services-section .empty-services small {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+/* ===== SECCIÓN DE RESEÑAS ===== */
+.reviews-section .reviews-overview {
+  background: linear-gradient(135deg, var(--background-secondary) 0%, rgba(59, 130, 246, 0.05) 100%);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.reviews-section .reviews-overview .rating-big span {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.reviews-section .reviews-overview .rating-big .stars {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.reviews-section .reviews-overview .rating-big .stars ion-icon {
+  color: #f59e0b;
+  font-size: 1.5rem;
+}
+
+.reviews-section .reviews-overview .rating-big p {
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin: 0;
+}
+
+.reviews-section .reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.reviews-section .review-item {
+  padding: 1.5rem;
+  background: var(--background-secondary);
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.reviews-section .review-item .review-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.reviews-section .review-item .review-header .reviewer-image {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-blue);
+}
+
+.reviews-section .review-item .review-header .reviewer-info {
+  flex: 1;
+}
+
+.reviews-section .review-item .review-header .reviewer-info h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.reviews-section .review-item .review-header .reviewer-info .review-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reviews-section .review-item .review-header .reviewer-info .review-rating .stars {
+  display: flex;
+  gap: 0.1rem;
+}
+
+.reviews-section .review-item .review-header .reviewer-info .review-rating .stars ion-icon {
+  color: #f59e0b;
+  font-size: 1rem;
+}
+
+.reviews-section .review-item .review-header .reviewer-info .review-rating .review-date {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.reviews-section .review-item .review-text {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.reviews-section .show-more-reviews {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.reviews-section .show-more-reviews ion-button {
+  --color: var(--accent-blue);
+  font-weight: 600;
+}
+
+.reviews-section .show-more-reviews ion-button:hover {
+  transform: scale(1.05);
+}
+
+/* ===== SECCIÓN DEL MAPA ===== */
+.map-section .map-container {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--background-secondary);
+  border: none;
+}
+
+.map-section .map-container .map-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 1rem;
+}
+
+.map-section .map-container .map-loading ion-spinner {
+  --color: var(--accent-blue);
+}
+
+.map-section .map-container .map-loading p {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.map-section .map-container app-map {
+  border-radius: 8px;
+  overflow: hidden;
+  border: none;
+}
+
+.map-section .map-container .address-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--background-light);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+}
+
+.map-section .map-container .address-detail ion-icon {
+  color: var(--accent-blue);
+  font-size: 1.2rem;
+}
+
+.map-section .map-container .address-detail p {
+  flex: 1;
+  margin: 0;
+  color: var(--text-secondary);
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.map-section .map-container .address-detail ion-button {
+  --color: var(--accent-blue);
+  font-weight: 600;
+}
+
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .business-layout {
+    flex-direction: column;
+    gap: 0;
+    padding: 0 1rem;
+  }
+  
+  .business-layout .map-column {
+    display: none;
+  }
+  
+  .business-info-card {
+    padding: 1.5rem;
+  }
+  
+  .business-info-card h1 {
+    font-size: 2rem;
+  }
+  
+  .modern-card,
+  .business-info-card,
+  .services-section,
+  .reviews-section,
+  .map-section {
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .section-header h2 {
+    font-size: 1.5rem;
+  }
+  
+}
+
+@media (max-width: 480px) {
+  .header-image-container {
+    height: 40vh;
+    min-height: 300px;
+  }
+  
+  .business-layout {
+    margin-top: -1.5rem;
+  }
+  
+  .business-info-card {
+    padding: 1rem;
+  }
+  
+  .business-info-card h1 {
+    font-size: 1.75rem;
+  }
+  
+  .modern-card,
+  .business-info-card,
+  .services-section,
+  .reviews-section,
+  .map-section {
+    padding: 1rem;
+  }
+  
+  .service-item ion-item {
+    --padding-start: 1rem;
+    --padding-end: 1rem;
+    --min-height: 70px;
+  }
+  
+  .service-item .booking-button {
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+  }
+}
+
+/* ===== UTILIDADES DE VISIBILIDAD ===== */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+}
+
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-only {
+    display: block !important;
+  }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.modern-card,
+.business-info-card,
+.services-section,
+.reviews-section,
+.map-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.modern-card:nth-child(1),
+.business-info-card:nth-child(1),
+.services-section:nth-child(1),
+.reviews-section:nth-child(1),
+.map-section:nth-child(1) { 
+  animation-delay: 0.1s; 
+}
+
+.modern-card:nth-child(2),
+.business-info-card:nth-child(2),
+.services-section:nth-child(2),
+.reviews-section:nth-child(2),
+.map-section:nth-child(2) { 
+  animation-delay: 0.2s; 
+}
+
+.modern-card:nth-child(3),
+.business-info-card:nth-child(3),
+.services-section:nth-child(3),
+.reviews-section:nth-child(3),
+.map-section:nth-child(3) { 
+  animation-delay: 0.3s; 
+}
+
+.modern-card:nth-child(4),
+.business-info-card:nth-child(4),
+.services-section:nth-child(4),
+.reviews-section:nth-child(4),
+.map-section:nth-child(4) { 
+  animation-delay: 0.4s; 
+}
+
+/* ===== MODO OSCURO ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-light: #94a3b8;
+    --background-light: #1e293b;
+    --background-secondary: #334155;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --card-hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+  }
+  
+  ion-content {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 30%, #475569 100%);
+  }
+  
+  .header-image-container .overlay-gradient {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.4) 0%,
+      rgba(0, 0, 0, 0.3) 40%,
+      rgba(0, 0, 0, 0.8) 100%
+    );
+  }
+}
+
+/* ===== MEJORAS DE ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+*:focus {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 2px;
+}

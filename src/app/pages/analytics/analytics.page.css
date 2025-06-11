@@ -1,0 +1,390 @@
+.analytics-container {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.period-selector {
+  margin-bottom: 20px;
+}
+
+.period-selector ion-item {
+  --background: white;
+  --border-radius: 12px;
+  border: 1px solid var(--ion-color-light-shade);
+  margin-bottom: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+
+.loading-container ion-spinner {
+  --color: var(--ion-color-primary);
+  margin-bottom: 16px;
+}
+
+.loading-container p {
+  color: var(--ion-color-medium);
+}
+
+.analytics-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--ion-color-light-shade);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.2s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+}
+
+.metric-card .metric-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-card .metric-icon ion-icon {
+  font-size: 24px;
+  color: white;
+}
+
+.metric-card .metric-content {
+  flex: 1;
+}
+
+.metric-card .metric-content h3 {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ion-color-medium);
+}
+
+.metric-card .metric-content .metric-value {
+  margin: 0 0 4px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+}
+
+.metric-card .metric-content .metric-change {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.metric-card .metric-content .metric-change.positive {
+  color: var(--ion-color-success);
+  background: rgba(var(--ion-color-success-rgb), 0.1);
+}
+
+.metric-card .metric-content .metric-change.negative {
+  color: var(--ion-color-danger);
+  background: rgba(var(--ion-color-danger-rgb), 0.1);
+}
+
+.metric-card .metric-content .metric-change.neutral {
+  color: var(--ion-color-medium);
+  background: rgba(var(--ion-color-medium-rgb), 0.1);
+}
+
+.metric-card.revenue .metric-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.metric-card.bookings .metric-icon {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.metric-card.rating .metric-icon {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.metric-card.services .metric-icon {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--ion-color-light-shade);
+}
+
+.chart-card .chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.chart-card .chart-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.chart-card .chart-header ion-button {
+  --color: var(--ion-color-primary);
+  font-size: 14px;
+}
+
+.chart-card .chart-content .simple-chart {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  height: 200px;
+  gap: 8px;
+}
+
+.chart-card .chart-content .simple-chart .chart-bar {
+  flex: 1;
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  min-height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.chart-card .chart-content .simple-chart .chart-bar .bar-label {
+  position: absolute;
+  bottom: -20px;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+}
+
+.chart-card .chart-content .simple-chart .chart-bar .bar-value {
+  position: absolute;
+  top: -20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.chart-card .chart-content .services-list,
+.chart-card .chart-content .revenue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chart-card .chart-content .services-list .service-item,
+.chart-card .chart-content .revenue-list .revenue-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chart-card .chart-content .services-list .service-item .service-info,
+.chart-card .chart-content .revenue-list .revenue-item .revenue-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chart-card .chart-content .services-list .service-item .service-info .service-name {
+  font-weight: 500;
+  color: var(--ion-color-dark);
+}
+
+.chart-card .chart-content .services-list .service-item .service-info .service-count,
+.chart-card .chart-content .services-list .service-item .service-info .service-revenue {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+}
+
+.chart-card .chart-content .services-list .service-item .service-bar,
+.chart-card .chart-content .revenue-list .revenue-item .revenue-bar {
+  height: 6px;
+  background: var(--ion-color-light);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.chart-card .chart-content .services-list .service-item .service-bar .service-progress,
+.chart-card .chart-content .revenue-list .revenue-item .revenue-bar .revenue-progress {
+  height: 100%;
+  background: linear-gradient(135deg, var(--ion-color-secondary), var(--ion-color-tertiary));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.chart-card.retention .chart-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.chart-card.retention .chart-content .retention-circle {
+  position: relative;
+}
+
+.chart-card.retention .chart-content .retention-circle .circle-progress {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--ion-color-success) var(--progress, 0%),
+    var(--ion-color-light) 0%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.chart-card.retention .chart-content .retention-circle .circle-progress::before {
+  content: '';
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  background: white;
+  border-radius: 50%;
+}
+
+.chart-card.retention .chart-content .retention-circle .circle-progress .retention-value {
+  position: relative;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+  z-index: 1;
+}
+
+.chart-card.retention .chart-content .retention-circle .circle-progress .retention-label {
+  position: relative;
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  text-align: center;
+  z-index: 1;
+}
+
+.quick-actions {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--ion-color-light-shade);
+}
+
+.quick-actions h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.quick-actions .actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.quick-actions .actions-grid .action-button {
+  --border-radius: 12px;
+  --border-width: 2px;
+  height: 48px;
+  font-weight: 500;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  text-align: center;
+}
+
+.error-container ion-icon {
+  font-size: 64px;
+  color: var(--ion-color-medium);
+  margin-bottom: 16px;
+}
+
+.error-container h3 {
+  color: var(--ion-color-dark);
+  margin-bottom: 8px;
+}
+
+.error-container p {
+  color: var(--ion-color-medium);
+  margin-bottom: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .analytics-container {
+    padding: 12px;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .charts-section {
+    grid-template-columns: 1fr;
+  }
+  
+  .metric-card .metric-content .metric-value {
+    font-size: 20px;
+  }
+  
+  .quick-actions .actions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Animation */
+.metric-card, .chart-card, .quick-actions {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

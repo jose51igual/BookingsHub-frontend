@@ -1,0 +1,322 @@
+.employee-content {
+  --ion-background-color: var(--ion-color-light);
+}
+
+.form-section {
+  background: white;
+  margin: 16px;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+  margin-bottom: 24px;
+}
+
+.section-header h2 {
+  color: var(--ion-color-primary);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.section-header p {
+  color: var(--ion-color-medium);
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.form-group ion-item {
+  --border-radius: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  margin-bottom: 8px;
+}
+
+.form-group ion-label {
+  font-weight: 500;
+  color: var(--ion-color-dark);
+}
+
+.error-message {
+  color: var(--ion-color-danger);
+  font-size: 0.8rem;
+  margin-top: 4px;
+  margin-left: 16px;
+}
+
+.time-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-actions {
+  margin-top: 32px;
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .form-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.employees-section {
+  margin: 16px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--ion-color-medium);
+}
+
+.loading-container ion-spinner {
+  margin-bottom: 16px;
+}
+
+.employees-grid {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .employees-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .employees-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.employee-card {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.employee-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.employee-header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.employee-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--ion-color-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.employee-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.employee-avatar ion-icon {
+  font-size: 40px;
+  color: var(--ion-color-medium);
+}
+
+.employee-info {
+  flex: 1;
+}
+
+.employee-info ion-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.employee-info ion-card-subtitle {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge.active {
+  background: var(--ion-color-success-tint);
+  color: var(--ion-color-success-shade);
+}
+
+.status-badge.inactive {
+  background: var(--ion-color-warning-tint);
+  color: var(--ion-color-warning-shade);
+}
+
+.employee-details {
+  margin-bottom: 20px;
+}
+
+.detail-section {
+  margin-bottom: 16px;
+}
+
+.detail-section h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-section p {
+  margin: 0;
+  color: var(--ion-color-dark);
+  line-height: 1.5;
+}
+
+.specialty-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.specialty-chips ion-chip {
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.available-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.available-days ion-chip {
+  margin: 0;
+  font-size: 0.7rem;
+  --background: var(--ion-color-light);
+  --color: var(--ion-color-dark);
+}
+
+.employee-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light);
+}
+
+.employee-actions ion-button {
+  margin: 0;
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--ion-color-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: var(--ion-color-dark);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+  max-width: 300px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .form-section {
+    margin: 12px;
+    padding: 20px;
+  }
+  
+  .employees-section {
+    margin: 12px;
+  }
+  
+  .employee-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .employee-info {
+    text-align: center;
+  }
+  
+  .employee-actions {
+    justify-content: center;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .form-section {
+    background: var(--ion-color-step-100);
+  }
+  
+  .employee-card {
+    background: var(--ion-color-step-100);
+  }
+  
+  .status-badge.active {
+    background: var(--ion-color-success-shade);
+    color: var(--ion-color-success-tint);
+  }
+  
+  .status-badge.inactive {
+    background: var(--ion-color-warning-shade);
+    color: var(--ion-color-warning-tint);
+  }
+}

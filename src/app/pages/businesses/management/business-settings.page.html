@@ -1,0 +1,338 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-back-button slot="start" default-href="/business-management"></ion-back-button>
+    <ion-title>Configuración del Negocio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="saveSettings()" [disabled]="isSaving">
+        <ion-icon name="save-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="settings-container">
+    
+    <!-- Loading State -->
+    @if (isLoading()) {
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando configuración...</p>
+      </div>
+    }
+
+    <!-- Settings Content -->
+    @if (!isLoading()) {
+      
+      <!-- Business Information -->
+      <div class="settings-section">
+        <h3>Información del Negocio</h3>
+        
+        <ion-item class="form-item">
+          <ion-label position="stacked">Nombre del Negocio *</ion-label>
+          <ion-input 
+            [value]="settings().business_name"
+            (ionInput)="updateBusinessName($event.detail.value!)"
+            placeholder="Ej: Salón de Belleza Elegancia"
+            required>
+          </ion-input>
+        </ion-item>
+        
+        <ion-item class="form-item">
+          <ion-label position="stacked">Descripción</ion-label>
+          <ion-textarea 
+            [value]="settings().business_description"
+            (ionInput)="updateBusinessDescription($event.detail.value!)"
+            placeholder="Describe tu negocio..."
+            rows="3">
+          </ion-textarea>
+        </ion-item>
+        
+        <div class="form-row">
+          <ion-item class="form-item">
+            <ion-label position="stacked">Teléfono *</ion-label>
+            <ion-input 
+              [value]="settings().business_phone"
+              (ionInput)="updateBusinessPhone($event.detail.value!)"
+              type="tel"
+              placeholder="+1 555-0123"
+              required>
+            </ion-input>
+          </ion-item>
+          
+          <ion-item class="form-item">
+            <ion-label position="stacked">Email *</ion-label>
+            <ion-input 
+              [value]="settings().business_email"
+              (ionInput)="updateBusinessEmail($event.detail.value!)"
+              type="email"
+              placeholder="info@negocio.com"
+              required>
+            </ion-input>
+          </ion-item>
+        </div>
+        
+        <ion-item class="form-item">
+          <ion-label position="stacked">Dirección *</ion-label>
+          <ion-input 
+            [value]="settings().business_address"
+            (ionInput)="updateBusinessAddress($event.detail.value!)"
+            placeholder="Av. Principal 123, Ciudad"
+            required>
+          </ion-input>
+        </ion-item>
+        
+        <ion-item class="form-item">
+          <ion-label position="stacked">Sitio Web</ion-label>
+          <ion-input 
+            [value]="settings().business_website"
+            (ionInput)="updateBusinessWebsite($event.detail.value!)"
+            type="url"
+            placeholder="https://mi-negocio.com">
+          </ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Business Hours -->
+      <div class="settings-section">
+        <div class="section-header">
+          <h3>Horarios de Atención</h3>
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="goToAvailability()">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            Horarios Detallados
+          </ion-button>
+        </div>
+        
+        <div class="hours-grid">
+          @for (day of days; track day.key) {
+            <div 
+              class="day-item"
+              [class.disabled]="!settings().business_hours[day.key].isOpen">
+              
+              <div class="day-header">
+                <span class="day-name">{{day.label}}</span>
+                <ion-toggle 
+                  [checked]="settings().business_hours[day.key].isOpen"
+                  (ionChange)="updateDayOpen(day.key, $event.detail.checked)">
+                </ion-toggle>
+              </div>
+              
+              @if (settings().business_hours[day.key].isOpen) {
+                <div class="time-inputs">
+                  <ion-datetime 
+                    [value]="settings().business_hours[day.key].open"
+                    (ionChange)="updateDayTime(day.key, 'open', $event)"
+                    presentation="time"
+                    display-format="HH:mm">
+                  </ion-datetime>
+                  <span class="time-separator">-</span>
+                  <ion-datetime 
+                    [value]="settings().business_hours[day.key].close"
+                    (ionChange)="updateDayTime(day.key, 'close', $event)"
+                    presentation="time"
+                    display-format="HH:mm">
+                  </ion-datetime>
+                </div>
+              }
+              
+              @if (!settings().business_hours[day.key].isOpen) {
+                <div class="closed-label">
+                  Cerrado
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="settings-section">
+        <h3>Notificaciones</h3>
+        
+        <ion-item class="toggle-item">
+          <ion-label>
+            <h4>Reservas por Email</h4>
+            <p>Recibe notificaciones cuando se realicen nuevas reservas</p>
+          </ion-label>
+          <ion-toggle 
+            [checked]="settings().notifications.emailBookings"
+            (ionChange)="updateNotificationSetting('emailBookings', $event.detail.checked)"
+            slot="end">
+          </ion-toggle>
+        </ion-item>
+        
+        <ion-item class="toggle-item">
+          <ion-label>
+            <h4>Recordatorios SMS</h4>
+            <p>Envía recordatorios por SMS a los clientes</p>
+          </ion-label>
+          <ion-toggle 
+            [checked]="settings().notifications.smsReminders"
+            (ionChange)="updateNotificationSetting('smsReminders', $event.detail.checked)"
+            slot="end">
+          </ion-toggle>
+        </ion-item>
+        
+        <ion-item class="toggle-item">
+          <ion-label>
+            <h4>Reseñas por Email</h4>
+            <p>Recibe notificaciones de nuevas reseñas</p>
+          </ion-label>
+          <ion-toggle 
+            [checked]="settings().notifications.emailReviews"
+            (ionChange)="updateNotificationSetting('emailReviews', $event.detail.checked)"
+            slot="end">
+          </ion-toggle>
+        </ion-item>
+        
+        <ion-item class="toggle-item">
+          <ion-label>
+            <h4>Notificaciones Push</h4>
+            <p>Recibe notificaciones en tiempo real en la app</p>
+          </ion-label>
+          <ion-toggle 
+            [checked]="settings().notifications.pushNotifications"
+            (ionChange)="updateNotificationSetting('pushNotifications', $event.detail.checked)"
+            slot="end">
+          </ion-toggle>
+        </ion-item>
+      </div>
+
+      <!-- Booking Settings -->
+      <div class="settings-section">
+        <h3>Configuración de Reservas</h3>
+        
+        <div class="form-row">
+          <ion-item class="form-item">
+            <ion-label position="stacked">Días de Anticipación</ion-label>
+            <ion-input 
+              [value]="settings().booking_settings.advance_booking_days"
+              (ionInput)="updateBookingNumber('advance_booking_days', $event)"
+              type="number"
+              min="1"
+              max="365">
+            </ion-input>
+          </ion-item>
+          
+          <ion-item class="form-item">
+            <ion-label position="stacked">Cancelación (horas)</ion-label>
+            <ion-input 
+              [value]="settings().booking_settings.cancellation_hours"
+              (ionInput)="updateBookingNumber('cancellation_hours', $event)"
+              type="number"
+              min="1"
+              max="72">
+            </ion-input>
+          </ion-item>
+        </div>
+        
+        <ion-item class="toggle-item">
+          <ion-label>
+            <h4>Requerir Depósito</h4>
+            <p>Los clientes deben pagar un depósito al reservar</p>
+          </ion-label>
+          <ion-toggle 
+            [checked]="settings().booking_settings.require_deposit"
+            (ionChange)="updateBookingSetting('require_deposit', $event.detail.checked)"
+            slot="end">
+          </ion-toggle>
+        </ion-item>
+        
+        @if (settings().booking_settings.require_deposit) {
+          <ion-item class="form-item">
+            <ion-label position="stacked">Porcentaje de Depósito (%)</ion-label>
+            <ion-input 
+              [value]="settings().booking_settings.deposit_percentage"
+              (ionInput)="updateBookingNumber('deposit_percentage', $event)"
+              type="number"
+              min="5"
+              max="100">
+            </ion-input>
+          </ion-item>
+        }
+        
+        <ion-item class="toggle-item">
+          <ion-label>
+            <h4>Confirmación Automática</h4>
+            <p>Las reservas se confirman automáticamente</p>
+          </ion-label>
+          <ion-toggle 
+            [checked]="settings().booking_settings.auto_confirm"
+            (ionChange)="updateBookingSetting('auto_confirm', $event.detail.checked)"
+            slot="end">
+          </ion-toggle>
+        </ion-item>
+      </div>
+      
+      <!-- Quick Actions -->
+      <div class="settings-section">
+        <h3>Acciones Rápidas</h3>
+        
+        <div class="actions-grid">
+          <ion-button 
+            fill="outline" 
+            (click)="goToAnalytics()"
+            class="action-button">
+            <ion-icon name="analytics-outline" slot="start"></ion-icon>
+            Ver Analíticas
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            (click)="goToAvailability()"
+            class="action-button">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            Gestionar Horarios
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Save Actions -->
+      <div class="save-actions">
+        <ion-button 
+          expand="block"
+          (click)="saveSettings()"
+          [disabled]="isSaving()"
+          class="save-button">
+          @if (isSaving()) {
+            <ion-spinner name="crescent" slot="start"></ion-spinner>
+          }
+          @if (!isSaving()) {
+            <ion-icon name="save-outline" slot="start"></ion-icon>
+          }
+          {{isSaving() ? 'Guardando...' : 'Guardar Configuración'}}
+        </ion-button>
+        
+        <ion-button 
+          expand="block"
+          fill="outline"
+          (click)="resetSettings()"
+          [disabled]="isSaving()"
+          class="reset-button">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Restablecer
+        </ion-button>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="settings-section danger-zone">
+        <h3>Zona de Peligro</h3>
+        <p>Las siguientes acciones son irreversibles.</p>
+        
+        <ion-button 
+          expand="block"
+          color="danger"
+          fill="outline"
+          (click)="deleteAccount()"
+          class="danger-button">
+          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          Eliminar Cuenta
+        </ion-button>
+      </div>
+
+    }
+  </div>
+</ion-content>

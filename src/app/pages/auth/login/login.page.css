@@ -1,0 +1,324 @@
+ion-content {
+  --background: #f0f2f5; /* Un gris muy claro para el fondo general */
+}
+
+ion-header ion-toolbar {
+  --background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  --border-style: none;
+}
+
+ion-header ion-toolbar ion-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+}
+
+ion-header ion-toolbar ion-buttons ion-button {
+  --color: var(--ion-color-primary);
+  --background: rgba(var(--ion-color-primary-rgb), 0.1);
+  --border-radius: 12px;
+}
+
+ion-header ion-toolbar ion-buttons ion-button:hover {
+  --background: rgba(var(--ion-color-primary-rgb), 0.2);
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Centra el contenido verticalmente */
+  padding: 0; /* Eliminamos el padding para que el contenido interno lo gestione */
+  height: 100vh; /* Ocupa toda la altura de la ventana */
+  width: 100vw; /* Ocupa todo el ancho de la ventana */
+  overflow: hidden; /* Evita barras de scroll innecesarias en el contenedor principal */
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 25px; /* Reducido ligeramente */
+  margin-top: 0; /* El centrado vertical se encarga de esto */
+  width: 100%;
+}
+
+.logo-container .logo-image {
+  width: 90px; /* Ligeramente más pequeño */
+  height: 90px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.logo-container .app-title {
+  font-size: 26px; /* Ligeramente más pequeño */
+  font-weight: 700;
+  color: #333; /* Un color oscuro más suave que el negro puro */
+  margin: 0 0 6px 0;
+}
+
+.logo-container .app-slogan {
+  color: #666; /* Un gris medio para el eslogan */
+  font-size: 15px;
+  text-align: center;
+  margin: 0;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 400px; /* Un poco más estrecho para un look más estilizado */
+  background-color: #ffffff; /* Fondo blanco para el formulario */
+  border-radius: 12px; /* Bordes más suaves */
+  padding: 30px; /* Más padding interno */
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.07); /* Sombra más sutil */
+}
+
+.login-form .form-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-form .form-header h2 {
+  font-size: 20px; /* Ligeramente más pequeño */
+  font-weight: 600; /* Un poco menos de peso */
+  color: #333;
+  margin: 0 0 6px 0;
+}
+
+.login-form .form-header p {
+  color: #777; /* Gris más claro para el texto secundario */
+  margin: 0;
+  font-size: 13px;
+}
+
+.custom-input {
+  --background: #f7f7f7; /* Fondo de input muy claro */
+  --border-color: #e0e0e0; /* Borde sutil */
+  --highlight-color-valid: var(--ion-color-primary);
+  --highlight-color-focused: var(--ion-color-primary);
+  --border-radius: 8px; /* Bordes más suaves para inputs */
+  margin-bottom: 18px; /* Un poco más de espacio */
+  --padding-start: 15px;
+  --inner-padding-end: 15px;
+  box-shadow: none;
+  border: 1px solid #e0e0e0; /* Añadimos un borde visible */
+}
+
+.custom-input ion-icon {
+  color: #888; /* Iconos en gris medio */
+  margin-right: 10px;
+}
+
+.custom-input ion-label {
+  --color: #444; /* Label un poco más oscuro */
+  font-weight: 500;
+  font-size: 14px; /* Tamaño de label */
+}
+
+.custom-input ion-input {
+  --color: #333;
+  --placeholder-color: #999; /* Placeholder en gris claro */
+  font-size: 15px;
+}
+
+ion-button.login-button { /* Aplicar solo al botón de login principal */
+  --background: linear-gradient(135deg, #5691c8, #457fca); /* Un azul más claro y sutil */
+  --background-hover: linear-gradient(135deg, #457fca, #3a6ea5);
+  --background-activated: linear-gradient(135deg, #3a6ea5, #2e5a8e);
+  --border-radius: 8px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  height: 48px; /* Altura estándar */
+  font-weight: 600;
+  text-transform: none; /* Sin mayúsculas forzadas */
+  font-size: 16px;
+  margin-top: 10px; /* Espacio antes del botón */
+}
+
+ion-button.login-button:hover {
+  --box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.error-message {
+  color: #e74c3c; /* Un rojo más suave para errores */
+  font-size: 0.85rem;
+  margin-top: -10px;
+  margin-bottom: 12px;
+  padding-left: 5px; /* Menos padding */
+  display: flex; /* Para alinear icono y texto */
+  align-items: center;
+  gap: 5px; /* Espacio entre icono y texto */
+  text-shadow: none; /* Quitar sombra de texto */
+}
+
+.register-link {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.register-link p {
+  color: #555; /* Texto del link de registro */
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.register-link ion-button { /* Estilo para el botón de "Crear cuenta" */
+  --color: var(--ion-color-primary);
+  font-weight: 600;
+  text-transform: none;
+  font-size: 1rem;
+  --box-shadow: none; /* Sin sombra para botones de texto claro */
+  --background: transparent;
+  --background-hover: rgba(var(--ion-color-primary-rgb), 0.05);
+  --ripple-color: var(--ion-color-primary);
+}
+
+.signup-link {
+  margin-top: 25px;
+  text-align: center;
+  position: relative;
+  z-index: 20; /* Z-index extra alto para asegurar que funcione */
+}
+
+.signup-link p {
+  color: #555;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.signup-link .register-button {
+  --color: var(--ion-color-primary);
+  font-weight: 600;
+  text-transform: none;
+  font-size: 1rem;
+  --box-shadow: none;
+  --background: transparent;
+  --background-hover: rgba(var(--ion-color-primary-rgb), 0.05);
+  --ripple-color: var(--ion-color-primary);
+  position: relative;
+  z-index: 21;
+}
+
+.signup-link .register-button ion-icon {
+  margin-left: 8px;
+}
+
+.home-link {
+  margin-top: 20px;
+  text-align: center;
+  position: relative;
+  z-index: 20; /* Z-index extra alto para asegurar que funcione */
+}
+
+.home-link .home-button {
+  --border-color: #ccc;
+  --color: #666;
+  --background: transparent;
+  --background-hover: rgba(108, 117, 125, 0.05);
+  --border-radius: 10px;
+  height: 44px;
+  font-weight: 500;
+  text-transform: none;
+  position: relative;
+  z-index: 21;
+}
+
+.home-link .home-button ion-icon {
+  margin-right: 8px;
+}
+
+.home-link .home-button:hover {
+  --border-color: #999;
+  --color: #333;
+}
+
+/* Mejorar el botón de registro para que sea más visible */
+.register-button {
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade)) !important;
+  --background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+  --color: white !important;
+  --border-radius: 10px;
+  height: 48px;
+  margin-top: 8px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+}
+
+.register-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(var(--ion-color-primary-rgb), 0.4);
+}
+
+/* Estilos para las formas decorativas */
+.shape-bottom, .shape-top {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  z-index: -1; /* Cambiar a z-index negativo para que esté detrás */
+  opacity: 0.3; /* Reducir opacidad para que sea más sutil */
+  pointer-events: none; /* Deshabilitar eventos de mouse para que no bloquee clics */
+}
+
+.shape-bottom svg, .shape-top svg {
+  display: block;
+}
+
+.shape-top {
+  top: 0;
+}
+
+.shape-top svg path {
+  fill: rgba(var(--ion-color-primary-rgb), 0.1); /* Color primario muy transparente */
+}
+
+.shape-bottom {
+  bottom: 0;
+  transform: rotate(180deg); /* Si quieres que la forma de abajo sea la misma pero invertida */
+}
+
+.shape-bottom svg path {
+  fill: rgba(var(--ion-color-secondary-rgb), 0.1); /* Color secundario muy transparente */
+}
+
+/* Ajustes para que el contenido del formulario esté por encima de las formas */
+.login-form, .logo-container, .signup-link, .home-link {
+  position: relative;
+  z-index: 10; /* Aumentar z-index para asegurar que estén encima */
+}
+
+/* Si tienes un ion-toolbar específico en login.page.html, puedes estilizarlo así: */
+ion-header ion-toolbar {
+  --background: transparent; /* Fondo de la barra de herramientas transparente */
+  box-shadow: none; /* Sin sombra para la barra de herramientas */
+}
+
+ion-header ion-toolbar ion-title {
+  color: #333; /* Título oscuro */
+  font-weight: 600;
+}
+
+ion-header ion-toolbar ion-buttons ion-back-button {
+  --color: var(--ion-color-primary); /* Color del botón de retroceso */
+}
+
+/* Asegurar que el ion-content no tenga padding si lo gestionamos internamente */
+:host ion-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+/* Ajustes generales para los botones de texto claro */
+ion-button[fill="clear"] {
+  --color: var(--ion-color-primary); /* Color primario para enlaces */
+  font-weight: 500;
+  text-transform: none;
+  font-size: 0.95rem; /* Tamaño de fuente para enlaces */
+  --box-shadow: none;
+}
+
+ion-button[fill="clear"]:hover {
+  --background: rgba(var(--ion-color-primary-rgb), 0.04); /* Un hover sutil */
+}

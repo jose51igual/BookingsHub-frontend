@@ -1,0 +1,172 @@
+<ion-content>
+  <!-- Componente de alerta de error usando nueva sintaxis @if -->
+  @if (errorMessage()) {
+    <div class="error-alert">
+      <ion-item color="danger">
+        <ion-label>{{ errorMessage() }}</ion-label>
+        <ion-button fill="clear" slot="end" (click)="clearError()">
+          <ion-icon name="close-outline"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </div>
+  }
+
+  <div class="service-form-container">
+    <div class="form-header">
+      <h1>{{ pageTitle() }}</h1>
+      <p>{{ isEditMode() ? 'Modifica la información de tu servicio' : 'Completa la información de tu servicio para que los clientes puedan reservarlo' }}</p>
+    </div>
+
+    <!-- Loading state for business info -->
+    @if (!businessStatus().loaded) {
+      <div class="business-loading">
+        <ion-item>
+          <ion-spinner slot="start"></ion-spinner>
+          <ion-label>{{ businessStatus().message }}</ion-label>
+        </ion-item>
+      </div>
+    }
+
+    <form [formGroup]="serviceForm" (ngSubmit)="createService()">>
+      <!-- Service Name -->
+      <div class="form-section">
+        <h3>Información Básica</h3>
+        <ion-item class="form-item">
+          <ion-label position="stacked">Nombre del Servicio *</ion-label>
+          <ion-input 
+            formControlName="name" 
+            placeholder="Ej: Corte de cabello, Manicura, Masaje..."
+            [class.error]="serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched">
+          </ion-input>
+        </ion-item>
+        @if (serviceForm.get('name')?.invalid && serviceForm.get('name')?.touched) {
+          <div class="error-message">
+            El nombre del servicio es requerido
+          </div>
+        }
+      </div>
+
+      <!-- Description -->
+      <div class="form-section">
+        <ion-item class="form-item">
+          <ion-label position="stacked">Descripción *</ion-label>
+          <ion-textarea 
+            formControlName="description" 
+            placeholder="Describe tu servicio detalladamente..."
+            rows="4"
+            [class.error]="serviceForm.get('description')?.invalid && serviceForm.get('description')?.touched">
+          </ion-textarea>
+        </ion-item>
+        @if (serviceForm.get('description')?.invalid && serviceForm.get('description')?.touched) {
+          <div class="error-message">
+            La descripción es requerida
+          </div>
+        }
+      </div>
+
+      <!-- Price and Duration -->
+      <div class="form-section">
+        <h3>Precio y Duración</h3>
+        <div class="form-row">
+          <ion-item class="form-item">
+            <ion-label position="stacked">Precio (€) *</ion-label>
+            <ion-input 
+              formControlName="price" 
+              type="number" 
+              min="0" 
+              step="0.01"
+              placeholder="0.00"
+              [class.error]="serviceForm.get('price')?.invalid && serviceForm.get('price')?.touched">
+            </ion-input>
+          </ion-item>
+          
+          <ion-item class="form-item">
+            <ion-label position="stacked">Duración (minutos) *</ion-label>
+            <ion-select 
+              formControlName="duration" 
+              placeholder="Seleccionar"
+              [class.error]="serviceForm.get('duration')?.invalid && serviceForm.get('duration')?.touched">
+              <ion-select-option [value]="15">15 minutos</ion-select-option>
+              <ion-select-option [value]="30">30 minutos</ion-select-option>
+              <ion-select-option [value]="45">45 minutos</ion-select-option>
+              <ion-select-option [value]="60">1 hora</ion-select-option>
+              <ion-select-option [value]="90">1 hora 30 min</ion-select-option>
+              <ion-select-option [value]="120">2 horas</ion-select-option>
+              <ion-select-option [value]="180">3 horas</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+        
+        <div class="form-row">
+          @if (serviceForm.get('price')?.invalid && serviceForm.get('price')?.touched) {
+            <div class="error-message">
+              El precio es requerido
+            </div>
+          }
+          @if (serviceForm.get('duration')?.invalid && serviceForm.get('duration')?.touched) {
+            <div class="error-message">
+              La duración es requerida
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="form-section">
+        <h3>Categoría</h3>
+        <ion-item class="form-item">
+          <ion-label position="stacked">Categoría del Servicio</ion-label>
+          <ion-select formControlName="category" placeholder="Selecciona una categoría">
+            @for (category of categories; track category) {
+              <ion-select-option [value]="category">
+                {{ category }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <!-- Benefits (Optional) -->
+      <div class="form-section">
+        <h3>Beneficios (Opcional)</h3>
+        <ion-item class="form-item">
+          <ion-label position="stacked">Beneficios del Servicio</ion-label>
+          <ion-textarea 
+            formControlName="benefits" 
+            placeholder="Ej: Relajación profunda, Mejora la circulación, Renovación de la piel..."
+            rows="3">
+          </ion-textarea>
+        </ion-item>
+        <div class="form-hint">
+          Separa los beneficios con comas. Esto ayuda a los clientes a entender el valor de tu servicio.
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <ion-button 
+          expand="block" 
+          type="submit" 
+          [disabled]="!canSubmit"
+          class="create-button">
+          @if (!isSubmitting()) {
+            <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+          }
+          @if (isSubmitting()) {
+            <ion-spinner slot="start"></ion-spinner>
+          }
+          {{ loadingText() }}
+        </ion-button>
+        
+        <ion-button 
+          expand="block" 
+          fill="outline" 
+          color="medium"
+          (click)="goBack()"
+          [disabled]="isSubmitting()">
+          Cancelar
+        </ion-button>
+      </div>
+    </form>
+  </div>
+</ion-content>

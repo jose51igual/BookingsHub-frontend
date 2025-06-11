@@ -1,0 +1,74 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Escribir Reseña</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (businessId() === 0) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando datos de la reserva...</p>
+    </div>
+  } @else {
+    <div class="review-form">
+    <div class="business-info">
+      <h2>{{ businessName() }}</h2>
+      <p>Comparte tu experiencia con otros usuarios</p>
+    </div>
+
+    <div class="rating-section">
+      <h3>Calificación</h3>
+      <div class="rating-stars">
+        @for (star of getRatingArray(); track star) {
+          <ion-icon 
+            [name]="star <= review().rating ? 'star' : 'star-outline'"
+            [class.selected]="star <= review().rating"
+            (click)="setRating(star)">
+          </ion-icon>
+        }
+      </div>
+      @if (review().rating > 0) {
+        <p class="rating-text">{{ getRatingText() }}</p>
+      }
+    </div>
+
+    <div class="comment-section">
+      <h3>Comentario</h3>
+      <ion-item>
+        <ion-textarea
+          [ngModel]="review().comment"
+          (ngModelChange)="updateComment($event)"
+          placeholder="Describe tu experiencia (mínimo 10 caracteres)"
+          rows="5"
+          maxlength="1000">
+        </ion-textarea>
+      </ion-item>
+      <p class="char-count">{{ review().comment.length }}/1000 caracteres</p>
+    </div>
+
+    <div class="submit-section">
+      <ion-button 
+        expand="block" 
+        [disabled]="!isValidReview() || isSubmitting()"
+        (click)="submitReview()">
+        @if (!isSubmitting()) {
+          <span>Enviar Reseña</span>
+        } @else {
+          <span>Enviando...</span>
+        }
+      </ion-button>
+    </div>
+  </div>
+  }
+
+  <ion-alert
+    [isOpen]="showAlert()"
+    [header]="alertType() === 'success' ? 'Éxito' : 'Error'"
+    [message]="alertMessage()"
+    [buttons]="[{ text: 'OK', handler: onAlertDismiss }]">
+  </ion-alert>
+</ion-content>

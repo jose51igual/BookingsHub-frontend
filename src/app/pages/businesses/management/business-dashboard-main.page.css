@@ -1,0 +1,330 @@
+/* Dashboard container */
+.dashboard-container {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Section styling */
+.section-title {
+  color: var(--ion-color-dark);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  text-align: left;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.metrics-section,
+.quick-actions-section,
+.recent-bookings-section {
+  margin-bottom: 32px;
+}
+
+/* Metric cards */
+.metric-card {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.metric-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.metric-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.metric-icon ion-icon {
+  font-size: 24px;
+  color: white;
+}
+
+.metric-info {
+  flex: 1;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--ion-color-dark);
+}
+
+.metric-title {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  margin: 4px 0 8px 0;
+  font-weight: 500;
+}
+
+.metric-trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.trend-up {
+  color: var(--ion-color-success);
+}
+
+.trend-down {
+  color: var(--ion-color-danger);
+}
+
+/* Metric card color variants basados en el color del icono */
+.metric-card .metric-icon {
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+}
+
+.metric-card[data-metric-type="primary"] .metric-icon {
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+}
+
+.metric-card[data-metric-type="success"] .metric-icon {
+  background: linear-gradient(135deg, var(--ion-color-success), var(--ion-color-success-shade));
+}
+
+.metric-card[data-metric-type="tertiary"] .metric-icon {
+  background: linear-gradient(135deg, var(--ion-color-tertiary), var(--ion-color-tertiary-shade));
+}
+
+.metric-card[data-metric-type="warning"] .metric-icon {
+  background: linear-gradient(135deg, var(--ion-color-warning), var(--ion-color-warning-shade));
+}
+
+/* Action cards */
+.action-card {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.action-content {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.action-icon {
+  font-size: 3rem;
+  color: var(--ion-color-primary);
+  margin-bottom: 16px;
+}
+
+.action-content h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin: 0 0 8px 0;
+}
+
+.action-content p {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+/* Bookings card */
+.bookings-card {
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.bookings-card ion-list {
+  background: transparent;
+}
+
+.bookings-card ion-item {
+  --background: transparent;
+  --border-color: transparent;
+  --inner-border-width: 0 0 1px 0;
+  --inner-border-color: var(--ion-color-light);
+  --padding-start: 0;
+  --padding-end: 0;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.bookings-card ion-item:last-child {
+  --inner-border-width: 0;
+  margin-bottom: 0;
+}
+
+.bookings-card ion-item:hover {
+  --background: var(--ion-color-light);
+}
+
+.customer-avatar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, var(--ion-color-primary), var(--ion-color-secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 50%;
+}
+
+.booking-datetime {
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+  margin-top: 4px;
+}
+
+/* Reservas recientes */
+.recent-bookings-section .loading-section {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--ion-color-medium);
+}
+
+.recent-bookings-section .loading-section ion-spinner {
+  margin-bottom: 16px;
+}
+
+.recent-bookings-section .empty-state {
+  text-align: center;
+  padding: 48px 16px;
+  color: var(--ion-color-medium);
+}
+
+.recent-bookings-section .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.recent-bookings-section .empty-state p {
+  margin-bottom: 24px;
+  font-size: 1.1rem;
+}
+
+.recent-bookings-section ion-list {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.recent-bookings-section ion-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --inner-padding-end: 0px;
+  --border-color: var(--ion-color-light);
+}
+
+.recent-bookings-section ion-item:not(:last-child) {
+  border-bottom: 1px solid var(--ion-color-light);
+}
+
+.recent-bookings-section ion-label h3 {
+  font-weight: 600;
+  color: var(--ion-color-dark);
+  margin-bottom: 4px;
+}
+
+.recent-bookings-section ion-label p {
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+  margin: 2px 0;
+}
+
+.recent-bookings-section ion-chip {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 12px;
+  }
+  
+  .section-title {
+    font-size: 1.3rem;
+  }
+  
+  .metric-value {
+    font-size: 1.8rem;
+  }
+  
+  .action-icon {
+    font-size: 2.5rem;
+  }
+  
+  .action-content h3 {
+    font-size: 1.1rem;
+  }
+  
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* Animation for cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.metric-card,
+.action-card,
+.bookings-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.metric-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.metric-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.metric-card:nth-child(4) {
+  animation-delay: 0.3s;
+}

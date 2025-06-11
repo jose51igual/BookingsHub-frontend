@@ -1,0 +1,84 @@
+<ion-content [fullscreen]="true" [scrollEvents]="true" class="modern-content">
+  
+  <!-- Hero Search Section -->
+  <div class="search-section">
+    <div class="search-container">
+      <h1>Encuentra tu servicio ideal</h1>
+      <p>Descubre los mejores profesionales cerca de ti</p>
+      <ion-searchbar 
+        class="modern-search"
+        placeholder="Buscar servicios, categorías..." 
+        [ngModel]="searchQuery()" 
+        (ionInput)="onSearchChange($event)">
+      </ion-searchbar>
+    </div>
+  </div>
+
+  <!-- Categorías horizontales -->
+  <div class="categories-section">
+    <div class="categories-scroll">
+      @for (category of categories; track category.id) {
+        <ion-button 
+          [fill]="selectedCategory() === category.id ? 'solid' : 'outline'" 
+          [color]="selectedCategory() === category.id ? 'primary' : 'medium'"
+          class="category-button"
+          (click)="filterByCategory(category.id)">
+          <ion-icon [name]="category.icon" slot="start"></ion-icon>
+          {{ category.name }}
+        </ion-button>
+      }
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+    <app-loading-indicator message="Cargando servicios..."></app-loading-indicator>
+  }
+
+  <!-- Main Content -->
+  @if (!isLoading()) {
+    <div class="main-sections">
+
+      <!-- All Services -->
+      <div class="section">
+        <div class="section-header">
+          <h2>🏪 Todos los Servicios</h2>
+          @if (selectedCategory() !== 'todas') {
+            <p>Categoría: {{ selectedCategoryName() }}</p>
+          }
+          @if (isShowingAllCategories()) {
+            <p>Explora todos nuestros servicios disponibles</p>
+          }
+        </div>
+        
+        <!-- Services Grid -->
+        @if (filteredServices().length > 0) {
+          <div class="services-grid">
+            @for (service of filteredServices(); track service.id; let i = $index) {
+              <app-service-card
+                [business]="service"
+                [animationOrder]="i"
+                (cardClick)="onServiceCardClick($event)">
+              </app-service-card>
+            }
+          </div>
+        }
+        
+        <!-- Empty State -->
+        @if (filteredServices().length === 0) {
+          <app-empty-state
+            [config]="{
+              icon: 'search-outline',
+              title: 'No se encontraron servicios',
+              message: getEmptyStateMessage(),
+              description: getEmptyStateMessage(),
+              showAction: hasActiveFilters(),
+              actionText: 'Ver todos los servicios'
+            }"
+            (actionClick)="clearFilters()">
+          </app-empty-state>
+        }
+      </div>
+    </div>
+  }
+</ion-content>

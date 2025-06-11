@@ -1,0 +1,25 @@
+<div class="map-container" [style.height]="height">
+  <!-- Elemento nativo capacitor-google-map -->
+  <capacitor-google-map #map class="map-element" *ngIf="!hasError"></capacitor-google-map>
+  
+  <!-- Placeholder cuando no hay coordenadas o hay un error -->
+  <div *ngIf="hasError" class="map-placeholder">
+    <div class="error-content">
+      <ion-icon name="map-outline" class="error-icon"></ion-icon>
+      <div class="error-text">
+        <h4>Mapa no disponible</h4>
+        <pre class="error-message">{{ errorMessage }}</pre>
+      </div>
+      <ion-button (click)="retryLoadMap()" fill="outline" color="primary" class="retry-button">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Reintentar
+      </ion-button>
+    </div>
+  </div>
+  
+  <!-- Indicador de carga -->
+  <div class="map-loading" *ngIf="!hasError && !isMapLoaded">
+    <ion-spinner name="dots" color="primary"></ion-spinner>
+    <p>Cargando mapa de ubicación...</p>
+  </div>
+</div>

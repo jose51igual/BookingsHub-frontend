@@ -1,0 +1,273 @@
+<ion-content class="bookings-content">
+  <!-- Componente de alerta de error -->
+  @if (errorMessage()) {
+    <ion-card color="danger">
+      <ion-card-content>
+        <div class="error-alert">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>{{ errorMessage() }}</span>
+          <ion-button fill="clear" size="small" (click)="clearError()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <!-- Pull to refresh -->
+  <ion-refresher slot="fixed" (ionRefresh)="refreshBookings($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  
+    @if (hasBookings()) {
+      <div class="main-container">
+        <!-- Filtros a la izquierda -->
+        <div class="filters-container">
+          <div class="filter-row">
+            <label>Buscar</label>
+            <ion-searchbar 
+              [value]="searchTerm()" 
+              (ionInput)="onSearchChange($event)"
+              placeholder="Servicio o negocio..."
+              [debounce]="300">
+            </ion-searchbar>
+          </div>
+          
+          <div class="filter-row">
+            <label>Estado</label>
+            <ion-select 
+              [value]="statusFilter()" 
+              (ionChange)="onStatusFilterChange($event)"
+              placeholder="Todos los estados"
+              interface="popover">
+              <ion-select-option value="">Todos</ion-select-option>
+              <ion-select-option value="confirmada">Confirmadas</ion-select-option>
+              <ion-select-option value="pendiente">Pendientes</ion-select-option>
+              <ion-select-option value="cancelada">Canceladas</ion-select-option>
+            </ion-select>
+          </div>
+          
+          <div class="filter-row">
+            <label>Ordenar por</label>
+            <ion-select 
+              [value]="sortBy()" 
+              (ionChange)="onSortChange($event)"
+              placeholder="Fecha"
+              interface="popover">
+              <ion-select-option value="date">Fecha</ion-select-option>
+              <ion-select-option value="service">Servicio</ion-select-option>
+              <ion-select-option value="business">Negocio</ion-select-option>
+            </ion-select>
+          </div>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="content-container">
+
+    <!-- Filtro por segmentos -->
+    <ion-segment (ionChange)="segmentChanged($event)" [value]="selectedSegment()" mode="ios" class="booking-segment">
+      <ion-segment-button value="upcoming" layout="icon-start">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <ion-label>Próximas ({{ filteredUpcomingBookings().length }})</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="past" layout="icon-start">
+        <ion-icon name="time-outline"></ion-icon>
+        <ion-label>Historial ({{ filteredPastBookings().length }})</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- Contenedor principal para las reservas -->
+    <div class="bookings-container">
+      @switch (selectedSegment()) {
+        @case ('upcoming') {
+          <!-- Sección de reservas próximas -->
+          @if (filteredUpcomingBookings().length === 0) {
+            <div class="empty-bookings-container">
+              <ion-icon name="calendar-outline" class="empty-icon"></ion-icon>
+              <h3>No tienes reservas próximas</h3>
+              <p>Explora nuestros negocios y agenda tu próxima cita</p>
+              <ion-button expand="block" routerLink="/inicio" class="explore-button" shape="round">
+                <ion-icon name="search-outline" slot="start"></ion-icon>
+                Explorar negocios
+              </ion-button>
+            </div>
+          } @else {
+            <!-- Lista de reservas próximas -->
+            <div class="bookings-list">
+              @for (booking of filteredUpcomingBookings(); track booking.id) {
+                <ion-item-sliding class="booking-item-sliding">
+                  <ion-item class="booking-item" lines="none" button detail="false">
+                    <div class="booking-card {{ booking.status }}" (click)="viewBookingDetails(booking)">
+                      <div class="booking-header">
+                        <h2>{{ booking.service_name || 'Servicio no disponible' }}</h2>
+                        <ion-badge [color]="getStatusColor(booking.status)" class="status-badge">
+                          {{ getStatusText(booking.status) }}
+                        </ion-badge>
+                      </div>
+                      
+                      <div class="booking-business">
+                        <ion-icon name="storefront-outline"></ion-icon>
+                        <span>{{ booking.business_name || 'Negocio no disponible' }}</span>
+                      </div>
+                      
+                      <div class="booking-details">
+                        <div class="booking-time">
+                          <ion-icon name="calendar-outline"></ion-icon>
+                          <span>{{ booking.booking_date | date:'EEE, dd MMM yyyy':'es-ES' }}</span>
+                        </div>
+                        
+                        <div class="booking-time">
+                          <ion-icon name="time-outline"></ion-icon>
+                          <span>{{ formatBookingTime(booking.booking_time) }}</span>
+                        </div>
+                        
+                        @if (booking.employee_name) {
+                          <div class="booking-time">
+                            <ion-icon name="person-outline"></ion-icon>
+                            <span>Con {{ booking.employee_name }}</span>
+                          </div>
+                        }
+                        
+                        @if (booking.price) {
+                          <div class="booking-time">
+                            <ion-icon name="cash-outline"></ion-icon>
+                            <span>{{ booking.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                          </div>
+                        }
+                        
+                        @if (booking.duration) {
+                          <div class="booking-time">
+                            <ion-icon name="time"></ion-icon>
+                            <span>{{ booking.duration }} min</span>
+                          </div>
+                        }
+                      </div>
+                      
+                      <div class="view-details">
+                        <ion-button fill="outline" (click)="viewBookingDetails(booking); $event.stopPropagation()">
+                          <ion-icon name="eye-outline" slot="start"></ion-icon>
+                          Ver detalles
+                        </ion-button>
+                      </div>
+                    </div>
+                  </ion-item>
+
+                  <ion-item-options side="end">
+                    @if (booking.status !== 'cancelada') {
+                      <ion-item-option color="danger" (click)="cancelBooking(booking)">
+                        <ion-icon slot="top" name="close-circle-outline"></ion-icon>
+                        Cancelar
+                      </ion-item-option>
+                    }
+                  </ion-item-options>
+                </ion-item-sliding>
+              }
+            </div>
+          }
+        }
+
+        @case ('past') {
+          <!-- Sección de historial de reservas -->
+          @if (filteredPastBookings().length === 0) {
+            <div class="empty-bookings-container">
+              <ion-icon name="time-outline" class="empty-icon"></ion-icon>
+              <h3>No tienes historial de reservas</h3>
+              <p>Aquí aparecerán tus reservas pasadas</p>
+            </div>
+          } @else {              <!-- Lista de reservas pasadas -->
+            <div class="bookings-list past-bookings">
+              @for (booking of filteredPastBookings(); track booking.id) {
+                <ion-item-sliding class="booking-item-sliding">
+                  <ion-item class="booking-item" lines="none" button detail="false">
+                    <div class="booking-card {{ booking.status }}" (click)="viewBookingDetails(booking)">
+                      <div class="booking-header">
+                        <h2>{{ booking.service_name || 'Servicio no disponible' }}</h2>
+                        <ion-badge [color]="getStatusColor(booking.status)" class="status-badge">
+                          {{ getStatusText(booking.status) }}
+                        </ion-badge>
+                      </div>
+                      
+                      <div class="booking-business">
+                        <ion-icon name="storefront-outline"></ion-icon>
+                        <span>{{ booking.business_name || 'Negocio no disponible' }}</span>
+                      </div>
+                      
+                      <div class="booking-details">
+                        <div class="booking-time">
+                          <ion-icon name="calendar-outline"></ion-icon>
+                          <span>{{ booking.booking_date | date:'EEE, dd MMM yyyy':'es-ES' }}</span>
+                        </div>
+                        
+                        <div class="booking-time">
+                          <ion-icon name="time-outline"></ion-icon>
+                          <span>{{ formatBookingTime(booking.booking_time) }}</span>
+                        </div>
+                        
+                        @if (booking.employee_name) {
+                          <div class="booking-time">
+                            <ion-icon name="person-outline"></ion-icon>
+                            <span>Con {{ booking.employee_name }}</span>
+                          </div>
+                        }
+                        
+                        @if (booking.price) {
+                          <div class="booking-time">
+                            <ion-icon name="cash-outline"></ion-icon>
+                            <span>{{ booking.price | currency:'EUR':'symbol':'1.2-2' }}</span>
+                          </div>
+                        }
+                        
+                        @if (booking.duration) {
+                          <div class="booking-time">
+                            <ion-icon name="time"></ion-icon>
+                            <span>{{ booking.duration }} min</span>
+                          </div>
+                        }
+                      </div>
+                      
+                      <div class="view-details">
+                        <ion-button fill="outline" (click)="viewBookingDetails(booking); $event.stopPropagation()">
+                          <ion-icon name="eye-outline" slot="start"></ion-icon>
+                          Ver detalles
+                        </ion-button>
+                        
+                        @if (booking.status === 'completada') {
+                          <ion-button fill="clear" color="primary" (click)="reviewBooking(booking); $event.stopPropagation()">
+                            <ion-icon name="star-outline" slot="start"></ion-icon>
+                            Dejar reseña
+                          </ion-button>
+                        }
+                      </div>
+                    
+                    </div>
+                  </ion-item>
+                  
+                  @if (booking.status !== 'cancelada' && booking.status !== 'completada') {
+                    <ion-item-options side="end">
+                      <ion-item-option color="medium" (click)="viewBookingDetails(booking)">
+                        <ion-icon slot="top" name="eye-outline"></ion-icon>
+                        Detalles
+                      </ion-item-option>
+                    </ion-item-options>
+                  }
+                </ion-item-sliding>
+              }
+            </div>
+          }
+        }
+      }
+    </div>
+        </div> <!-- Cierre de content-container -->
+      </div> <!-- Cierre de main-container -->
+    }
+    
+    <!-- Vista cuando no hay reservas (sin filtros) -->
+    @if (!hasBookings()) {
+      <div class="empty-bookings-container">
+      <ion-icon name="calendar-outline" class="empty-icon"></ion-icon>
+      <h3>No tienes reservas</h3>
+
+      </div>
+    }
+</ion-content>

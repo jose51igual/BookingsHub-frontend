@@ -1,0 +1,137 @@
+<ion-content class="booking-detail-content">
+  <!-- Mensaje de carga -->
+  @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando detalles...</p>
+    </div>
+  }
+
+  <!-- Detalle de la reserva -->
+  @if (!isLoading() && hasBooking()) {
+    <div class="booking-detail-container">
+      <!-- Estado de la reserva -->
+      <div class="booking-status-container">
+        <ion-badge [color]="statusColor()" class="status-badge">
+          {{ booking().status }}
+        </ion-badge>
+      </div>
+      
+      <!-- Información del servicio -->
+      <div class="section service-section">
+        <h2>{{ booking().service_name }}</h2>
+        @if (booking().service_description) {
+          <p>{{ booking().service_description }}</p>
+        }
+        
+        <div class="price-duration">
+          @if (booking().price) {
+            <div class="price">
+              <ion-icon name="cash-outline"></ion-icon>
+              <span>{{ booking().price | currency:'EUR':'symbol':'1.2-2' }}</span>
+            </div>
+          }
+          @if (booking().duration) {
+            <div class="duration">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ booking().duration }} min</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Detalles de fecha y hora -->
+      <div class="section date-time-section">
+        <h3>Fecha y hora</h3>
+        <div class="booking-details">
+          <div class="booking-time">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{ booking().booking_date | date:'EEE, dd MMM yyyy' }}</span>
+          </div>
+          
+          <div class="booking-time">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{ formatBookingTime(booking().booking_time) }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Información del negocio -->
+      @if (business()) {
+        <div class="section business-section">
+          <h3>Negocio</h3>
+          <div class="business-header">
+            @if (business().logo) {
+              <ion-avatar>
+                <img [src]="business().logo || 'assets/images/business-placeholder.jpg'" alt="Logo">
+              </ion-avatar>
+            }
+            <h4>{{ business().name }}</h4>
+          </div>
+          
+          <div class="business-details">
+            @if (business().address) {
+              <div class="business-detail">
+                <ion-icon name="location-outline"></ion-icon>
+                <span>{{ business().address }}</span>
+              </div>
+            }
+            @if (business().phone) {
+              <div class="business-detail">
+                <ion-icon name="call-outline"></ion-icon>
+                <span>{{ business().phone }}</span>
+              </div>
+            }
+            @if (business().email) {
+              <div class="business-detail">
+                <ion-icon name="mail-outline"></ion-icon>
+                <span>{{ business().email }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+      
+      <!-- Notas adicionales -->
+      @if (booking().notes) {
+        <div class="section notes-section">
+          <h3>Notas</h3>
+          <p>{{ booking().notes }}</p>
+        </div>
+      }
+      
+      <!-- Acciones según el estado -->
+      <div class="section actions-section">
+        @if (canCancel()) {
+          <ion-button expand="block" color="danger" (click)="cancelBooking()">
+            <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+            Cancelar reserva
+          </ion-button>
+        }
+        @if (booking().status === 'completada') {
+          <ion-button expand="block" color="primary" (click)="leaveReview()">
+            <ion-icon name="star-outline" slot="start"></ion-icon>
+            Dejar reseña
+          </ion-button>
+        }
+        @if (business() && business().address) {
+          <ion-button expand="block" color="success" (click)="openMap()">
+            <ion-icon name="map-outline" slot="start"></ion-icon>
+            Ver ubicación en mapa
+          </ion-button>
+        }
+      </div>
+    </div>
+  }
+  
+  <!-- Mensaje si no hay datos de reserva -->
+  @if (!isLoading() && !hasBooking()) {
+    <div class="no-booking-container">
+      <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
+      <h3>Datos de reserva no disponibles</h3>
+      <ion-button (click)="goBack()" expand="block">
+        Volver a mis reservas
+      </ion-button>
+    </div>
+  }
+</ion-content>

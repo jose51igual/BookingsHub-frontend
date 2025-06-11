@@ -1,0 +1,279 @@
+.availability-container {
+  padding: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.availability-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.availability-header h1 {
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.availability-header p {
+  color: var(--ion-color-medium);
+  font-size: 14px;
+}
+
+.quick-templates {
+  margin-bottom: 24px;
+}
+
+.quick-templates .template-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--ion-color-dark);
+}
+
+.quick-templates .template-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.quick-templates .template-buttons ion-button {
+  --border-radius: 8px;
+  font-size: 12px;
+  height: 32px;
+}
+
+.availability-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.day-card {
+  border: 1px solid var(--ion-color-light-shade);
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.day-card .day-header {
+  background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+  color: white;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.day-card .day-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.day-card .day-header ion-toggle {
+  --background: rgba(255, 255, 255, 0.3);
+  --background-checked: white;
+  --handle-background: var(--ion-color-primary);
+  --handle-background-checked: var(--ion-color-primary);
+}
+
+.day-card .day-content {
+  padding: 16px;
+}
+
+.day-card .day-content .time-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.day-card .day-content .time-inputs .time-group ion-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ion-color-medium);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.day-card .day-content .time-inputs .time-group ion-datetime {
+  --background: var(--ion-color-light);
+  --border-radius: 8px;
+  border: 1px solid var(--ion-color-light-shade);
+}
+
+.day-card .day-content .break-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light);
+}
+
+.day-card .day-content .break-section .break-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.day-card .day-content .break-section .break-header ion-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ion-color-dark);
+}
+
+.day-card .day-content .break-section .break-header ion-checkbox {
+  --size: 18px;
+}
+
+.day-card .day-content .break-section .break-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.day-card .day-content .break-section .break-inputs .time-group ion-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ion-color-medium);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.day-card .day-content .break-section .break-inputs .time-group ion-datetime {
+  --background: var(--ion-color-light);
+  --border-radius: 8px;
+  border: 1px solid var(--ion-color-light-shade);
+}
+
+.day-card.disabled {
+  opacity: 0.6;
+}
+
+.day-card.disabled .day-content {
+  pointer-events: none;
+}
+
+.service-specific {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid var(--ion-color-light);
+}
+
+.service-specific .section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.service-specific .service-selector {
+  margin-bottom: 20px;
+}
+
+.service-specific .service-selector ion-select {
+  --background: white;
+  --border-radius: 8px;
+  border: 1px solid var(--ion-color-light-shade);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ion-color-light);
+}
+
+.action-buttons ion-button {
+  --border-radius: 8px;
+  font-weight: 600;
+  height: 44px;
+  min-width: 120px;
+}
+
+.action-buttons ion-button.save-button {
+  --background: linear-gradient(135deg, var(--ion-color-success), var(--ion-color-success-shade));
+}
+
+.action-buttons ion-button.cancel-button {
+  --color: var(--ion-color-medium);
+  --background: transparent;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: var(--ion-color-light-shade);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .availability-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons ion-button {
+    width: 100%;
+  }
+
+  .quick-templates .template-buttons {
+    justify-content: center;
+  }
+}
+
+/* Loading state */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.loading-container ion-spinner {
+  --color: var(--ion-color-primary);
+}
+
+/* Error state */
+.error-container {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ion-color-danger);
+}
+
+.error-container ion-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.error-container h3 {
+  margin-bottom: 8px;
+}
+
+.error-container p {
+  color: var(--ion-color-medium);
+  margin-bottom: 20px;
+}
+
+/* Animation */
+.day-card {
+  transition: all 0.3s ease;
+}
+
+.day-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+ion-button {
+  transition: all 0.2s ease;
+}
+
+ion-button:hover {
+  transform: translateY(-1px);
+}

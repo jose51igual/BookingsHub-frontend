@@ -1,0 +1,214 @@
+/* Estilos para la página de detalle de reserva */
+.booking-detail-content {
+  --background: #f4f5f8;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+/* Contenedor de carga */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  height: 40vh;
+}
+
+.loading-container ion-spinner {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 1rem;
+}
+
+.loading-container p {
+  color: var(--ion-color-medium);
+  font-weight: 500;
+}
+
+/* Contenedor principal para los detalles */
+.booking-detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Secciones generales */
+.section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Estado de la reserva */
+.booking-status-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.booking-status-container .status-badge {
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+/* Sección del servicio */
+.service-section h2 {
+  font-size: 20px;
+  margin: 0;
+  margin-bottom: 8px;
+  color: var(--ion-color-dark);
+}
+
+.service-section p {
+  margin: 8px 0;
+  color: var(--ion-color-medium);
+}
+
+.price-duration {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.price-duration .price,
+.price-duration .duration {
+  display: flex;
+  align-items: center;
+}
+
+.price-duration .price ion-icon,
+.price-duration .duration ion-icon {
+  margin-right: 8px;
+  color: var(--ion-color-primary);
+}
+
+.price-duration .price span,
+.price-duration .duration span {
+  font-weight: 500;
+}
+
+/* Sección de fecha y hora */
+.date-time-section h3 {
+  font-size: 16px;
+  margin: 0;
+  margin-bottom: 12px;
+  color: var(--ion-color-dark);
+}
+
+.booking-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booking-details .booking-time {
+  display: flex;
+  align-items: center;
+}
+
+.booking-details .booking-time ion-icon {
+  font-size: 18px;
+  margin-right: 10px;
+  color: var(--ion-color-primary);
+}
+
+.booking-details .booking-time span {
+  font-weight: 400;
+}
+
+/* Sección del negocio */
+.business-section h3 {
+  font-size: 16px;
+  margin: 0;
+  margin-bottom: 12px;
+  color: var(--ion-color-dark);
+}
+
+.business-section .business-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.business-section .business-header ion-avatar {
+  width: 40px;
+  height: 40px;
+  margin-right: 12px;
+}
+
+.business-section .business-header h4 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--ion-color-dark);
+}
+
+.business-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.business-details .business-detail {
+  display: flex;
+  align-items: center;
+}
+
+.business-details .business-detail ion-icon {
+  font-size: 18px;
+  margin-right: 10px;
+  color: var(--ion-color-primary);
+}
+
+.business-details .business-detail span {
+  font-weight: 400;
+  color: var(--ion-color-medium);
+}
+
+/* Sección de notas */
+.notes-section h3 {
+  font-size: 16px;
+  margin: 0;
+  margin-bottom: 12px;
+  color: var(--ion-color-dark);
+}
+
+.notes-section p {
+  margin: 0;
+  color: var(--ion-color-medium);
+  line-height: 1.4;
+}
+
+/* Contenedor cuando no hay datos */
+.no-booking-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  height: 60vh;
+}
+
+.no-booking-container .no-data-icon {
+  font-size: 64px;
+  margin-bottom: 1rem;
+  color: var(--ion-color-medium);
+}
+
+.no-booking-container h3 {
+  color: var(--ion-color-medium);
+  margin-bottom: 2rem;
+}
+
+/* Responsive para tablets y escritorio */
+@media (min-width: 768px) {
+  .booking-detail-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}

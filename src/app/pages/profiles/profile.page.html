@@ -1,0 +1,159 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Componente de alerta de error mejorado -->
+  <app-error-alert 
+    [error]="errorMessage()" 
+    [floating]="true" 
+    (dismissed)="clearError()">
+  </app-error-alert>
+
+  @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner></ion-spinner>
+      <p>Cargando perfil...</p>
+    </div>
+  }
+
+  @if (!isLoading() && currentUser()) {
+    <div class="profile-container">
+
+      <!-- Información básica del usuario -->
+      <div class="profile-header">
+        <ion-avatar class="profile-avatar">
+          <img src="assets/images/avatar.png" alt="Avatar" onerror="this.src='assets/icon/favicon.png'; this.onerror=null;">
+        </ion-avatar>
+        <h2>{{ displayName() || 'Usuario' }}</h2>
+        <p class="user-role">{{ userRole() }}</p>
+        <p class="user-email">{{ displayEmail() || 'Email no disponible' }}</p>
+        <p class="user-since">Miembro desde {{ memberSince() }}</p>
+      </div>
+
+      <!-- Acceso rápido para propietarios de negocio -->
+      @if (currentUser()?.role === 'negocio') {
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Mi Negocio</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="ion-text-center">
+            <p>Gestiona tu negocio desde la pestaña dedicada</p>
+            <ion-button expand="block" routerLink="/panel-negocio/principal">
+              <ion-icon name="business-outline" slot="start"></ion-icon>
+              Ir a Mi Negocio
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <div class="form-container">
+        <h3>Actualizar Información del Perfil</h3>
+
+        <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+          <ion-item>
+            <ion-label position="floating">Nombre</ion-label>
+            <ion-input type="text" formControlName="name"></ion-input>
+          </ion-item>
+          @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
+            <ion-text color="danger">
+              <p class="error-message">El nombre es obligatorio</p>
+            </ion-text>
+          }
+
+          <ion-item>
+            <ion-label position="floating">Correo electrónico</ion-label>
+            <ion-input type="email" formControlName="email"></ion-input>
+          </ion-item>
+          @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
+            <ion-text color="danger">
+              @if (profileForm.get('email')?.errors?.['required']) {
+                <p class="error-message">El correo es obligatorio</p>
+              }
+              @if (profileForm.get('email')?.errors?.['email']) {
+                <p class="error-message">Formato de correo inválido</p>
+              }
+            </ion-text>
+          }
+
+          <ion-button expand="block" type="submit" [disabled]="!canUpdateProfile()">
+            @if (isUpdatingProfile()) {
+              <ion-spinner name="crescent" slot="start"></ion-spinner>
+              Actualizando...
+            } @else {
+              Actualizar Perfil
+            }
+          </ion-button>
+        </form>
+
+        <ion-button expand="block" fill="outline" (click)="togglePasswordForm()">
+          {{ showPasswordForm() ? 'Cancelar Cambio de Contraseña' : 'Cambiar Contraseña' }}
+        </ion-button>
+
+        @if (showPasswordForm()) {
+          <div class="password-form-section">
+            <h3>Cambiar Contraseña</h3>
+
+            <form [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
+              <ion-item>
+                <ion-label position="floating">Contraseña actual</ion-label>
+                <ion-input type="password" formControlName="current_password"></ion-input>
+              </ion-item>
+              @if (passwordForm.get('current_password')?.invalid && passwordForm.get('current_password')?.touched) {
+                <ion-text color="danger">
+                  <p class="error-message">La contraseña actual es obligatoria</p>
+                </ion-text>
+              }
+
+              <ion-item>
+                <ion-label position="floating">Nueva contraseña</ion-label>
+                <ion-input type="password" formControlName="new_password"></ion-input>
+              </ion-item>
+              @if (passwordForm.get('new_password')?.invalid && passwordForm.get('new_password')?.touched) {
+                <ion-text color="danger">
+                  @if (passwordForm.get('new_password')?.errors?.['required']) {
+                    <p class="error-message">La nueva contraseña es obligatoria</p>
+                  }
+                  @if (passwordForm.get('new_password')?.errors?.['minlength']) {
+                    <p class="error-message">La contraseña debe tener al menos 6 caracteres</p>
+                  }
+                </ion-text>
+              }
+
+              <ion-item>
+                <ion-label position="floating">Confirmar nueva contraseña</ion-label>
+                <ion-input type="password" formControlName="confirm_password"></ion-input>
+              </ion-item>
+              @if (passwordForm.get('confirm_password')?.invalid && passwordForm.get('confirm_password')?.touched) {
+                <ion-text color="danger">
+                  @if (passwordForm.get('confirm_password')?.errors?.['required']) {
+                    <p class="error-message">Confirmar la contraseña es obligatorio</p>
+                  }
+                  @if (passwordForm.get('confirm_password')?.errors?.['mismatch']) {
+                    <p class="error-message">Las contraseñas no coinciden</p>
+                  }
+                </ion-text>
+              }
+
+              <ion-button expand="block" type="submit" [disabled]="!canUpdatePassword()">
+                @if (isUpdatingPassword()) {
+                  <ion-spinner name="crescent" slot="start"></ion-spinner>
+                  Actualizando...
+                } @else {
+                  Actualizar Contraseña
+                }
+              </ion-button>
+            </form>
+          </div>
+        }
+
+        <ion-button expand="block" color="danger" (click)="logout()">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          Cerrar Sesión
+        </ion-button>
+      </div>
+    </div>
+  }
+</ion-content>

@@ -1,0 +1,206 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Mi Negocio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" routerLink="/business-settings">
+        <ion-icon name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Componente de alerta de error mejorado -->
+  <app-error-alert 
+    [error]="errorMessage()" 
+    [floating]="true" 
+    (dismissed)="clearError()">
+  </app-error-alert>
+
+  <div *ngIf="isLoading()" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Cargando información del negocio...</p>
+  </div>
+
+  <div *ngIf="!isLoading()" class="business-dashboard">
+    
+    <!-- Header del negocio -->
+     @if(businessData()) { 
+      <div class="business-header">
+        <div class="business-info">
+          <h1>{{ businessData()?.name }}</h1>
+          <div class="rating-info">
+            <ion-icon name="star" class="star-icon"></ion-icon>
+            <span>{{ formatRating(businessData()?.rating) }}</span>
+            <span class="review-count">({{ businessData()?.reviewCount }} reseñas)</span>
+          </div>
+          <p class="business-category">{{ businessData()?.category }}</p>
+        </div>
+        <div class="business-image" *ngIf="businessData()?.image">
+          <img [src]="businessData()?.image" alt="Negocio">
+        </div>
+      </div>
+     }
+
+    <!-- Estado si no hay negocio -->
+    @if(!businessData) {
+      <div class="no-business-header">
+        <ion-icon name="business-outline" class="no-business-icon"></ion-icon>
+        <h2>¡Aún no tienes un negocio configurado!</h2>
+        <p>Configura tu negocio para empezar a recibir reservas y gestionar tus servicios.</p>
+      </div>
+    }
+
+    <!-- Dashboard compacto -->
+    @if (businessData()) {
+      <div class="dashboard-grid">
+      
+      <!-- Card de Servicios -->
+      <ion-card class="dashboard-card services-card">
+        <ion-card-header>
+          <div class="card-header">
+            <ion-icon name="cut-outline" class="card-icon"></ion-icon>
+            <div>
+              <ion-card-title>Servicios</ion-card-title>
+              <ion-card-subtitle>{{ services().length }} activos</ion-card-subtitle>
+            </div>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <div *ngIf="services().length > 0" class="service-preview">
+            <div *ngFor="let service of services().slice(0, 2)" class="service-item">
+              <span class="service-name">{{ service.name }}</span>
+              <span class="service-price">{{ service.price | currency:'EUR':'symbol' }}</span>
+            </div>
+            <div *ngIf="services().length > 2" class="more-services">
+              +{{ services().length - 2 }} más
+            </div>
+          </div>
+          <div *ngIf="services.length === 0" class="empty-state">
+            <p>No hay servicios</p>
+          </div>
+          <ion-button expand="block" fill="outline" size="small" routerLink="/panel-negocio/crear-servicio">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            {{ services.length === 0 ? 'Crear servicio' : 'Gestionar' }}
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Card de Empleados -->
+      <ion-card class="dashboard-card employees-card">
+        <ion-card-header>
+          <div class="card-header">
+            <ion-icon name="people-outline" class="card-icon"></ion-icon>
+            <div>
+              <ion-card-title>Empleados</ion-card-title>
+              <ion-card-subtitle>{{ employees().length }} activos</ion-card-subtitle>
+            </div>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <div *ngIf="employees().length > 0" class="employee-preview">
+            <div *ngFor="let employee of employees().slice(0, 2)" class="employee-item">
+              <span class="employee-name">{{ employee.name }}</span>
+              <span class="employee-position">{{ employee.position || 'Sin cargo' }}</span>
+            </div>
+            <div *ngIf="employees().length > 2" class="more-employees">
+              +{{ employees().length - 2 }} más
+            </div>
+          </div>
+          <div *ngIf="employees.length === 0" class="empty-state">
+            <p>No hay empleados</p>
+          </div>
+          <ion-button expand="block" fill="outline" size="small" routerLink="/employee-management">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            {{ employees.length === 0 ? 'Agregar empleado' : 'Gestionar' }}
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Card de Reservas -->
+      <ion-card class="dashboard-card bookings-card">
+        <ion-card-header>
+          <div class="card-header">
+            <ion-icon name="calendar-outline" class="card-icon"></ion-icon>
+            <div>
+              <ion-card-title>Reservas</ion-card-title>
+              <ion-card-subtitle>{{ recentBookings().length }} hoy</ion-card-subtitle>
+            </div>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <div *ngIf="recentBookings().length > 0" class="booking-preview">
+            <div *ngFor="let booking of recentBookings().slice(0, 2)" class="booking-item">
+              <span class="booking-time">{{ booking.booking_time }}</span>
+              <span class="booking-service">{{ booking.service_name }}</span>
+            </div>
+            <div *ngIf="recentBookings().length > 2" class="more-bookings">
+              +{{ recentBookings().length - 2 }} más
+            </div>
+          </div>
+          <div *ngIf="recentBookings().length === 0" class="empty-state">
+            <p>No hay reservas hoy</p>
+          </div>
+          <ion-button expand="block" fill="outline" size="small" routerLink="/business-bookings">
+            <ion-icon name="eye-outline" slot="start"></ion-icon>
+            Ver todas
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Card de Analytics -->
+      <ion-card class="dashboard-card analytics-card">
+        <ion-card-header>
+          <div class="card-header">
+            <ion-icon name="bar-chart-outline" class="card-icon"></ion-icon>
+            <div>
+              <ion-card-title>Estadísticas</ion-card-title>
+              <ion-card-subtitle>Esta semana</ion-card-subtitle>
+            </div>
+          </div>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="stats-preview">
+            <div class="stat-item">
+              <span class="stat-value">{{ weeklyStats().bookings || 0 }}</span>
+              <span class="stat-label">Reservas</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value">{{ weeklyStats().revenue || 0 | currency:'EUR':'symbol':'1.0-0' }}</span>
+              <span class="stat-label">Ingresos</span>
+            </div>
+          </div>
+          <ion-button expand="block" fill="outline" size="small" routerLink="/business-analytics">
+            <ion-icon name="trending-up-outline" slot="start"></ion-icon>
+            Ver análisis
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="quick-actions" *ngIf="businessData">
+      <h3>Acciones rápidas</h3>
+      <div class="actions-grid">
+        <ion-button fill="outline" routerLink="/panel-negocio/crear-servicio">
+          <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          Nuevo Servicio
+        </ion-button>
+        <ion-button fill="outline" routerLink="/employee-management">
+          <ion-icon name="person-add-outline" slot="start"></ion-icon>
+          Agregar Empleado
+        </ion-button>
+        <ion-button fill="outline" routerLink="/business-availability">
+          <ion-icon name="time-outline" slot="start"></ion-icon>
+          Horarios
+        </ion-button>
+        <ion-button fill="outline" routerLink="/business-settings">
+          <ion-icon name="settings-outline" slot="start"></ion-icon>
+          Configuración
+        </ion-button>
+      </div>
+    </div>
+    }
+  </div>
+</ion-content>

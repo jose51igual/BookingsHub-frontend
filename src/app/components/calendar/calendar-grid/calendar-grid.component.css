@@ -1,0 +1,162 @@
+.calendar-grid-container {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: var(--ion-background-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background-color: var(--ion-color-primary-tint);
+}
+
+.month-year {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--ion-color-primary-contrast);
+}
+
+.weekdays-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  background-color: var(--ion-color-light);
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.weekday {
+  padding: 8px 0;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  position: relative;
+}
+
+.day-cell {
+  padding: 12px 0;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+  transition: background-color 0.2s ease;
+}
+
+.day-cell:hover:not(.other-month) {
+  background-color: var(--ion-color-light);
+}
+
+.other-month {
+  color: var(--ion-color-medium-tint);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.other-month:hover {
+  background-color: transparent;
+}
+
+.today {
+  font-weight: bold;
+  color: var(--ion-color-primary);
+}
+
+.today::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--ion-color-primary);
+}
+
+.available {
+  color: var(--ion-color-success);
+  font-weight: 500;
+}
+
+.available::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--ion-color-success);
+}
+
+.available:hover {
+  background-color: var(--ion-color-success-tint);
+  color: white;
+}
+
+.selected {
+  background-color: var(--ion-color-primary);
+  color: white !important;
+  font-weight: bold;
+}
+
+.selected::after {
+  display: none;
+}
+
+.loading-overlay, 
+.error-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  z-index: 2;
+}
+
+.error-message {
+  color: var(--ion-color-danger);
+  text-align: center;
+  padding: 20px;
+}
+
+.error-message ion-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.error-message p {
+  margin-bottom: 16px;
+  max-width: 250px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .day-cell {
+    padding: 8px 0;
+    font-size: 0.9rem;
+  }
+  
+  .weekday {
+    padding: 6px 0;
+    font-size: 0.8rem;
+  }
+  
+  .month-year {
+    font-size: 1rem;
+  }
+}

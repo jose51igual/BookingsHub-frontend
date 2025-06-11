@@ -1,0 +1,128 @@
+<ion-content [fullscreen]="true" class="landing-content">
+  
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-background">
+      <div class="hero-overlay"></div>
+    </div>
+    
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Encuentra y Reserva
+        <span class="hero-highlight">Servicios Increíbles</span>
+      </h1>
+      <p class="hero-subtitle">
+        Conecta con los mejores profesionales y negocios cerca de ti. 
+        Reserva fácilmente tu cita y paga directamente en el negocio.
+      </p>
+      
+      <div class="hero-actions">
+        <ion-button 
+          size="large" 
+          expand="block" 
+          class="primary-cta"
+          (click)="navigateToServices()">
+          <ion-icon name="search-outline" slot="start"></ion-icon>
+          Explorar Servicios
+        </ion-button>
+        
+        @if (!isAuthenticated()) {
+          <div class="auth-actions">
+            <ion-button 
+              fill="outline" 
+              size="large"
+              (click)="navigateToLogin()">
+              Iniciar Sesión
+            </ion-button>
+            <ion-button 
+              fill="clear" 
+              size="large"
+              (click)="navigateToRegister()">
+              Registrarse
+            </ion-button>
+          </div>
+        }
+        
+        @if (isAuthenticated()) {
+          <div class="welcome-message">
+            <p>¡Bienvenido de vuelta, <strong>{{ userName() }}</strong>!</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <h2 class="section-title">¿Por qué elegir BookingsHub?</h2>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <ion-icon name="search-outline"></ion-icon>
+          </div>
+          <h3>Fácil de Encontrar</h3>
+          <p>Busca y descubre servicios por categoría, ubicación o nombre. Encuentra exactamente lo que necesitas.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <h3>Reserva Instantánea</h3>
+          <p>Reserva citas de forma rápida y sencilla. Confirmación inmediata - pago directamente en el negocio.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <ion-icon name="star-outline"></ion-icon>
+          </div>
+          <h3>Calidad Garantizada</h3>
+          <p>Todos nuestros proveedores están verificados. Lee reseñas reales de otros usuarios.</p>
+        </div>
+        
+        <div class="feature-card">
+          <div class="feature-icon">
+            <ion-icon name="shield-checkmark-outline"></ion-icon>
+          </div>
+          <h3>Sin Pagos Online</h3>
+          <p>Solo reservas tu cita. El pago se realiza directamente en el negocio al recibir el servicio.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2>¿Listo para Comenzar?</h2>
+        <p>Únete a miles de usuarios que ya confían en BookingsHub para sus reservas.</p>
+        
+        <div class="cta-actions">
+          <ion-button 
+            size="large" 
+            expand="block"
+            (click)="navigateToServices()">
+            <ion-icon name="search-outline" slot="start"></ion-icon>
+            Buscar Servicios
+          </ion-button>
+          
+          @if (!isAuthenticated()) {
+            <ion-button 
+              fill="outline" 
+              size="large" 
+              expand="block"
+              (click)="navigateToRegister()">
+              <ion-icon name="person-add-outline" slot="start"></ion-icon>
+              Crear Cuenta Gratuita
+            </ion-button>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+</ion-content>

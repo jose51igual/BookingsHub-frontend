@@ -1,0 +1,46 @@
+<div class="calendar-grid-container">
+  <div class="calendar-header">
+    <ion-button fill="clear" (click)="previousMonth()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </ion-button>
+    <span class="month-year">{{ currentMonthYear() }}</span>
+    <ion-button fill="clear" (click)="nextMonth()">
+      <ion-icon name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+  </div>
+
+  <!-- Días de la semana -->
+  <div class="weekdays-row">
+    @for (dayName of daysOfWeek(); track $index) {
+      <div class="weekday">{{ dayName }}</div>
+    }
+  </div>
+
+  <!-- Días del mes -->
+  <div class="calendar-grid">
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+    }
+    
+    @if (hasError()) {
+      <div class="error-message">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>{{ errorMessage() }}</p>
+        <ion-button (click)="onRetry()">Reintentar</ion-button>
+      </div>
+    }
+    
+    @for (day of calendarDays(); track $index) {
+      <div class="day-cell" 
+           [class.other-month]="!day.isCurrentMonth"
+           [class.today]="day.isToday"
+           [class.available]="day.isAvailable"
+           [class.selected]="day.isSelected"
+           (click)="selectDay(day)">
+        {{ day.day }}
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,31 @@
+@if (selectedDate()) {
+  <div class="time-slots-container">
+    <h4>Horarios disponibles para {{ formatSelectedDate() }}</h4>
+    
+    @if (isLoading()) {
+      <div class="loading-slots">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando horarios...</p>
+      </div>
+    } @else {
+      @if (availableTimeSlots().length === 0) {
+        <div class="no-slots">
+          <ion-icon name="time-outline"></ion-icon>
+          <p>No hay horarios disponibles para esta fecha.</p>
+        </div>
+      } @else {
+        <div class="time-slots-grid">
+          @for (timeSlot of availableTimeSlots(); track timeSlot) {
+            <ion-button 
+              size="small" 
+              [fill]="selectedTimeSlot() === timeSlot ? 'solid' : 'outline'"
+              [color]="selectedTimeSlot() === timeSlot ? 'primary' : 'medium'"
+              (click)="selectTime(timeSlot)">
+              {{ timeSlot }}
+            </ion-button>
+          }
+        </div>
+      }
+    }
+  </div>
+}

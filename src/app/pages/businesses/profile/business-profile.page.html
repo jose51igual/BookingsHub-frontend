@@ -1,0 +1,172 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/panel-negocio/principal"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEditMode() ? 'Editar Perfil' : 'Perfil de Negocio' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Componente de alerta de error -->
+  @if (errorMessage()) {
+    <ion-card color="danger">
+      <ion-card-content>
+        <div class="error-alert">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>{{ errorMessage() }}</span>
+          <ion-button fill="clear" size="small" (click)="clearError()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <ion-icon name="storefront-outline"></ion-icon>
+      </div>
+      <div class="profile-info">
+        <h2>{{ displayName() }}</h2>
+        <p>Perfil de negocio</p>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-section">
+        <ion-spinner></ion-spinner>
+        <p>Cargando información...</p>
+      </div>
+    }
+
+    @if (!isLoading() && !isEditMode()) {
+      <div class="view-mode">
+        <div class="info-section">
+          <h3>Información del Negocio</h3>
+          <div class="info-card">
+            <div class="info-item">
+              <ion-icon name="storefront-outline"></ion-icon>
+              <div class="info-content">
+                <label>Nombre</label>
+                <span>{{ businessData()?.name || 'No especificado' }}</span>
+              </div>
+            </div>
+            
+            <div class="info-item">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <div class="info-content">
+                <label>Descripción</label>
+                <span>{{ businessData()?.description || 'No especificado' }}</span>
+              </div>
+            </div>
+            
+            <div class="info-item">
+              <ion-icon name="call-outline"></ion-icon>
+              <div class="info-content">
+                <label>Teléfono</label>
+                <span>{{ businessData()?.phone || 'No especificado' }}</span>
+              </div>
+            </div>
+            
+            <div class="info-item">
+              <ion-icon name="location-outline"></ion-icon>
+              <div class="info-content">
+                <label>Dirección</label>
+                <span>{{ businessData()?.address || 'No especificado' }}</span>
+              </div>
+            </div>
+            
+            @if (businessData()?.city) {
+              <div class="info-item">
+                <ion-icon name="location-outline"></ion-icon>
+                <div class="info-content">
+                  <label>Ciudad</label>
+                  <span>{{ businessData()?.city }}</span>
+                </div>
+              </div>
+            }
+            
+            @if (businessData()?.category) {
+              <div class="info-item">
+                <ion-icon name="storefront-outline"></ion-icon>
+                <div class="info-content">
+                  <label>Categoría</label>
+                  <span>{{ businessData()?.category }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="actions-section">
+          <ion-button expand="block" fill="outline" (click)="enterEditMode()">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Editar Perfil
+          </ion-button>
+          
+          <ion-button expand="block" fill="clear" color="medium" (click)="viewStatistics()">
+            <ion-icon name="analytics-outline" slot="start"></ion-icon>
+            Ver Estadísticas
+          </ion-button>
+        </div>
+      </div>
+    }
+
+    @if (!isLoading() && isEditMode()) {
+      <form [formGroup]="businessForm" (ngSubmit)="saveBusiness()" class="edit-mode">
+        <div class="form-section">
+          <h3>Editar Información</h3>
+          
+          <ion-item>
+            <ion-label position="stacked">Nombre del negocio *</ion-label>
+            <ion-input type="text" formControlName="name"></ion-input>
+          </ion-item>
+          @if (businessForm.get('name')?.invalid && businessForm.get('name')?.touched) {
+            <ion-text color="danger">
+              <p class="error-text">El nombre del negocio es obligatorio</p>
+            </ion-text>
+          }
+
+          <ion-item>
+            <ion-label position="stacked">Descripción</ion-label>
+            <ion-textarea rows="3" formControlName="description"></ion-textarea>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Teléfono</ion-label>
+            <ion-input type="tel" formControlName="phone"></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">Dirección *</ion-label>
+            <ion-textarea rows="2" formControlName="address"></ion-textarea>
+          </ion-item>
+          @if (businessForm.get('address')?.invalid && businessForm.get('address')?.touched) {
+            <ion-text color="danger">
+              <p class="error-text">La dirección es obligatoria</p>
+            </ion-text>
+          }
+        </div>
+
+        <div class="form-actions">
+          <ion-button expand="block" type="submit" [disabled]="!canSave()">
+            @if (isSaving()) {
+              <ion-spinner name="crescent" slot="start"></ion-spinner>
+              Guardando...
+            } @else {
+              <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+              Guardar Cambios
+            }
+          </ion-button>
+          
+          <ion-button expand="block" fill="clear" type="button" (click)="cancelEdit()">
+            <ion-icon name="close-outline" slot="start"></ion-icon>
+            Cancelar
+          </ion-button>
+        </div>
+      </form>
+    }
+  </div>
+</ion-content>

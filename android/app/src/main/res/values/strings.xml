@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bookings Hub</string>
+    <string name="title_activity_main">Bookings Hub</string>
+    <string name="package_name">io.ionic.bookingshub</string>
+    <string name="custom_url_scheme">io.ionic.bookingshub</string>
+</resources>

@@ -1,0 +1,229 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>Configurar Horarios</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="saveAvailability()" [disabled]="isSaving()">
+        @if (!isSaving()) {
+          <ion-icon name="checkmark-outline"></ion-icon>
+        }
+        @if (isSaving()) {
+          <ion-spinner></ion-spinner>
+        }
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner></ion-spinner>
+      <p>Cargando configuración de horarios...</p>
+    </div>
+  }
+
+  @if (!isLoading()) {
+    <div class="page-header">
+      <h1>Configuración de Horarios</h1>
+      <p>Define los días y horarios en los que tu negocio estará disponible para recibir reservas</p>
+    </div>
+
+    <!-- Services Selection -->
+    <div class="services-section">
+      <h2>Selecciona los servicios a configurar</h2>
+      <div class="services-grid">
+        <ion-card 
+          *ngFor="let service of services()" 
+          (click)="toggleServiceSelection(service)"
+          [class.selected]="selectedServices().includes(service.id)"
+          class="service-card">
+          <ion-card-content>
+            <div class="service-info">
+              <h3>{{ service.name }}</h3>
+              <p>{{ service.duration }}min - {{ service.price | currency }}</p>
+            </div>
+            <ion-checkbox 
+              [checked]="selectedServices().includes(service.id)"
+              color="primary">
+            </ion-checkbox>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-- Days Configuration -->
+    <div class="days-section" *ngIf="selectedServices.length > 0">
+      <h2>Configuración de Días y Horarios</h2>
+      
+      <div class="days-list">
+        <div 
+          *ngFor="let day of weekDays(); let i = index" 
+          class="day-config">
+          
+          <div class="day-header">
+            <div class="day-info">
+              <ion-checkbox 
+                [(ngModel)]="day.enabled"
+                (ionChange)="onDayToggle(i)"
+                color="primary">
+              </ion-checkbox>
+              <span class="day-name">{{ day.name }}</span>
+            </div>
+            
+            <ion-button 
+              *ngIf="day.enabled && day.slots.length > 0"
+              fill="clear" 
+              size="small"
+              (click)="addTimeSlot(i)">
+              <ion-icon name="add-outline"></ion-icon>
+              Añadir Horario
+            </ion-button>
+          </div>
+
+          <div class="time-slots" *ngIf="day.enabled">
+            <div 
+              *ngFor="let slot of day.slots; let slotIndex = index"
+              class="time-slot">
+              
+              <div class="time-inputs">
+                <ion-item class="time-item">
+                  <ion-label position="stacked">Inicio</ion-label>
+                  <ion-datetime 
+                    presentation="time" 
+                    [(ngModel)]="slot.startTime"
+                    [preferWheel]="true">
+                  </ion-datetime>
+                </ion-item>
+                
+                <ion-item class="time-item">
+                  <ion-label position="stacked">Fin</ion-label>
+                  <ion-datetime 
+                    presentation="time" 
+                    [(ngModel)]="slot.endTime"
+                    [preferWheel]="true">
+                  </ion-datetime>
+                </ion-item>
+              </div>
+              
+              <ion-button 
+                fill="clear" 
+                color="danger" 
+                size="small"
+                (click)="removeTimeSlot(i, slotIndex)">
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+            </div>
+            
+            <ion-button 
+              *ngIf="day.slots.length === 0"
+              fill="outline" 
+              size="small"
+              (click)="addTimeSlot(i)"
+              class="add-first-slot">
+              <ion-icon name="add-outline" slot="start"></ion-icon>
+              Añadir primer horario
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preset Templates -->
+    <div class="templates-section" *ngIf="selectedServices.length > 0">
+      <h2>Plantillas Rápidas</h2>
+      <div class="templates-grid">
+        <ion-card class="template-card" (click)="applyTemplate('business')">
+          <ion-card-content>
+            <ion-icon name="business-outline" color="primary"></ion-icon>
+            <h3>Horario de Oficina</h3>
+            <p>Lun-Vie: 9:00-18:00</p>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card class="template-card" (click)="applyTemplate('shop')">
+          <ion-card-content>
+            <ion-icon name="storefront-outline" color="secondary"></ion-icon>
+            <h3>Comercio</h3>
+            <p>Lun-Sáb: 10:00-20:00</p>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card class="template-card" (click)="applyTemplate('salon')">
+          <ion-card-content>
+            <ion-icon name="cut-outline" color="tertiary"></ion-icon>
+            <h3>Salón de Belleza</h3>
+            <p>Mar-Sáb: 9:00-19:00</p>
+          </ion-card-content>
+        </ion-card>
+        
+        <ion-card class="template-card" (click)="applyTemplate('restaurant')">
+          <ion-card-content>
+            <ion-icon name="restaurant-outline" color="warning"></ion-icon>
+            <h3>Restaurante</h3>
+            <p>Todos los días: 12:00-15:00, 19:00-23:00</p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="preview-section" *ngIf="selectedServices.length > 0">
+      <h2>Vista Previa</h2>
+      <div class="preview-grid">
+        @for (day of weekDays(); track day.name) {
+          <div 
+            class="preview-day"
+            [class.enabled]="day.enabled">
+            
+            <h4>{{ day.name }}</h4>
+            @if (!day.enabled) {
+              <div class="closed">Cerrado</div>
+            }
+            @if (day.enabled && day.slots.length === 0) {
+              <div class="no-slots">Sin horarios</div>
+            }
+            @if (day.enabled && day.slots.length > 0) {
+              <div class="slots-list">
+                @for (slot of day.slots; track $index) {
+                  <div class="slot-preview">
+                    {{ slot.startTime }} - {{ slot.endTime }}
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons" *ngIf="selectedServices.length > 0">
+      <ion-button 
+        expand="block" 
+        size="large"
+        (click)="saveAvailability()"
+        [disabled]="isSaving"
+        class="save-button">
+        @if (!isSaving()) {
+          <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+        }
+        @if (isSaving()) {
+          <ion-spinner slot="start"></ion-spinner>
+        }
+        {{ isSaving() ? 'Guardando...' : 'Guardar Configuración' }}
+      </ion-button>
+      
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        color="medium"
+        (click)="resetToDefault()"
+        [disabled]="isSaving()">
+        Restablecer
+      </ion-button>
+    </div>
+  }
+</ion-content>

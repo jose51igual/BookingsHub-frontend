@@ -1,0 +1,250 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/register-type" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ accountType() === 'client' ? 'Registro de Cliente' : 'Registro de Negocio' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="register-container">
+    <!-- Logo y título de la app -->
+    <div class="logo-container">
+      <img src="assets/images/logo.png" alt="Bookings Hub Logo" class="logo-image" onerror="this.src='assets/icon/favicon.png'; this.onerror=null;">
+      <h1 class="app-title">Bookings Hub</h1>
+      <p class="app-slogan">Tu plataforma de reservas favorita</p>
+    </div>
+    
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="register-form">
+      <!-- Header del formulario -->
+      <div class="form-header">
+        <h2>{{ accountType() === 'client' ? 'Crear cuenta de cliente' : 'Crear cuenta de negocio' }}</h2>
+        <p>Completa tus datos para comenzar a utilizar la plataforma</p>
+      </div>
+
+      <!-- Campos del formulario -->
+
+        <!-- Nombre -->
+        <ion-item class="custom-input">
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input type="text" formControlName="name"></ion-input>
+        </ion-item>
+        @if (registerForm.get('name')?.invalid && (registerForm.get('name')?.dirty || registerForm.get('name')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('name')?.errors?.['required']) {
+              <span>El nombre es obligatorio</span>
+            }
+          </div>
+        }
+
+        <!-- Apellido (solo para cliente) -->
+        @if (accountType() === 'client') {
+          <ion-item class="custom-input">
+            <ion-icon name="person-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Apellidos</ion-label>
+            <ion-input type="text" formControlName="last_name"></ion-input>
+          </ion-item>
+        }
+        @if (accountType() === 'client' && registerForm.get('last_name')?.invalid && (registerForm.get('last_name')?.dirty || registerForm.get('last_name')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('last_name')?.errors?.['required']) {
+              <span>El apellido es obligatorio</span>
+            }
+          </div>
+        }
+
+        <!-- Fecha de nacimiento (solo para cliente) -->
+        @if (accountType() === 'client') {
+          <ion-item class="custom-input">
+            <ion-icon name="calendar-outline" slot="start"></ion-icon>
+            <ion-label position="floating">Fecha de nacimiento</ion-label>
+            <ion-input type="date" formControlName="birth_date"></ion-input>
+          </ion-item>
+        }
+        @if (accountType() === 'client' && registerForm.get('birth_date')?.invalid && (registerForm.get('birth_date')?.dirty || registerForm.get('birth_date')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('birth_date')?.errors?.['required']) {
+              <span>La fecha de nacimiento es obligatoria</span>
+            }
+          </div>
+        }
+
+        <!-- Teléfono -->
+        <ion-item class="custom-input">
+          <ion-icon name="call-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Teléfono</ion-label>
+          <ion-input type="tel" formControlName="phone"></ion-input>
+        </ion-item>
+        @if (registerForm.get('phone')?.invalid && (registerForm.get('phone')?.dirty || registerForm.get('phone')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('phone')?.errors?.['required']) {
+              <span>El teléfono es obligatorio</span>
+            }
+            @if (registerForm.get('phone')?.errors?.['pattern']) {
+              <span>El teléfono debe contener solo dígitos (7-15 caracteres)</span>
+            }
+          </div>
+        }
+
+        <!-- Email -->
+        <ion-item class="custom-input">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Correo electrónico</ion-label>
+          <ion-input type="email" formControlName="email"></ion-input>
+        </ion-item>
+        @if (registerForm.get('email')?.invalid && (registerForm.get('email')?.dirty || registerForm.get('email')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('email')?.errors?.['required']) {
+              <span>El correo es obligatorio</span>
+            }
+            @if (registerForm.get('email')?.errors?.['email']) {
+              <span>Formato de correo inválido</span>
+            }
+          </div>
+        }
+
+        <!-- Contraseña -->
+        <ion-item class="custom-input">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Contraseña</ion-label>
+          <ion-input type="password" formControlName="password"></ion-input>
+        </ion-item>
+        @if (registerForm.get('password')?.invalid && (registerForm.get('password')?.dirty || registerForm.get('password')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('password')?.errors?.['required']) {
+              <span>La contraseña es obligatoria</span>
+            }
+            @if (registerForm.get('password')?.errors?.['minlength']) {
+              <span>La contraseña debe tener al menos 6 caracteres</span>
+            }
+          </div>
+        }
+
+      <!-- Sección para datos de negocio (solo para negocio) -->
+      @if (accountType() === 'business') {
+        <div class="form-section">
+        <h2 class="section-title">
+          <ion-icon name="business-outline"></ion-icon>
+          Información del negocio
+        </h2>
+
+        <!-- Nombre del negocio -->
+        <ion-item class="custom-input">
+          <ion-icon name="storefront-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Nombre del negocio</ion-label>
+          <ion-input type="text" formControlName="business_name"></ion-input>
+        </ion-item>
+        @if (registerForm.get('business_name')?.invalid && (registerForm.get('business_name')?.dirty || registerForm.get('business_name')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('business_name')?.errors?.['required']) {
+              <span>El nombre del negocio es obligatorio</span>
+            }
+          </div>
+        }
+
+        <!-- Dirección del negocio -->
+        <ion-item class="custom-input">
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Dirección</ion-label>
+          <ion-input type="text" formControlName="business_address"></ion-input>
+        </ion-item>
+        @if (registerForm.get('business_address')?.invalid && (registerForm.get('business_address')?.dirty || registerForm.get('business_address')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('business_address')?.errors?.['required']) {
+              <span>La dirección es obligatoria</span>
+            }
+          </div>
+        }
+
+        <!-- Ciudad del negocio -->
+        <ion-item class="custom-input">
+          <ion-icon name="business-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Ciudad</ion-label>
+          <ion-input type="text" formControlName="business_city"></ion-input>
+        </ion-item>
+        @if (registerForm.get('business_city')?.invalid && (registerForm.get('business_city')?.dirty || registerForm.get('business_city')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('business_city')?.errors?.['required']) {
+              <span>La ciudad es obligatoria</span>
+            }
+          </div>
+        }
+
+        <!-- Categoría del negocio -->
+        <ion-item class="custom-input">
+          <ion-icon name="apps-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Categoría</ion-label>
+          <ion-select formControlName="business_category">
+            <ion-select-option value="Peluquería">Peluquería</ion-select-option>
+            <ion-select-option value="Spa">Spa</ion-select-option>
+            <ion-select-option value="Barbería">Barbería</ion-select-option>
+            <ion-select-option value="Salón de uñas">Salón de uñas</ion-select-option>
+            <ion-select-option value="Estética">Estética</ion-select-option>
+            <ion-select-option value="Masajes">Masajes</ion-select-option>
+            <ion-select-option value="Fisioterapia">Fisioterapia</ion-select-option>
+            <ion-select-option value="Dentista">Dentista</ion-select-option>
+            <ion-select-option value="Médico">Médico</ion-select-option>
+            <ion-select-option value="Entrenador personal">Entrenador personal</ion-select-option>
+            <ion-select-option value="Nutricionista">Nutricionista</ion-select-option>
+            <ion-select-option value="Psicólogo">Psicólogo</ion-select-option>
+            <ion-select-option value="Tatuador">Tatuador</ion-select-option>
+            <ion-select-option value="Otro">Otro</ion-select-option>
+          </ion-select>
+        </ion-item>
+        @if (registerForm.get('business_category')?.invalid && (registerForm.get('business_category')?.dirty || registerForm.get('business_category')?.touched)) {
+          <div class="error-message">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            @if (registerForm.get('business_category')?.errors?.['required']) {
+              <span>La categoría es obligatoria</span>
+            }
+          </div>
+        }
+
+        <!-- Descripción del negocio -->
+        <ion-item class="custom-input">
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          <ion-label position="floating">Descripción (opcional)</ion-label>
+          <ion-textarea formControlName="business_description" rows="3"></ion-textarea>
+        </ion-item>
+      </div>
+      }
+
+      <div class="terms-privacy">
+        <ion-checkbox [checked]="termsAccepted()" (ionChange)="onTermsChange($event)">
+          Acepto los <a href="#">Términos y Condiciones</a>
+        </ion-checkbox>
+      </div>
+
+      <ion-button expand="block" type="submit" [disabled]="!canSubmit()" class="register-button">
+        <ion-icon name="create-outline" slot="start"></ion-icon>
+        {{ submitButtonText() }}
+      </ion-button>
+    </form>
+
+    <div class="login-link">
+      <p>¿Ya tienes una cuenta?</p>
+      <ion-button fill="outline" routerLink="/iniciar-sesion" class="login-btn">
+        Iniciar Sesión
+        <ion-icon name="log-in-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="home-link">
+      <ion-button fill="clear" routerLink="/inicio" class="home-button">
+        <ion-icon name="home-outline" slot="start"></ion-icon>
+        Volver al inicio
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

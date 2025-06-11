@@ -1,0 +1,18 @@
+<div class="calendar-container">
+  <!-- Grid del calendario -->
+  <app-calendar-grid
+    [(currentDate)]="currentDate"
+    [(selectedDate)]="selectedDate"
+    (dateSelected)="onDateSelected($event)"
+  ></app-calendar-grid>
+
+  <!-- Selector de horarios -->
+  @if (serviceIdValue) {
+    <app-time-slots-selector
+      [serviceId]="serviceIdValue"
+      [employeeId]="employeeIdValue"
+      [selectedDate]="selectedDate()"
+      (timeSelected)="onTimeSelected($event)"
+    ></app-time-slots-selector>
+  }
+</div>

@@ -1,0 +1,79 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Tipo de cuenta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="register-type-container">
+    <div class="register-type-header">
+      <h1>¿Cómo quieres usar Bookings Hub?</h1>
+      <p>Elige el tipo de cuenta que mejor se adapte a tus necesidades</p>
+    </div>
+    
+    <div class="account-types">
+      <div class="account-type client" (click)="navigateToRegister('client')">
+        <div class="icon-container">
+          <ion-icon name="person-outline"></ion-icon>
+        </div>
+        <h2>Cliente</h2>
+        <p>Busca y reserva servicios de diferentes negocios.</p>
+        <ul>
+          <li>
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Acceso a miles de negocios</span>
+          </li>
+          <li>
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Gestiona tus reservas</span>
+          </li>
+          <li>
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Valora y comparte tus experiencias</span>
+          </li>
+        </ul>
+        <ion-button expand="block" class="select-button" (click)="navigateToRegister('client')">
+          Crear cuenta de cliente
+          <ion-icon name="arrow-forward" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+      
+      <div class="account-type business" (click)="navigateToRegister('business')">
+        <div class="icon-container business">
+          <ion-icon name="business-outline"></ion-icon>
+        </div>
+        <h2>Negocio</h2>
+        <p>Ofrece tus servicios y gestiona reservas online.</p>
+        <ul>
+          <li>
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Gestión completa de tu negocio</span>
+          </li>
+          <li>
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Sistema de reservas automatizado</span>
+          </li>
+          <li>
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>Análisis y estadísticas</span>
+          </li>
+        </ul>
+        <ion-button expand="block" class="select-button business" (click)="navigateToRegister('business')">
+          Crear cuenta de negocio
+          <ion-icon name="arrow-forward" slot="end"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="login-link ion-text-center">
+      <p>¿Ya tienes una cuenta?</p>
+      <ion-button fill="clear" routerLink="/login" class="login-button">
+        Iniciar Sesión
+        <ion-icon name="log-in-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

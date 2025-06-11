@@ -1,0 +1,88 @@
+<!-- Diseño moderno con navegación superior para dashboard de negocio -->
+<div class="business-app-container">
+  <!-- Barra de navegación superior -->
+  <header class="business-nav-bar">
+    <!-- Información del usuario y brand -->
+    <div class="nav-brand">
+      <div class="user-info">
+        <div class="avatar-initials">{{ getUserInitials() }}</div>
+        <div class="user-details">
+          <span class="user-name">{{ user()?.name || 'Usuario' }}</span>
+          <span class="user-role">Propietario</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Navegación principal tipo tabs -->
+    <nav class="business-nav-tabs">
+      <a 
+        [routerLink]="['/panel-negocio/principal']" 
+        routerLinkActive="active" 
+        class="nav-tab"
+        [routerLinkActiveOptions]="{exact: false}">
+        <ion-icon name="home-outline" class="nav-icon"></ion-icon>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      
+      <a 
+        [routerLink]="['/panel-negocio/reservas']" 
+        routerLinkActive="active" 
+        class="nav-tab"
+        [routerLinkActiveOptions]="{exact: false}">
+        <ion-icon name="calendar-outline" class="nav-icon"></ion-icon>
+        <span class="nav-label">Reservas</span>
+        <span *ngIf="getBookingsBadge()" class="nav-badge">{{ getBookingsBadge() }}</span>
+      </a>
+      
+      <a 
+        [routerLink]="['/panel-negocio/servicios']" 
+        routerLinkActive="active" 
+        class="nav-tab"
+        [routerLinkActiveOptions]="{exact: false}">
+        <ion-icon name="list-outline" class="nav-icon"></ion-icon>
+        <span class="nav-label">Servicios</span>
+      </a>
+      
+      <a 
+        [routerLink]="['/panel-negocio/empleados']" 
+        routerLinkActive="active" 
+        class="nav-tab"
+        [routerLinkActiveOptions]="{exact: false}">
+        <ion-icon name="people-outline" class="nav-icon"></ion-icon>
+        <span class="nav-label">Empleados</span>
+      </a>
+      
+      <a 
+        [routerLink]="['/panel-negocio/estadisticas']" 
+        routerLinkActive="active" 
+        class="nav-tab"
+        [routerLinkActiveOptions]="{exact: false}">
+        <ion-icon name="analytics-outline" class="nav-icon"></ion-icon>
+        <span class="nav-label">Analíticas</span>
+      </a>
+      
+      <a 
+        [routerLink]="['/panel-negocio/perfil']" 
+        routerLinkActive="active" 
+        class="nav-tab"
+        [routerLinkActiveOptions]="{exact: false}">
+        <ion-icon name="person-circle-outline" class="nav-icon"></ion-icon>
+        <span class="nav-label">Perfil</span>
+      </a>
+    </nav>
+
+    <!-- Acciones del lado derecho -->
+    <div class="nav-actions">
+      <button class="action-btn logout-btn" (click)="logout()" title="Cerrar Sesión">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Contenido principal -->
+  <main class="business-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-footer></app-footer>
+</div>

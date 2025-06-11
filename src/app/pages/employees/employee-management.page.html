@@ -1,0 +1,168 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/business-management"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gestión de Empleados</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="resetForm()">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="employee-content">
+  <!-- Formulario de empleado -->
+  <div class="form-section">
+    <div class="section-header">
+      <h2>{{ isEditing() ? 'Editar Empleado' : 'Agregar Nuevo Empleado' }}</h2>
+    </div>
+
+    <form [formGroup]="employeeForm" (ngSubmit)="isEditing() ? updateEmployee() : addEmployee()">
+      <div class="form-grid">
+        <!-- Información básica -->
+        <div class="form-group">
+          <ion-item fill="outline">
+            <ion-label position="stacked">Nombre completo *</ion-label>
+            <ion-input 
+              formControlName="name" 
+              placeholder="Ej: María García"
+              type="text">
+            </ion-input>
+          </ion-item>
+          @if (employeeForm.get('name')?.invalid && employeeForm.get('name')?.touched) {
+            <div class="error-message">
+              El nombre es requerido (mínimo 2 caracteres)
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <ion-item fill="outline">
+            <ion-label position="stacked">Posición/Cargo</ion-label>
+            <ion-input 
+              formControlName="position" 
+              placeholder="Ej: Estilista Senior"
+              type="text">
+            </ion-input>
+          </ion-item>
+        </div>
+
+        <!-- Especialidades -->
+        <div class="form-group specialties-group">
+          <ion-label>Especialidades</ion-label>
+          <div class="specialties-container">
+            @for (specialty of specialtyOptions; track specialty) {
+              <ion-chip 
+                [class.selected]="isSpecialtySelected(specialty)"
+                (click)="toggleSpecialty(specialty)">
+                {{ specialty }}
+                @if (isSpecialtySelected(specialty)) {
+                  <ion-icon name="checkmark-outline"></ion-icon>
+                }
+              </ion-chip>
+            }
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="form-actions">
+          <ion-button 
+            expand="block" 
+            type="submit" 
+            color="primary"
+            [disabled]="employeeForm.invalid || isLoading()">
+            @if (isLoading()) {
+              <ion-spinner name="crescent"></ion-spinner>
+            }
+            {{ isEditing() ? 'Actualizar Empleado' : 'Agregar Empleado' }}
+          </ion-button>
+          
+          @if (isEditing()) {
+            <ion-button 
+              expand="block" 
+              fill="outline" 
+              color="medium"
+              (click)="resetForm()">
+              Cancelar
+            </ion-button>
+          }
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Lista de empleados -->
+  <div class="employees-section">
+    <div class="section-header">
+      <h2>Empleados Actuales</h2>
+      <span class="employee-count">{{ employees().length }} empleado(s)</span>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando empleados...</p>
+      </div>
+    }
+
+    @if (!isLoading() && employeesValid()) {
+      <div class="employees-grid">
+        @for (employee of employees(); track employee.id) {
+          <div 
+            class="employee-card"
+            [class.editing]="editingEmployeeId() === employee.id">
+            
+            <div class="employee-header">
+              <div class="employee-info">
+                <h3>{{ employee.name }}</h3>
+                @if (employee.position) {
+                  <p class="position">{{ employee.position }}</p>
+                }
+              </div>
+            </div>
+
+            @if (employee.specialties && employee.specialties.length > 0) {
+              <div class="employee-specialties">
+                @for (specialty of employee.specialties; track specialty) {
+                  <ion-chip color="secondary">
+                    {{ specialty }}
+                  </ion-chip>
+                }
+              </div>
+            }
+
+            <div class="employee-actions">
+              <ion-button 
+                size="small" 
+                fill="outline" 
+                color="primary"
+                (click)="editEmployee(employee)">
+                <ion-icon name="create-outline"></ion-icon>
+                Editar
+              </ion-button>
+              
+              <ion-button 
+                size="small" 
+                fill="outline" 
+                color="danger"
+                (click)="deleteEmployee(employee.id!)">
+                <ion-icon name="trash-outline"></ion-icon>
+                Eliminar
+              </ion-button>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (employees().length === 0) {
+        <div class="empty-state">
+          <ion-icon name="people-outline" size="large"></ion-icon>
+          <h3>No hay empleados registrados</h3>
+          <p>Agrega tu primer empleado usando el formulario de arriba</p>
+        </div>
+      }
+    }
+  </div>
+</ion-content>

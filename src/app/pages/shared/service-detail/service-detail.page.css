@@ -1,0 +1,429 @@
+/* Estilos para la página de detalle de servicio */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 200px;
+}
+
+.loading-container ion-spinner {
+  margin-bottom: 1rem;
+}
+
+.loading-container p {
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+}
+
+.error-container ion-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+ion-datetime {
+  --background: #fff1f2;
+  --background-rgb: 255, 241, 242;
+
+  border-radius: 16px;
+  box-shadow: rgba(var(--ion-color-rose-rgb), 0.3) 0px 10px 15px -3px;
+  width: 100%;
+  max-width: 2000px;
+}
+.error-container p {
+  margin-bottom: 1.5rem;
+  color: var(--ion-color-danger);
+}
+
+.service-content .business-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.service-content .business-header:hover {
+  background: var(--ion-color-light-shade);
+}
+
+.service-content .business-header ion-icon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.service-content .business-header span {
+  font-weight: 500;
+  color: var(--ion-color-tertiary);
+}
+
+.service-description {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  color: var(--ion-color-dark);
+}
+
+.service-details .detail-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.service-details .detail-item ion-icon {
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.service-details .detail-item span {
+  font-weight: 500;
+}
+
+/* Información adicional de disponibilidad */
+.availability-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  border-left: 4px solid var(--ion-color-primary);
+}
+
+.availability-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--ion-color-primary);
+  font-size: 1rem;
+}
+
+.availability-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+.booking-summary {
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--ion-color-primary);
+}
+
+.booking-summary h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--ion-color-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.booking-summary .summary-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.booking-summary .summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.booking-summary .summary-item ion-icon {
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+  min-width: 1.1rem;
+}
+
+.booking-summary .summary-item span {
+  line-height: 1.4;
+}
+
+.booking-summary .summary-item span strong {
+  color: var(--ion-color-dark);
+}
+
+.notes-container {
+  margin-bottom: 1.5rem;
+}
+
+.notes-container ion-item {
+  --border-radius: 8px;
+  --border-color: var(--ion-color-light-shade);
+  --background: var(--ion-color-light);
+  margin-bottom: 0.5rem;
+}
+
+.notes-container ion-textarea {
+  --color: var(--ion-color-dark);
+  --placeholder-color: var(--ion-color-medium);
+}
+
+.confirm-button {
+  margin-top: 1rem;
+  --border-radius: 8px;
+  height: 48px;
+  font-weight: 600;
+}
+
+.confirm-button[disabled] {
+  opacity: 0.5;
+}
+
+/* Mensajes informativos */
+.login-prompt,
+.info-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.login-prompt ion-icon,
+.info-message ion-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.login-prompt p,
+.info-message p {
+  margin-bottom: 1.5rem;
+  color: var(--ion-color-medium);
+  line-height: 1.5;
+}
+
+.login-prompt ion-button,
+.info-message ion-button {
+  --border-radius: 8px;
+}
+
+/* Estilos para selector de empleados */
+.employee-selector {
+  margin-bottom: 1.5rem;
+}
+
+.employee-selector ion-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ion-color-primary);
+}
+
+.employee-position {
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+/* Estilos para selector de fecha */
+.date-selector {
+  margin-bottom: 1.5rem;
+}
+
+.date-selector ion-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ion-color-primary);
+}
+
+/* Estilos para selector de hora */
+.time-selector {
+  margin-bottom: 1.5rem;
+}
+
+.time-selector ion-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ion-color-primary);
+}
+
+.loading-times {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+
+.loading-times ion-spinner {
+  margin-right: 0.5rem;
+}
+
+.loading-times span {
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+/* Grid de horarios disponibles */
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.time-slots-grid ion-button {
+  --padding-start: 0.5rem;
+  --padding-end: 0.5rem;
+  --padding-top: 0.25rem;
+  --padding-bottom: 0.25rem;
+  font-size: 0.8rem;
+  height: 35px;
+}
+
+/* Horas disponibles */
+.available-slot {
+  --color: var(--ion-color-primary);
+  --border-color: var(--ion-color-primary);
+}
+
+.available-slot:hover {
+  --background: var(--ion-color-primary);
+  --color: white;
+}
+
+/* Horas no disponibles */
+.unavailable-slot {
+  --color: var(--ion-color-light);
+  --border-color: var(--ion-color-light);
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.unavailable-slot:disabled {
+  --color: var(--ion-color-light);
+  --background: transparent;
+}
+
+/* Estilos para horarios disponibles/no disponibles */
+.available-slot {
+  --background: var(--ion-color-success-tint);
+  --color: var(--ion-color-success-contrast);
+  --border-color: var(--ion-color-success);
+}
+
+.unavailable-slot {
+  --background: var(--ion-color-danger-tint);
+  --color: var(--ion-color-danger-contrast);
+  --border-color: var(--ion-color-danger);
+  opacity: 0.6;
+}
+
+/* Leyenda de disponibilidad */
+.availability-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-dot.available {
+  background: var(--ion-color-success);
+  border: 1px solid var(--ion-color-success-shade);
+}
+
+.legend-dot.unavailable {
+  background: var(--ion-color-light);
+  border: 1px solid var(--ion-color-medium);
+}
+
+.loading-availability {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .service-content .business-header {
+    padding: 0.75rem;
+  }
+
+  .booking-summary {
+    padding: 0.75rem;
+  }
+
+  .booking-summary h3 {
+    font-size: 1rem;
+  }
+}
+
+/* Estilos para leyenda de disponibilidad */
+.availability-legend {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.legend-dot.available {
+  background-color: var(--ion-color-success);
+}
+
+.legend-dot.unavailable {
+  background-color: var(--ion-color-light);
+  border: 1px solid var(--ion-color-medium);
+}
+
+/* Estilos para loading de disponibilidad */
+.loading-availability {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .booking-summary {
+    background: var(--ion-color-dark);
+    border-left-color: var(--ion-color-primary);
+  }
+
+  .legend-dot.unavailable {
+    background-color: var(--ion-color-dark);
+    border-color: var(--ion-color-medium);
+  }
+}

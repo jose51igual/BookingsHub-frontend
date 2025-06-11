@@ -1,0 +1,74 @@
+ion-app {
+  font-family: var(--ion-font-family);
+  background-color: var(--ion-color-light-bg);
+  width: 100%;
+}
+
+ion-router-outlet {
+  background-color: var(--ion-color-light-bg);
+  width: 100%;
+}
+
+html, body{
+    height: 99%;
+    border: 1px solid red;
+    overflow:hidden;
+}
+/* Estilos para pantallas grandes - eliminar restricción de ancho */
+@media (min-width: 992px) {
+  ion-router-outlet {
+    max-width: 100%; /* Cambiado de 1200px para usar todo el ancho */
+    margin: 0 auto;
+    box-shadow: none; /* Eliminar sombra que creaba efecto de "caja" */
+  }
+
+  ion-content {
+    --background: var(--ion-color-light-bg);
+  }
+  
+
+  ion-card {
+    margin: 16px;
+  }
+
+  ion-app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  ion-router-outlet {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 0; /* Espacio para el tab bar superior */
+    margin-bottom: 0; /* Espacio para el toolbar inferior */
+  }
+}
+
+/* Animaciones de transición para la navegación */
+:root {
+  --ion-router-transition-duration: 300ms;
+}
+
+ion-page.ion-page-animated {
+  animation-name: pageTransition;
+  animation-duration: var(--ion-router-transition-duration);
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+  animation-fill-mode: both;
+}
+
+@keyframes pageTransition {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+}

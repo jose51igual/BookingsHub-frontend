@@ -1,0 +1,202 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-back-button slot="start" default-href="/business-management"></ion-back-button>
+    <ion-title>Analíticas del Negocio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshData()" [disabled]="isLoading()">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="exportData()">
+        <ion-icon name="download-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="analytics-container">
+    
+    <!-- Period Selector -->
+    <div class="period-selector">
+      <ion-item>
+        <ion-label>Período:</ion-label>
+        <ion-select 
+          [(ngModel)]="selectedPeriod" 
+          (ionChange)="onPeriodChange($event)"
+          interface="popover">
+          <ion-select-option 
+            *ngFor="let option of periodOptions" 
+            [value]="option.value">
+            {{option.label}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading()" class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando estadísticas...</p>
+    </div>
+
+    <!-- Analytics Content -->
+    <div *ngIf="!isLoading() && analyticsData" class="analytics-content">
+      
+      <!-- Key Metrics Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card revenue">
+          <div class="metric-icon">
+            <ion-icon name="cash-outline"></ion-icon>
+          </div>
+          <div class="metric-content">
+            <h3>Ingresos Totales</h3>
+            <p class="metric-value">${{analyticsData.totalRevenue | number:'1.2-2'}}</p>
+            <span class="metric-change positive">+12.5%</span>
+          </div>
+        </div>
+
+        <div class="metric-card bookings">
+          <div class="metric-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <div class="metric-content">
+            <h3>Total Reservas</h3>
+            <p class="metric-value">{{analyticsData.totalBookings}}</p>
+            <span class="metric-change positive">+8.3%</span>
+          </div>
+        </div>
+
+        <div class="metric-card rating">
+          <div class="metric-icon">
+            <ion-icon name="star-outline"></ion-icon>
+          </div>
+          <div class="metric-content">
+            <h3>Calificación Promedio</h3>
+            <p class="metric-value">{{analyticsData.averageRating}}/5</p>
+            <span class="metric-change positive">+0.2</span>
+          </div>
+        </div>
+
+        <div class="metric-card services">
+          <div class="metric-icon">
+            <ion-icon name="construct-outline"></ion-icon>
+          </div>
+          <div class="metric-content">
+            <h3>Servicios Activos</h3>
+            <p class="metric-value">{{analyticsData.totalServices}}</p>
+            <span class="metric-change neutral">Sin cambios</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        
+        <!-- Bookings Trend -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Tendencia de Reservas</h3>
+            <ion-button fill="clear" (click)="goToBookings()">
+              Ver todas
+              <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+            </ion-button>
+          </div>
+          <div class="chart-content">
+            <div class="simple-chart">
+              <div 
+                *ngFor="let month of analyticsData.bookingsByMonth" 
+                class="chart-bar"
+                [style.height.%]="(month.count / 60) * 100">
+                <span class="bar-label">{{month.month.substring(0,3)}}</span>
+                <span class="bar-value">{{month.count}}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Popular Services -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Servicios Más Populares</h3>
+            <ion-button fill="clear" (click)="goToServices()">
+              Gestionar
+              <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+            </ion-button>
+          </div>
+          <div class="chart-content">
+            <div class="services-list">
+              <div 
+                *ngFor="let service of analyticsData.popularServices; let i = index" 
+                class="service-item">
+                <div class="service-info">
+                  <span class="service-name">{{service.name}}</span>
+                  <span class="service-count">{{service.bookings}} reservas</span>
+                </div>
+                <div class="service-bar">
+                  <div 
+                    class="service-progress" 
+                    [style.width.%]="(service.bookings / analyticsData.popularServices[0].bookings) * 100">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Revenue by Service -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <h3>Ingresos por Servicio</h3>
+          </div>
+          <div class="chart-content">
+            <div class="revenue-list">
+              <div 
+                *ngFor="let service of analyticsData.revenueByService" 
+                class="revenue-item">
+                <div class="revenue-info">
+                  <span class="service-name">{{service.name}}</span>
+                  <span class="service-revenue">${{service.revenue | number:'1.2-2'}}</span>
+                </div>
+                <div class="revenue-bar">
+                  <div 
+                    class="revenue-progress" 
+                    [style.width.%]="(service.revenue / analyticsData.revenueByService[0].revenue) * 100">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer Retention -->
+        <div class="chart-card retention">
+          <div class="chart-header">
+            <h3>Retención de Clientes</h3>
+          </div>
+          <div class="chart-content">
+            <div class="retention-circle">
+              <div class="circle-progress" [style.--progress]="analyticsData.customerRetention + '%'">
+                <span class="retention-value">{{analyticsData.customerRetention}}%</span>
+                <span class="retention-label">Clientes que regresan</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isLoading() && !analyticsData" class="error-container">
+      <ion-icon name="analytics-outline"></ion-icon>
+      <h3>No se pudieron cargar las estadísticas</h3>
+      <p>Intenta nuevamente más tarde</p>
+      <ion-button (click)="loadAnalytics()">
+        Reintentar
+      </ion-button>
+    </div>
+
+  </div>
+</ion-content>

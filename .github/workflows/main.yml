@@ -19,14 +19,13 @@ jobs:
       with:
         node-version: '22'
         
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 8
-        run_install: false
+    - name: Configure Yarn
+      run: |
+        yarn config set network-timeout 300000
+        yarn config set registry https://registry.npmjs.org
         
-    - name: Install dependencies with pnpm
-      run: pnpm install
+    - name: Install dependencies with Yarn
+      run: yarn install --frozen-lockfile --network-concurrency 4
       
     - name: Create production environment file
       run: |

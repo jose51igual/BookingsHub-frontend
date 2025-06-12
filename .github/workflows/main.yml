@@ -42,7 +42,7 @@ jobs:
       run: git config --global url."https://github.com/".insteadOf git://github.com/
       
     - name: Install dependencies with pnpm
-      run: pnpm install --frozen-lockfile --prefer-offline
+      run: pnpm install --prefer-offline
       
     - name: Create production environment file
       run: |

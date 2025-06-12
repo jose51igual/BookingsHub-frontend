@@ -1,0 +1,160 @@
+name: Deploy Frontend to Server
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm run test -- --watch=false --browsers=ChromeHeadless
+      continue-on-error: true
+      
+    - name: Create production environment file
+      run: |
+        cat > src/environments/environment.prod.ts << 'EOF'
+        export const environment = {
+          production: true,
+          stage: 'production',
+          apiUrl: '${{ secrets.FRONTEND_API_URL || 'https://api.bookingshub.es' }}',
+          googleClientId: '${{ secrets.GOOGLE_CLIENT_ID }}',
+          googleMapsApiKey: '${{ secrets.GOOGLE_MAPS_API_KEY }}',
+          geocodeApiKey: '${{ secrets.GOOGLE_GEOCODE_API_KEY }}',
+          logLevel: 'error',
+          version: '1.0.0',
+          enableMocks: false
+        };
+        EOF
+        
+    - name: Build for production
+      run: npm run build:prod
+      
+    - name: Create deployment package
+      working-directory: .
+      run: |
+        mkdir -p deploy
+        cp -r dist/app/* deploy/
+        
+        echo "VERSION=$(date +%Y%m%d_%H%M%S)" > deploy/version.txt
+        echo "COMMIT_HASH=${{ github.sha }}" >> deploy/version.txt        echo "BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> deploy/version.txt
+        
+        cat > deploy/nginx-site.conf << 'EOF'
+        server {
+            listen 80;
+            server_name _;
+            
+            root /var/www/bookings-hub-frontend/current;
+            index index.html;
+            
+            location / {
+                try_files $uri $uri/ /index.html;
+                
+                add_header X-Frame-Options "SAMEORIGIN" always;
+                add_header X-Content-Type-Options "nosniff" always;
+                add_header Referrer-Policy "no-referrer-when-downgrade" always;
+            }
+            
+            location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+                expires 1y;
+                add_header Cache-Control "public, immutable";
+                access_log off;
+            }
+            
+            access_log /var/log/nginx/bookings-hub-frontend.access.log;
+            error_log /var/log/nginx/bookings-hub-frontend.error.log;
+            
+            gzip on;
+            gzip_vary on;
+            gzip_min_length 1024;
+            gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json application/xml image/svg+xml;
+        }
+        EOF
+        
+    - name: Create directories on server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          mkdir -p /var/www/bookings-hub-frontend
+          mkdir -p /var/www/bookings-hub-frontend/backups
+          
+          if [ -d "/var/www/bookings-hub-frontend/current" ]; then
+            sudo mv /var/www/bookings-hub-frontend/current /var/www/bookings-hub-frontend/backups/backup_$(date +%Y%m%d_%H%M%S)
+          fi
+          
+          mkdir -p /var/www/bookings-hub-frontend/current
+          
+    - name: Upload files to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        source: "deploy/*"
+        target: "/var/www/bookings-hub-frontend/current"
+        strip_components: 2
+        
+    - name: Configure Nginx and finalize deployment
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          cd /var/www/bookings-hub-frontend/current
+          
+          sudo chown -R www-data:www-data /var/www/bookings-hub-frontend/current
+          sudo chmod -R 755 /var/www/bookings-hub-frontend/current
+          
+          echo "Configurando Nginx..."
+          sudo cp nginx-site.conf /etc/nginx/sites-available/bookings-hub-frontend
+          sudo ln -sf /etc/nginx/sites-available/bookings-hub-frontend /etc/nginx/sites-enabled/
+          sudo rm -f /etc/nginx/sites-enabled/default
+          
+          if sudo nginx -t; then
+            echo "Configuración de Nginx válida"
+            sudo systemctl reload nginx
+            echo "Nginx recargado exitosamente"
+          else
+            echo "Error en configuración de Nginx"
+            exit 1
+          fi
+          
+          if sudo systemctl is-active --quiet nginx; then
+            echo "Nginx está ejecutándose"
+          else
+            echo "Iniciando Nginx..."
+            sudo systemctl start nginx
+            sudo systemctl enable nginx
+          fi
+          
+          cd /var/www/bookings-hub-frontend/backups
+          if [ "$(ls -1 | wc -l)" -gt 5 ]; then
+            ls -1t | tail -n +6 | xargs -r rm -rf
+            echo "Backups antiguos limpiados"
+          fi
+          
+          echo "Frontend deployment completed successfully!"
+          echo "Deployment info:"
+          cat /var/www/bookings-hub-frontend/current/version.txt

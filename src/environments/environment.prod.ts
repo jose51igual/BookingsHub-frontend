@@ -7,8 +7,8 @@
 export const environment = {
   production: true,
   stage: 'production',
-  apiUrl: 'https://213.165.93.50:3000/api', // Será reemplazado por GitHub Actions
-  googleClientId: '318468418060-u333rd9caq6nandaqc8s2rh9eeljl573.apps.googleusercontent.com',
+  apiUrl: 'https://api.bookingshub.es/api',
+  googleClientId: '', // Se configurará desde GitHub Secrets
   googleMapsApiKey: '', // Se configurará desde GitHub Secrets
   geocodeApiKey: '', // Se configurará desde GitHub Secrets
   logLevel: 'error',

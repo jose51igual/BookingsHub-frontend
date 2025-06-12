@@ -19,13 +19,8 @@ jobs:
       with:
         node-version: '22'
         
-    - name: Configure Yarn
-      run: |
-        yarn config set network-timeout 300000
-        yarn config set registry https://registry.npmjs.org
-        
     - name: Install dependencies with Yarn
-      run: yarn install --frozen-lockfile --network-concurrency 4
+      run: yarn install
       
     - name: Create production environment file
       run: |

@@ -49,25 +49,6 @@ jobs:
         
         # Ejecutar build con configuración offline
         npm run build:prod
-      
-    - name: Debug - List build output
-      run: |
-        echo "Contenido del directorio raíz:"
-        ls -la
-        echo "Contenido del directorio dist:"
-        if [ -d "dist" ]; then
-          ls -la dist/
-        else
-          echo "Directorio dist no encontrado"
-        fi
-        echo "Contenido del directorio dist/app:"
-        if [ -d "dist/app" ]; then
-          ls -la dist/app/
-          echo "Verificando index.html en dist/app:"
-          [ -f "dist/app/index.html" ] && echo "✅ index.html encontrado" || echo "❌ index.html no encontrado"
-        else
-          echo "Directorio dist/app no encontrado"
-        fi
         
     - name: Create directories on server
       uses: appleboy/ssh-action@v1.0.3

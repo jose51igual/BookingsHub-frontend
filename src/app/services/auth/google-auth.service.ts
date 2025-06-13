@@ -214,11 +214,19 @@ export class GoogleAuthService {
         });
         
         google.accounts.id.prompt((notification: any) => {
+          console.log('🔍 Google prompt notification:', notification);
+          console.log('🌐 Current origin:', window.location.origin);
+          console.log('🔑 Client ID being used:', environment.googleClientId);
+          
           if (notification.isNotDisplayed()) {
-            const error = new Error('Google Sign-In prompt no fue mostrado. Verifica la configuración de orígenes autorizados.');
+            const reason = notification.getNotDisplayedReason ? notification.getNotDisplayedReason() : 'unknown';
+            console.error('❌ Prompt not displayed. Reason:', reason);
+            const error = new Error(`Google Sign-In prompt no fue mostrado. Razón: ${reason}. Verifica la configuración de orígenes autorizados en Google Cloud Console para el dominio ${window.location.origin}`);
             observer.error(error);
           } else if (notification.isSkippedMoment()) {
-            const error = new Error('Google Sign-In prompt fue omitido por el usuario');
+            const reason = notification.getSkippedReason ? notification.getSkippedReason() : 'unknown';
+            console.warn('⚠️ Prompt skipped. Reason:', reason);
+            const error = new Error(`Google Sign-In prompt fue omitido. Razón: ${reason}`);
             observer.error(error);
           }
         });

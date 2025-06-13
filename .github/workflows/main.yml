@@ -48,10 +48,14 @@ jobs:
         COPY tsconfig*.json ./
         COPY angular.json ./
         COPY vite.config.ts ./
+        COPY ionic.config.json ./
         
-        # Configurar npm y instalar dependencias
+        # Configurar npm y instalar dependencias (incluyendo dev dependencies para build)
         RUN npm config set registry https://registry.npmjs.org/
-        RUN npm ci --only=production --prefer-offline
+        RUN npm ci --prefer-offline
+        
+        # Verificar que Angular CLI esté disponible
+        RUN npx ng version
         
         # Copiar código fuente
         COPY . .

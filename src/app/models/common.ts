@@ -10,17 +10,6 @@ export interface NotificationConfig {
   showCloseButton?: boolean;
 }
 
-export interface LoadingConfig {
-  message: string;
-  spinner?: 'bubbles' | 'circles' | 'circular' | 'crescent' | 'dots' | 'lines' | 'lines-small';
-  duration?: number;
-}
-
-export interface LoadingState {
-  isLoading: boolean;
-  message: string;
-}
-
 export interface AlertConfig {
   title: string;
   message: string;

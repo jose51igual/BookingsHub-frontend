@@ -24,23 +24,26 @@
           [(ngModel)]="selectedPeriod" 
           (ionChange)="onPeriodChange($event)"
           interface="popover">
-          <ion-select-option 
-            *ngFor="let option of periodOptions" 
-            [value]="option.value">
-            {{option.label}}
-          </ion-select-option>
+          @for (option of periodOptions; track option) {
+            <ion-select-option [value]="option.value">
+              {{option.label}}
+            </ion-select-option>
+          }
         </ion-select>
       </ion-item>
     </div>
 
     <!-- Loading State -->
-    <div *ngIf="isLoading()" class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Cargando estadísticas...</p>
-    </div>
+    @if (isLoading()) {
+      <div class="loading-container">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando estadísticas...</p>
+      </div>
+    }
 
     <!-- Analytics Content -->
-    <div *ngIf="!isLoading() && analyticsData" class="analytics-content">
+    @if (analyticsData) {
+      <div class="analytics-content">
       
       <!-- Key Metrics Cards -->
       <div class="metrics-grid">
@@ -103,13 +106,13 @@
           </div>
           <div class="chart-content">
             <div class="simple-chart">
-              <div 
-                *ngFor="let month of analyticsData.bookingsByMonth" 
-                class="chart-bar"
-                [style.height.%]="(month.count / 60) * 100">
-                <span class="bar-label">{{month.month.substring(0,3)}}</span>
-                <span class="bar-value">{{month.count}}</span>
-              </div>
+              @for (month of analyticsData.bookingsByMonth; track month) {
+                <div class="chart-bar"
+                     [style.height.%]="(month.count / 60) * 100">
+                  <span class="bar-label">{{month.month.substring(0,3)}}</span>
+                  <span class="bar-value">{{month.count}}</span>
+                </div>
+              }
             </div>
           </div>
         </div>
@@ -125,20 +128,19 @@
           </div>
           <div class="chart-content">
             <div class="services-list">
-              <div 
-                *ngFor="let service of analyticsData.popularServices; let i = index" 
-                class="service-item">
-                <div class="service-info">
-                  <span class="service-name">{{service.name}}</span>
-                  <span class="service-count">{{service.bookings}} reservas</span>
-                </div>
-                <div class="service-bar">
-                  <div 
-                    class="service-progress" 
-                    [style.width.%]="(service.bookings / analyticsData.popularServices[0].bookings) * 100">
+              @for (service of analyticsData.popularServices; track service; let i = $index) {
+                <div class="service-item">
+                  <div class="service-info">
+                    <span class="service-name">{{service.name}}</span>
+                    <span class="service-count">{{service.bookings}} reservas</span>
+                  </div>
+                  <div class="service-bar">
+                    <div class="service-progress" 
+                         [style.width.%]="(service.bookings / analyticsData.popularServices[0].bookings) * 100">
+                    </div>
                   </div>
                 </div>
-              </div>
+              }
             </div>
           </div>
         </div>
@@ -150,20 +152,19 @@
           </div>
           <div class="chart-content">
             <div class="revenue-list">
-              <div 
-                *ngFor="let service of analyticsData.revenueByService" 
-                class="revenue-item">
-                <div class="revenue-info">
-                  <span class="service-name">{{service.name}}</span>
-                  <span class="service-revenue">${{service.revenue | number:'1.2-2'}}</span>
-                </div>
-                <div class="revenue-bar">
-                  <div 
-                    class="revenue-progress" 
-                    [style.width.%]="(service.revenue / analyticsData.revenueByService[0].revenue) * 100">
+              @for (service of analyticsData.revenueByService; track service) {
+                <div class="revenue-item">
+                  <div class="revenue-info">
+                    <span class="service-name">{{service.name}}</span>
+                    <span class="service-revenue">${{service.revenue | number:'1.2-2'}}</span>
+                  </div>
+                  <div class="revenue-bar">
+                    <div class="revenue-progress" 
+                         [style.width.%]="(service.revenue / analyticsData.revenueByService[0].revenue) * 100">
+                    </div>
                   </div>
                 </div>
-              </div>
+              }
             </div>
           </div>
         </div>
@@ -186,17 +187,20 @@
       </div>
 
 
-    </div>
+      </div>
+    }
 
     <!-- Error State -->
-    <div *ngIf="!isLoading() && !analyticsData" class="error-container">
-      <ion-icon name="analytics-outline"></ion-icon>
-      <h3>No se pudieron cargar las estadísticas</h3>
-      <p>Intenta nuevamente más tarde</p>
-      <ion-button (click)="loadAnalytics()">
-        Reintentar
-      </ion-button>
-    </div>
+    @if (!analyticsData) {
+      <div class="error-container">
+        <ion-icon name="analytics-outline"></ion-icon>
+        <h3>No se pudieron cargar las estadísticas</h3>
+        <p>Intenta nuevamente más tarde</p>
+        <ion-button (click)="loadAnalytics()">
+          Reintentar
+        </ion-button>
+      </div>
+    }
 
   </div>
 </ion-content>

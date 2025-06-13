@@ -40,16 +40,14 @@ export class AnalyticsPage {
     try {
       this.isLoading.set(true);
       
-      // Obtener datos reales del API usando NotificationService
-      await this.notificationService.withLoading(async () => {
-        const response = await firstValueFrom(this.analyticsService.getBusinessAnalytics(this.selectedPeriod));
-        
-        if (response && response.success && response.data) {
-          this.analyticsData = response.data;
-        } else {
-          throw new Error('Error en la respuesta del servidor');
+      // Obtener datos reales del API
+      const response = await firstValueFrom(this.analyticsService.getBusinessAnalytics(this.selectedPeriod));
+      
+      if (response && response.success && response.data) {
+        this.analyticsData = response.data;
+      } else {
+        throw new Error('Error en la respuesta del servidor');
         }
-      }, 'Cargando analíticas...');
       
     } catch (error) {
       console.error('Error loading analytics:', error);

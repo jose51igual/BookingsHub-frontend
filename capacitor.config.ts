@@ -1,4 +1,5 @@
 import type { CapacitorConfig } from '@capacitor/cli';
+import { environment } from '@environments/environment';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.bookingshub',
@@ -8,11 +9,15 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
     // Configuración para desarrollo en dispositivos
     cleartext: true
-  },  plugins: {
+  },
+  plugins: {
     SplashScreen: {
       launchShowDuration: 1000,
       backgroundColor: "#222428",
       showSpinner: false
+    },
+    CapacitorGoogleMaps: {
+      apiKey: environment.googleMapsApiKey, // Reemplazar con tu clave de API
     }
     // GoogleAuth deshabilitado temporalmente para evitar crashes
     // GoogleAuth: {

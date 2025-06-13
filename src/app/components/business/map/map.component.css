@@ -1,21 +1,47 @@
 .map-container {
   position: relative;
   width: 100%;
+  height: 300px; /* Altura fija por defecto */
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  z-index: 5; /* Aumentar z-index para evitar conflictos */
+  z-index: 1; /* Reducir z-index para evitar conflictos con ionic */
+  display: block;
+}
+
+/* Mejoras para dispositivos móviles */
+@media (max-width: 768px) {
+  .map-container {
+    height: 250px; /* Altura fija en móvil */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
 }
 
 /* Estilo para el elemento nativo de capacitor */
 capacitor-google-map, 
 .map-element {
-  display: block; /* Cambiar a block para evitar problemas de layout */
-  width: 100%;
-  height: 100%;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
   background-color: #f8f8f8;
-  pointer-events: auto; /* Asegurar que los eventos del mapa funcionen */
-  touch-action: manipulation; /* Mejorar el comportamiento táctil */
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+/* Mejoras específicas para móvil */
+@media (max-width: 768px) {
+  capacitor-google-map, 
+  .map-element {
+    /* Asegurar que el mapa sea táctil y responsive */
+    touch-action: pan-x pan-y zoom !important;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
 }
 
 /* Prevenir que el mapa capture eventos de scroll del ion-content padre */
@@ -34,7 +60,7 @@ capacitor-google-map::part(map) {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 16px;
   box-sizing: border-box;
 }
 
@@ -44,43 +70,86 @@ capacitor-google-map::part(map) {
 }
 
 .map-placeholder .error-content .error-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
+  font-size: 32px; /* Reducido de 48px */
+  margin-bottom: 12px; /* Reducido de 16px */
   color: var(--ion-color-warning);
   opacity: 0.8;
 }
 
 .map-placeholder .error-content .error-text {
-  margin-bottom: 20px;
+  margin-bottom: 16px; /* Reducido de 20px */
 }
 
 .map-placeholder .error-content .error-text h4 {
-  margin: 0 0 12px 0;
-  font-size: 18px;
+  margin: 0 0 8px 0; /* Reducido de 12px */
+  font-size: 16px; /* Reducido de 18px */
   font-weight: 600;
   color: var(--ion-color-dark);
 }
 
 .map-placeholder .error-content .error-text .error-message {
   margin: 0;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 12px; /* Reducido de 13px */
+  line-height: 1.4; /* Reducido de 1.5 */
   color: var(--ion-color-medium);
   background: rgba(255, 255, 255, 0.7);
-  padding: 12px;
-  border-radius: 8px;
+  padding: 10px; /* Reducido de 12px */
+  border-radius: 6px; /* Reducido de 8px */
   border: 1px solid rgba(0, 0, 0, 0.1);
   text-align: left;
   white-space: pre-wrap;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  max-height: 120px;
+  max-height: 100px; /* Reducido de 120px */
   overflow-y: auto;
 }
 
 .map-placeholder .error-content .retry-button {
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --border-radius: 8px;
+  --padding-start: 12px; /* Reducido de 16px */
+  --padding-end: 12px; /* Reducido de 16px */
+  --border-radius: 6px; /* Reducido de 8px */
+  --font-size: 14px; /* Añadido para hacer el botón más pequeño */
+}
+
+/* Estilos específicos para móvil - hacer el placeholder más compacto */
+@media (max-width: 768px) {
+  .map-placeholder {
+    padding: 12px; /* Aún más pequeño en móvil */
+  }
+  
+  .map-placeholder .error-content .error-icon {
+    font-size: 24px; /* Aún más pequeño en móvil */
+    margin-bottom: 8px;
+  }
+  
+  .map-placeholder .error-content .error-text h4 {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  
+  .map-placeholder .error-content .error-text .error-message {
+    font-size: 11px;
+    padding: 8px;
+    max-height: 80px;
+  }
+  
+  .map-placeholder .error-content .retry-button {
+    --font-size: 13px;
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
+  
+  .map-loading {
+    padding: 12px;
+  }
+  
+  .map-loading ion-spinner {
+    transform: scale(0.7);
+    margin-bottom: 8px;
+  }
+  
+  .map-loading p {
+    font-size: 12px;
+  }
 }
 
 /* Animación para carga de mapa */
@@ -98,16 +167,18 @@ capacitor-google-map::part(map) {
   height: 100%;
   width: 100%;
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 16px; /* Añadido padding más pequeño */
 }
 
 .map-loading ion-spinner {
-  margin-bottom: 16px;
+  margin-bottom: 12px; /* Reducido de 16px */
   --color: var(--ion-color-primary);
+  transform: scale(0.8); /* Hacer el spinner más pequeño */
 }
 
 .map-loading p {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px; /* Reducido de 14px */
   color: var(--ion-color-medium);
   text-align: center;
 }

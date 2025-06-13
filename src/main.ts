@@ -19,21 +19,20 @@ import { APP_PROVIDERS } from './app/shared/providers';
 // Importar el interceptor de autenticación
 import { authInterceptor } from './app/interceptors/auth.interceptor.function';
 
-// Registrar todos los iconos de Ionic disponibles
+// Registrar todos los iconos de Ionic
 const ioniconsToRegister: Record<string, string> = {};
 Object.keys(allIcons).forEach(key => {
   ioniconsToRegister[key] = (allIcons as any)[key];
 });
 addIcons(ioniconsToRegister);
 
-// Registrar datos de localización para español
 registerLocaleData(localeEs, 'es-ES');
 
 if (environment.production) {
   enableProdMode();
 }
 
-// Define una función para inicializar la aplicación
+// Función para inicializar la aplicación
 const initApp = async () => {
   try {
     await defineCustomElements(window);    
@@ -44,7 +43,6 @@ const initApp = async () => {
         provideHttpClient(
           withInterceptors([authInterceptor])
         ),
-        // Configuramos Ionic con el proveedor standalone
         provideIonicAngular({
           mode: 'md',
           animated: true,

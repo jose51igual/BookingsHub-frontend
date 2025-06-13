@@ -1,0 +1,58 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Autenticación</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="callback-container">
+    <!-- Indicador de procesamiento -->
+    @if (isProcessing()) {
+      <div class="processing-section">
+        <div class="spinner-container">
+          <ion-spinner name="dots" color="primary"></ion-spinner>
+        </div>
+        <h2>{{ message() }}</h2>
+        <p>Por favor, espera mientras procesamos tu autenticación...</p>
+      </div>
+    }
+
+    <!-- Mensaje de error -->
+    @if (hasError()) {
+      <div class="error-section">
+        <div class="error-icon">
+          <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
+        </div>
+        <h2>Error de Autenticación</h2>
+        <p>{{ message() }}</p>
+        
+        <div class="action-buttons">
+          <ion-button expand="block" (click)="retry()" color="primary">
+            <ion-icon name="refresh-outline" slot="start"></ion-icon>
+            Intentar de nuevo
+          </ion-button>
+          
+          <ion-button expand="block" fill="outline" routerLink="/iniciar-sesion">
+            <ion-icon name="log-in-outline" slot="start"></ion-icon>
+            Volver al Login
+          </ion-button>
+        </div>
+      </div>
+    }
+
+    <!-- Mensaje de éxito -->
+    @if (!isProcessing() && !hasError()) {
+      <div class="success-section">
+        <div class="success-icon">
+          <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+        </div>
+        <h2>¡Autenticación Exitosa!</h2>
+        <p>{{ message() }}</p>
+        
+        <div class="loading-indicator">
+          <ion-spinner name="crescent" color="success"></ion-spinner>
+        </div>
+      </div>
+    }
+  </div>
+</ion-content>

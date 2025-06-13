@@ -13,15 +13,9 @@
   </ion-refresher>
 
   <!-- Loading state -->
-  @if (isLoading()) {
-    <div class="loading-container">
-      <ion-icon name="hourglass-outline"></ion-icon>
-      <p>Cargando reseñas...</p>
-    </div>
-  }
 
   <!-- Error state -->
-  @if (error() && !isLoading()) {
+  @if (error() ) {
     <div class="error-container">
       <ion-icon name="alert-circle-outline"></ion-icon>
       <h3>Error</h3>
@@ -34,7 +28,7 @@
   }
 
   <!-- Content -->
-  @if (!isLoading() && !error()) {
+  @if (!error()) {
     <div class="reviews-container">
       <!-- Business header -->
       @if (business(); as businessData) {

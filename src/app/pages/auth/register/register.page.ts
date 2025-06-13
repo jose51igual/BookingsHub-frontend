@@ -183,10 +183,7 @@ export class RegisterPage {
     try {
       const formData = this.prepareFormData();
       
-      await this.notificationService.withLoading(
-        () => firstValueFrom(this.authService.register(formData)),
-        'Creando cuenta...'
-      );
+      await firstValueFrom(this.authService.register(formData));
       
       await this.notificationService.showSuccess(
         'Registro exitoso',

@@ -8,7 +8,6 @@ import {
   ToastController,
 } from '@ionic/angular/standalone';
 
-
 // Services
 import { ServiceService } from '@services/api/service.service';
 import { BusinessService } from '@services/api/business.service';
@@ -408,7 +407,6 @@ export class ServiceDetailPage {
       await loading.dismiss();
     }
   }
-
 
   private async showToast(message: string, color: 'success' | 'danger' = 'success') {
     const toast = await this.toastController.create({

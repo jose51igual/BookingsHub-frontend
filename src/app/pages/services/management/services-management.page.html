@@ -26,47 +26,53 @@
   </div>
 
   <!-- Loading State -->
-  <div *ngIf="isLoading()" class="loading-container">
-    <ion-spinner name="crescent" color="primary"></ion-spinner>
-    <p>Cargando servicios...</p>
-  </div>
+  @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+      <p>Cargando servicios...</p>
+    </div>
+  }
 
   <!-- Services Grid -->
-  <div *ngIf="!isLoading()" class="services-grid">
+  @if (!isLoading()) {
+    <div class="services-grid">
     
-    <!-- Empty State -->
-    <div *ngIf="services().length === 0" class="empty-state">
-      <ion-icon name="business-outline" class="empty-icon"></ion-icon>
-      <h2>No hay servicios</h2>
-      <p>Crea tu primer servicio para empezar a recibir reservas</p>
-      <ion-button 
-        expand="block" 
-        color="primary" 
-        size="large"
-        (click)="addService()">
-        <ion-icon name="add-outline" slot="start"></ion-icon>
-        Crear Primer Servicio
-      </ion-button>
-    </div>
+      <!-- Empty State -->
+      @if (services().length === 0) {
+        <div class="empty-state">
+      <ion-icon name="business-outline" class="empty-icon"></ion-icon>          <h2>No hay servicios</h2>
+          <p>Crea tu primer servicio para empezar a recibir reservas</p>
+          <ion-button 
+            expand="block" 
+            color="primary" 
+            size="large"
+            (click)="addService()">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            Crear Primer Servicio
+          </ion-button>
+        </div>
+      }
 
-    <!-- Services List -->
-    <div *ngIf="services().length > 0" class="services-list">
-      <ion-grid>
-        <ion-row>
-          <ion-col size="12" size-md="6" size-lg="4" *ngFor="let service of services()">
-            <ion-card class="service-card" [class.inactive]="service.status === 'inactive'">
-              
-              <!-- Service Image -->
-              <div class="service-image" [attr.data-category]="service.category || 'Otros'">
-                <img 
-                  *ngIf="service.image" 
-                  [src]="service.image" 
-                  [alt]="service.name"
-                  class="custom-image">
-                <div class="image-overlay">
-                  <ion-icon [name]="getCategoryIcon(service.category || 'Otros')" class="category-icon"></ion-icon>
-                </div>
-              </div>
+      <!-- Services List -->
+      @if (services().length > 0) {
+        <div class="services-list">
+        <ion-grid>
+          <ion-row>
+            @for (service of services(); track service) {
+              <ion-col size="12" size-md="6" size-lg="4">
+                <ion-card class="service-card" [class.inactive]="service.status === 'inactive'">
+                  
+                  <!-- Service Image -->
+                  <div class="service-image" [attr.data-category]="service.category || 'Otros'">
+                    @if (service.image) {
+                      <img [src]="service.image" 
+                           [alt]="service.name"
+                           class="custom-image">
+                    }
+                    <div class="image-overlay">
+                      <ion-icon [name]="getCategoryIcon(service.category || 'Otros')" class="category-icon"></ion-icon>
+                    </div>
+                  </div>
 
               <!-- Service Content -->
               <ion-card-header>
@@ -78,7 +84,9 @@
                     {{ (service.status === 'active') ? 'Activo' : 'Inactivo' }}
                   </ion-badge>
                 </div>
-                <p class="service-category" *ngIf="service.category">{{ service.category }}</p>
+                @if (service.category) {
+                  <p class="service-category">{{ service.category }}</p>
+                }
               </ion-card-header>
 
               <ion-card-content>
@@ -116,11 +124,14 @@
                 </div>
               </ion-card-content>
             </ion-card>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+              </ion-col>
+            }
+          </ion-row>
+        </ion-grid>
+        </div>
+      }
     </div>
-  </div>
+  }
 
   <!-- Floating Action Button (alternativo para móvil) -->
   <ion-fab vertical="bottom" horizontal="end" class="fab-button">

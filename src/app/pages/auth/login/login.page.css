@@ -322,3 +322,12 @@ ion-button[fill="clear"] {
 ion-button[fill="clear"]:hover {
   --background: rgba(var(--ion-color-primary-rgb), 0.04); /* Un hover sutil */
 }
+
+/* Estilos para el botón de Google */
+.google-button {
+  --color: white;
+  --border-radius: 12px;
+  height: 48px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}

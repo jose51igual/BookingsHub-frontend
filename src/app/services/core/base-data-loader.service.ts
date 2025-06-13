@@ -44,11 +44,6 @@ export class BaseDataLoaderService {
         loadingSignal.set(true);
       }
 
-      // Mostrar loading visual si se solicita
-      if (showLoading) {
-        loading = await this.notificationService.showLoading({ message: 'Cargando...' });
-      }
-
       // Ejecutar operación
       const result = await operation();
 

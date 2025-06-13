@@ -228,7 +228,6 @@ export class ClientBookingsPage {
   async updateStatus(booking: any, newStatus: string) {
     const normalizedStatus = mapBackendStatusToFrontend(newStatus);
     
-    await this.notificationService.withLoading(async () => {
       // Usar el método correcto según el estado
       let apiCall;
       switch (normalizedStatus) {
@@ -253,7 +252,6 @@ export class ClientBookingsPage {
         b.id === booking.id ? { ...b, status: normalizedStatus } : b
       );
       this.bookings.set(updatedBookings);
-    }, 'Actualizando estado...');
     
     await this.notificationService.showSuccess('Éxito', 'El estado de la reserva ha sido actualizado');
   }

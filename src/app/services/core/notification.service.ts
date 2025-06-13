@@ -1,17 +1,15 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { AlertController, LoadingController, ToastController } from '@ionic/angular';
-import { NotificationConfig, LoadingConfig } from '@interfaces/index';
+import { AlertController, ToastController } from '@ionic/angular';
+import { NotificationConfig } from '@interfaces/index';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
   private readonly alertController = inject(AlertController);
-  private readonly loadingController = inject(LoadingController);
   private readonly toastController = inject(ToastController);
 
   // Signals para estado de notificaciones
-  readonly isLoading = signal(false);
   readonly activeNotifications = signal<NotificationConfig[]>([]);
 
   // Métodos para mostrar diferentes tipos de notificaciones
@@ -99,49 +97,6 @@ export class NotificationService {
 
       await alert.present();
     });
-  }
-
-  // Método para mostrar loading
-  async showLoading(config: LoadingConfig): Promise<HTMLIonLoadingElement> {
-    this.isLoading.set(true);
-    
-    const loading = await this.loadingController.create({
-      message: config.message,
-      spinner: config.spinner || 'crescent',
-      duration: config.duration
-    });
-
-    await loading.present();
-
-    // Auto-dismiss cuando se complete la duración o cuando se llame a dismiss
-    loading.onDidDismiss().then(() => {
-      this.isLoading.set(false);
-    });
-
-    return loading;
-  }
-
-  // Método para ocultar loading
-  async hideLoading(): Promise<void> {
-    this.isLoading.set(false);
-    await this.loadingController.dismiss();
-  }
-
-  // Método utilitario para operaciones async con loading
-  async withLoading<T>(
-    operation: () => Promise<T>, 
-    loadingMessage = 'Cargando...'
-  ): Promise<T> {
-    const loading = await this.showLoading({ message: loadingMessage });
-    
-    try {
-      const result = await operation();
-      await loading.dismiss();
-      return result;
-    } catch (error) {
-      await loading.dismiss();
-      throw error;
-    }
   }
 
   // Métodos privados para obtener colores e iconos

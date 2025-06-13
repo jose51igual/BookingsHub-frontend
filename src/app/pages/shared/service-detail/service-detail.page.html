@@ -9,16 +9,8 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- Indicador de Carga -->
-  @if (isLoading()) {
-    <div class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Cargando detalles del servicio...</p>
-    </div>
-  }
-
   <!-- Mensaje de Error -->
-  @if (error() && !isLoading()) {
+  @if (error()) {
     <div class="error-container">
       <ion-icon name="alert-circle-outline" color="danger"></ion-icon>
       <p>{{ error() }}</p>
@@ -30,7 +22,7 @@
   }
 
   <!-- Contenido Principal del Servicio -->
-  @if (!isLoading() && !error() && service()) {
+  @if (!error() && service()) {
     <div class="service-content">
         <div class="business-header" (click)="navigateToBusinessDetail()">
           <ion-icon name="storefront-outline" color="tertiary"></ion-icon>
@@ -170,7 +162,7 @@
             <ion-button 
               expand="block" 
               (click)="confirmBooking()" 
-              [disabled]="!canBook() || isLoading()"
+              [disabled]="!canBook()"
               class="confirm-button">
               <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
               Confirmar Reserva

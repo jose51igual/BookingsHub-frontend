@@ -97,7 +97,6 @@ export class BusinessProfilePage {
       }
 
       // Usar NotificationService para loading - patrón estándar
-      await this.notificationService.withLoading(async () => {
         // Llamada real al API para obtener el negocio del usuario
         const response: any = await firstValueFrom(this.businessService.getBusinessByUserId());
         
@@ -134,7 +133,6 @@ export class BusinessProfilePage {
           // Si no tiene negocio, activar modo de creación
           this.isEditMode.set(true);
         }
-      }, 'Cargando perfil del negocio...');
       
     } catch (error: any) {
       console.error('Error loading business profile:', error);
@@ -190,8 +188,6 @@ export class BusinessProfilePage {
       const businessData = this.businessForm.value;
       const currentBusiness = this.businessData();
       
-      // Usar NotificationService.withLoading para manejo unificado - patrón estándar
-      await this.notificationService.withLoading(async () => {
         if (currentBusiness?.id) {
           const businessDataClean = {
             name: businessData.name || '',
@@ -210,7 +206,6 @@ export class BusinessProfilePage {
             description: businessData.description || currentBusiness.description || '',
             phone: businessData.phone || currentBusiness.phone,
             address: businessData.address || currentBusiness.address,
-            // city: businessData.city || currentBusiness.city || '',
             category: businessData.category || currentBusiness.category || '',
             updated_at: new Date().toISOString()
           };
@@ -220,7 +215,6 @@ export class BusinessProfilePage {
           
           await this.notificationService.showSuccess('Éxito', 'Negocio actualizado correctamente');
         } else {
-          // Crear nuevo negocio - llamada real a la API
           const businessDataClean = {
             name: businessData.name || '',
             description: businessData.description || '',
@@ -231,7 +225,6 @@ export class BusinessProfilePage {
           };
           const response: any = await firstValueFrom(this.businessService.createBusiness(businessDataClean));
           
-          // Manejar tanto el formato {success: true, data: {...}} como el formato directo
           let businessInfo;
           if (response && response.success && response.data) {
             businessInfo = response.data;
@@ -242,7 +235,6 @@ export class BusinessProfilePage {
           }
           
           if (businessInfo) {
-            // Crear nuevo negocio con los datos de la respuesta
             const newBusiness: BusinessProfile = {
               id: businessInfo.id,
               name: businessInfo.name || businessData.name || '',
@@ -260,11 +252,9 @@ export class BusinessProfilePage {
             this.isEditMode.set(false);
             
             await this.notificationService.showSuccess('Éxito', 'Negocio creado correctamente');
-            // Redirigir al panel de negocio después de crear
             this.router.navigate(['/panel-negocio']);
           }
         }
-      }, currentBusiness?.id ? 'Actualizando negocio...' : 'Creando negocio...');
       
     } catch (error: any) {
       console.error('Error saving business:', error);

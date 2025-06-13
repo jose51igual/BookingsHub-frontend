@@ -72,10 +72,7 @@
             expand="block" 
             type="submit" 
             color="primary"
-            [disabled]="employeeForm.invalid || isLoading()">
-            @if (isLoading()) {
-              <ion-spinner name="crescent"></ion-spinner>
-            }
+            [disabled]="employeeForm.invalid ">
             {{ isEditing() ? 'Actualizar Empleado' : 'Agregar Empleado' }}
           </ion-button>
           
@@ -100,14 +97,8 @@
       <span class="employee-count">{{ employees().length }} empleado(s)</span>
     </div>
 
-    @if (isLoading()) {
-      <div class="loading-container">
-        <ion-spinner name="crescent"></ion-spinner>
-        <p>Cargando empleados...</p>
-      </div>
-    }
 
-    @if (!isLoading() && employeesValid()) {
+    @if (employeesValid()) {
       <div class="employees-grid">
         @for (employee of employees(); track employee.id) {
           <div 

@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthSignalService, StorageService } from './services/index';
-import { LoadingComponent } from './components/ui/loading/loading.component';
 
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 
@@ -15,7 +14,6 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   imports: [
     CommonModule, 
     RouterModule, 
-    LoadingComponent,
     IonApp,
     IonRouterOutlet
   ],

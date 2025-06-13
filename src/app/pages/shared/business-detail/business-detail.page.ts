@@ -129,14 +129,12 @@ export class BusinessDetailPage implements OnDestroy {
   private async loadBusinessServices(): Promise<void> {
     try {
       const response = await firstValueFrom(this.serviceService.getServicesByBusiness(this.businessId()));
-      console.log('Services response:', response); // Debug log
       
       // Usar directamente la respuesta del servicio
       this.services.set(response || []);
       
       // Asegurar que services es un array
       if (!Array.isArray(response)) {
-        console.warn('Services no es un array:', response);
         this.services.set([]);
       }
     } catch (error) {
@@ -147,9 +145,7 @@ export class BusinessDetailPage implements OnDestroy {
 
   private async loadBusinessReviews(): Promise<void> {
     try {
-      const response = await firstValueFrom(this.reviewService.getBusinessReviews(this.businessId()));
-      console.log('Reviews response:', response); // Debug log
-      
+      const response = await firstValueFrom(this.reviewService.getBusinessReviews(this.businessId()));      
       // Extraer los datos del response del API
       const reviews = response || [];
       this.mockReviews.set(this.mapReviewsToViewModel(reviews));
@@ -222,7 +218,6 @@ export class BusinessDetailPage implements OnDestroy {
           }
         },
         error: (error) => {
-          console.error('Error al geocodificar dirección:', error);
           this.setMapError('Error al obtener las coordenadas del mapa');
         },
         complete: () => {
@@ -262,13 +257,6 @@ export class BusinessDetailPage implements OnDestroy {
     const authenticated = this.isAuthenticated();
     const role = this.userRole();
     
-    console.log('DEBUG - handleBookingClick:', {
-      authenticated,
-      role,
-      condition: authenticated && role === 'cliente',
-      serviceId
-    });
-    
     if (authenticated && role === 'cliente') {
       this.navigateToServiceDetail(serviceId);
     } else {
@@ -289,17 +277,6 @@ export class BusinessDetailPage implements OnDestroy {
     }
   }
 
-  onMapLoaded(event: any): void {
-    console.log('Mapa cargado:', event);
-    // Mapa cargado correctamente
-  }
-
-  onMapLoadError(error: any): void {
-    console.error('Error al cargar el mapa:', error);
-    this.setMapError(typeof error === 'string' ? error : 'Error al cargar el mapa');
-  }
-
-  // Métodos para interacciones del usuario
   async addService(): Promise<void> {
     // Navegar a la página de creación de servicios
     await this.router.navigate(['/panel-negocio/servicio-nuevo']);

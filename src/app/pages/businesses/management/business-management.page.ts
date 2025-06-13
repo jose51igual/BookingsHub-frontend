@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { BusinessService, ServiceService, EmployeeService, BookingService, AnalyticsService } from '@services/api/index';
 import { NotificationService, BaseDataLoaderService } from '@services/index';
-import { ErrorAlertComponent } from '@components/index';
 import { Business, Service, Employee, Booking, WeeklyStats } from '@interfaces/index';
 import { APP_ROUTES } from '@utils/constants';
 import { formatRating } from '@utils/common.utils';
@@ -18,8 +17,7 @@ import { formatRating } from '@utils/common.utils';
   imports: [
     CommonModule,
     IonicModule,
-    RouterModule,
-    ErrorAlertComponent
+    RouterModule
   ]
 })
 export class BusinessManagementPage {

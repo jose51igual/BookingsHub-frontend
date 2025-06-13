@@ -2,13 +2,12 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
-  // Ruta raíz que redirije según el rol del usuario
-  {
-    path: '',
-    canActivate: [AuthGuard],
-    data: { roleRedirect: true },
-    loadComponent: () => import('./pages/auth/login/login.page').then(m => m.LoginPage)
-  },
+{
+  path: '',
+  canActivate: [AuthGuard],
+  data: { roleRedirect: true },
+  loadComponent: () => import('./pages/shared/home/home.page').then(m => m.HomePage)
+},
   
   // Layout principal para rutas públicas y de clientes
   {
@@ -152,6 +151,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { allowUnauthenticated: true, redirectAuthenticated: true },
     loadComponent: () => import('./pages/auth/register-type/register-type.page').then(m => m.RegisterTypePage)
+  },
+  {
+    path: 'auth/callback',
+    canActivate: [AuthGuard],
+    data: { allowUnauthenticated: true },
+    loadComponent: () => import('./pages/auth/callback/callback.page').then(m => m.CallbackPage)
   },
   {
     path: '**',

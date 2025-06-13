@@ -18,6 +18,11 @@
 
   <!-- Días del mes -->
   <div class="calendar-grid">
+    @if (isLoading()) {
+      <div class="loading-overlay">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+    }
     
     @if (hasError()) {
       <div class="error-message">

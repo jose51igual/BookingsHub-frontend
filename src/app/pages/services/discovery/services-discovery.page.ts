@@ -5,13 +5,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { BusinessService } from '@services/api';
 import { AuthSignalService, BaseDataLoaderService } from '@services/index';
 import { ServiceCardComponent } from '@app/components/business/service-card/service-card.component';
-import { LoadingIndicatorComponent } from '@app/components/ui/loading-indicator/loading-indicator.component';
 import { EmptyStateComponent } from '@app/components/ui/empty-state/empty-state.component';
 import { Category, ServiceBusiness } from '@interfaces/index';
 import { IonicModule } from '@ionic/angular';
 import { BUSINESS_CATEGORIES, normalizeCategory, CATEGORY_MAPPING } from '@utils/constants';
 import { isBusinessOpen } from '@utils/date.utils';
-
 
 @Component({
   selector: 'app-services',
@@ -23,7 +21,6 @@ import { isBusinessOpen } from '@utils/date.utils';
     FormsModule,
     IonicModule,
     ServiceCardComponent,
-    LoadingIndicatorComponent,
     EmptyStateComponent
   ]
 })

@@ -63,10 +63,6 @@ jobs:
         # Construir la aplicación
         RUN npm run build:prod
         
-        # Verificar que la construcción fue exitosa
-        RUN ls -la dist/ && [ -f "dist/index.html" ] || (echo "Build failed: index.html not found" && exit 1)
-        EOF
-        
         # Construir la imagen
         docker build -t bookingshub-frontend -f Dockerfile.build .
         

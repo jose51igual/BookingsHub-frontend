@@ -20,7 +20,7 @@ jobs:
         node-version: '22'
         cache: 'npm'
         
-    - name: Create production environment file
+    - name: Crear archivo de entorno de producción
       run: |
         cat > src/environments/environment.prod.ts << 'EOF'
         export const environment = {
@@ -89,36 +89,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT || 22 }}
-        script: |          
-          # Configurar permisos correctos para los archivos subidos
-          echo "🔧 Configurando permisos..."
-          sudo chown -R www-data:www-data /var/www/bookings-hub-frontend/current
-          sudo chmod -R 644 /var/www/bookings-hub-frontend/current
-          sudo find /var/www/bookings-hub-frontend/current -type d -exec chmod 755 {} \;
-          
-          # Verificar permisos específicos para archivos críticos
-          sudo chmod 644 /var/www/bookings-hub-frontend/current/index.html
-          sudo chmod 755 /var/www/bookings-hub-frontend/current
-          
-          # Verificar que los archivos son legibles por nginx
-          echo "📋 Verificando permisos:"
-          ls -la /var/www/bookings-hub-frontend/current/index.html
-          ls -la /var/www/bookings-hub-frontend/current/ | head -5
-          
-          # Verificar que nginx puede leer el archivo
-          sudo -u www-data test -r /var/www/bookings-hub-frontend/current/index.html && echo "✅ index.html es legible por www-data" || echo "❌ index.html no es legible por www-data"
-          
-          # Crear favicon.ico si no existe (para evitar errores 404)
-          if [ ! -f "/var/www/bookings-hub-frontend/current/favicon.ico" ]; then
-            if [ -f "/var/www/bookings-hub-frontend/current/assets/icon/favicon.png" ]; then
-              sudo cp /var/www/bookings-hub-frontend/current/assets/icon/favicon.png /var/www/bookings-hub-frontend/current/favicon.ico
-              sudo chown www-data:www-data /var/www/bookings-hub-frontend/current/favicon.ico
-              sudo chmod 644 /var/www/bookings-hub-frontend/current/favicon.ico
-              echo "✅ favicon.ico creado desde favicon.png"
-            else
-              echo "⚠️ favicon.ico no encontrado, los navegadores mostrarán un error 404 pero la app funcionará"
-            fi
-          fi
+        script: |
           
           # Verificar que Nginx esté funcionando
           if sudo systemctl is-active --quiet nginx; then
@@ -136,5 +107,5 @@ jobs:
             sudo ls -1t | tail -n +6 | xargs -r sudo rm -rf
             echo "Backups antiguos limpiados"
           fi
-          
-          echo "✅ Frontend deployment completed successfully!"
+
+          echo "Despliegue completado correctamente"

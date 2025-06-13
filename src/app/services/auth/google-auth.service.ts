@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, from } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { map, switchMap, tap, catchError } from 'rxjs/operators';
 import { AuthSignalService } from './auth-signal.service';
 import { environment } from '@environments/environment';
 import { AuthResponse } from '@interfaces/index';
+import { throwError } from 'rxjs';
 
 declare var google: any;
 
@@ -13,6 +14,7 @@ declare var google: any;
 })
 export class GoogleAuthService {
   private googleAuthInitialized = false;
+  private scriptLoadPromise: Promise<void> | null = null;
 
   constructor(
     private http: HttpClient,
@@ -22,13 +24,24 @@ export class GoogleAuthService {
   /**
    * Inicializa la API de Google Sign-In
    */
-  async initGoogleAuth() {
+  async initGoogleAuth(): Promise<void> {
     if (this.googleAuthInitialized) {
       return;
     }
     
-    // Cargamos la biblioteca de Google
-    return new Promise<void>((resolve) => {
+    // Evitar cargar el script múltiples veces
+    if (this.scriptLoadPromise) {
+      return this.scriptLoadPromise;
+    }
+    
+    this.scriptLoadPromise = new Promise<void>((resolve, reject) => {
+      // Verificar si el script ya está cargado
+      if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+        this.googleAuthInitialized = true;
+        resolve();
+        return;
+      }
+      
       // Cargar el script de la API de Google si aún no está cargado
       if (!document.getElementById('google-auth-script')) {
         const script = document.createElement('script');
@@ -38,16 +51,34 @@ export class GoogleAuthService {
         script.defer = true;
         
         script.onload = () => {
-          this.googleAuthInitialized = true;
-          resolve();
+          // Esperar un poco para que la API se inicialice completamente
+          setTimeout(() => {
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+              this.googleAuthInitialized = true;
+              resolve();
+            } else {
+              reject(new Error('Google Identity Services API no se cargó correctamente'));
+            }
+          }, 100);
+        };
+        
+        script.onerror = () => {
+          reject(new Error('Error al cargar la biblioteca de Google Identity Services'));
         };
         
         document.body.appendChild(script);
       } else {
-        this.googleAuthInitialized = true;
-        resolve();
+        // Script ya existe, verificar si Google está disponible
+        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+          this.googleAuthInitialized = true;
+          resolve();
+        } else {
+          reject(new Error('Google Identity Services API no está disponible'));
+        }
       }
     });
+    
+    return this.scriptLoadPromise;
   }
 
   /**

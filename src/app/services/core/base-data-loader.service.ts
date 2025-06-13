@@ -10,7 +10,7 @@ import { NotificationService } from './notification.service';
   providedIn: 'root'
 })
 export class BaseDataLoaderService {
-  private readonly notificationService = inject(NotificationService);
+  private notificationService = inject(NotificationService);
 
   /**
    * Wrapper genérico para operaciones async con manejo automático de loading y errores

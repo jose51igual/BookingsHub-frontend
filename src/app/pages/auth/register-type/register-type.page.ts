@@ -16,11 +16,11 @@ import { RouterModule } from '@angular/router';
   ]
 })
 export class RegisterTypePage {
-  private readonly router = inject(Router);
-  private readonly animationCtrl = inject(AnimationController);
+  private router = inject(Router);
+  private animationCtrl = inject(AnimationController);
 
   // Signals
-  readonly selectedType = signal<string | null>(null);
+ selectedType = signal<string | null>(null);
 
   // Methods
   navigateToRegister = (type: 'client' | 'business'): void => {

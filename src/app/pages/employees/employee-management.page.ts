@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-import { EmployeeService } from '@services/api';
+import { EmployeeService, BusinessService } from '@services/api';
 import { AuthSignalService, NotificationService, BaseDataLoaderService } from '@services/index';
 import { Employee } from '@interfaces/index';
 import { APP_ROUTES, EMPLOYEE_SPECIALTIES } from '@utils/constants';
@@ -25,30 +25,30 @@ import { showConfirmAlert } from '@utils/alert.utils';
 })
 export class EmployeeManagementPage {
   // Signals para estado reactivo
-  readonly employees = signal<Employee[]>([]);
-  readonly businessId = signal<number | null>(null);
-  readonly isLoading = signal<boolean>(false);
-  readonly isEditing = signal<boolean>(false);
-  readonly editingEmployeeId = signal<number | null>(null);
+ employees = signal<Employee[]>([]);
+ businessId = signal<number | null>(null);
+ isLoading = signal<boolean>(false);
+ isEditing = signal<boolean>(false);
+ editingEmployeeId = signal<number | null>(null);
 
   // Computed signals
-  readonly hasEmployees = computed(() => this.employees().length > 0);
-  readonly canAddEmployee = computed(() => !!this.businessId() && !this.isLoading());
-  readonly employeesValid = computed(() => Array.isArray(this.employees()));
+ hasEmployees = computed(() => this.employees().length > 0);
+ canAddEmployee = computed(() => !!this.businessId() && !this.isLoading());
+ employeesValid = computed(() => Array.isArray(this.employees()));
 
   // Servicios inyectados
-  private readonly employeeService = inject(EmployeeService);
-  private readonly authService = inject(AuthSignalService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly dataLoader = inject(BaseDataLoaderService);
-  private readonly router = inject(Router);
-  private readonly formBuilder = inject(FormBuilder);
+  private employeeService = inject(EmployeeService);
+  private businessService = inject(BusinessService);
+  private authService = inject(AuthSignalService);
+  private dataLoader = inject(BaseDataLoaderService);
+  private router = inject(Router);
+  private formBuilder = inject(FormBuilder);
 
   // Formulario reactivo
-  readonly employeeForm: FormGroup = createEmployeeForm(this.formBuilder);
+ employeeForm: FormGroup = createEmployeeForm(this.formBuilder);
 
   // Constantes
-  readonly specialtyOptions = EMPLOYEE_SPECIALTIES;
+ specialtyOptions = EMPLOYEE_SPECIALTIES;
 
   constructor() {
     this.loadBusinessInfo();
@@ -56,13 +56,56 @@ export class EmployeeManagementPage {
 
   private async loadBusinessInfo(): Promise<void> {
     const user = this.authService.user;
-    if (!user || user.role !== 'negocio') {
+    console.log('🔍 Usuario actual:', user);
+    
+    if (!user) {
+      console.log('❌ No hay usuario autenticado');
       this.router.navigate([APP_ROUTES.HOME]);
       return;
     }
 
-    // TODO: Obtener business ID del usuario autenticado
-    // Por ahora asumimos que existe
+    if (user.role !== 'negocio') {
+      console.log('❌ Usuario no es negocio. Rol actual:', user.role);
+      this.router.navigate([APP_ROUTES.HOME]);
+      return;
+    }
+
+    console.log('✅ Usuario válido, obteniendo negocio...');
+
+    // Obtener el negocio del usuario autenticado
+    const business = await this.dataLoader.fromObservable(
+      this.businessService.getBusinessByUserId(),
+      {
+        loadingSignal: this.isLoading,
+        errorMessage: 'Error al cargar información del negocio'
+      }
+    );
+
+    console.log('🏢 Negocio obtenido:', business);
+
+    if (business) {
+      // Manejar diferentes formatos de respuesta
+      let businessId = null;
+      
+      if (business.id) {
+        businessId = business.id;
+      } else if ((business as any).data && (business as any).data.id) {
+        businessId = (business as any).data.id;
+      } else if (Array.isArray(business) && business.length > 0) {
+        businessId = business[0].id;
+      }
+
+      console.log('🆔 Business ID extraído:', businessId);
+
+      if (businessId) {
+        this.businessId.set(businessId);
+        await this.loadEmployees();
+        return;
+      }
+    }
+
+    console.log('❌ No se pudo obtener el negocio válido');
+    // Por ahora, en lugar de redirigir, usamos un ID temporal para debugging
     this.businessId.set(1);
     await this.loadEmployees();
   }
@@ -99,7 +142,7 @@ export class EmployeeManagementPage {
     }
   }
 
-  readonly addEmployee = async (): Promise<void> => {
+ addEmployee = async (): Promise<void> => {
     if (!this.businessId() || this.employeeForm.invalid) return;
 
     const employeeData = {
@@ -121,7 +164,7 @@ export class EmployeeManagementPage {
     }
   };
 
-  readonly updateEmployee = async (): Promise<void> => {
+ updateEmployee = async (): Promise<void> => {
     if (!this.editingEmployeeId() || this.employeeForm.invalid) return;
 
     const updated = await this.dataLoader.fromObservable(
@@ -138,13 +181,13 @@ export class EmployeeManagementPage {
     }
   };
 
-  readonly editEmployee = (employee: Employee): void => {
+ editEmployee = (employee: Employee): void => {
     this.isEditing.set(true);
     this.editingEmployeeId.set(employee.id || null);
     this.employeeForm.patchValue(employee);
   };
 
-  readonly deleteEmployee = async (employeeId: number): Promise<void> => {
+ deleteEmployee = async (employeeId: number): Promise<void> => {
     const confirmed = await showConfirmAlert(
       'Confirmar eliminación',
       '¿Estás seguro de que quieres eliminar este empleado?',
@@ -167,24 +210,24 @@ export class EmployeeManagementPage {
     }
   };
 
-  readonly resetForm = (): void => {
+ resetForm = (): void => {
     this.employeeForm.reset();
     this.employeeForm.patchValue({ specialties: [] });
     this.isEditing.set(false);
     this.editingEmployeeId.set(null);
   };
 
-  readonly onSpecialtyChange = (event: any): void => {
+ onSpecialtyChange = (event: any): void => {
     const selectedSpecialties = event.detail.value;
     this.employeeForm.patchValue({ specialties: selectedSpecialties });
   };
 
-  readonly isSpecialtySelected = (specialty: string): boolean => {
+ isSpecialtySelected = (specialty: string): boolean => {
     const currentSpecialties = this.employeeForm.get('specialties')?.value || [];
     return currentSpecialties.includes(specialty);
   };
 
-  readonly toggleSpecialty = (specialty: string): void => {
+ toggleSpecialty = (specialty: string): void => {
     const currentSpecialties = this.employeeForm.get('specialties')?.value || [];
     let updatedSpecialties;
 
@@ -197,7 +240,7 @@ export class EmployeeManagementPage {
     this.employeeForm.patchValue({ specialties: updatedSpecialties });
   };
 
-  readonly goBack = (): void => {
+ goBack = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_PROFILE]);
   };
 }

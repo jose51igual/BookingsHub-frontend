@@ -42,7 +42,7 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/shared/service-detail/service-detail.page').then(m => m.ServiceDetailPage)
       },
       
-      // Rutas protegidas para clientes
+      // Rutas protegidas
       {
         path: 'mis-reservas',
         canActivate: [AuthGuard],

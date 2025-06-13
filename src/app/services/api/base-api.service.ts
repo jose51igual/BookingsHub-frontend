@@ -23,12 +23,12 @@ export class BaseApiService {
     protected storageService: StorageService
   ) { }
 
-  // Helper methods for authenticated requests
+  // Metodo para obtener los headers de autenticación
+  // que se usará en las peticiones HTTP
   protected async getAuthHeaders(): Promise<HttpHeaders> {
     try {
       const token = await this.storageService.get('auth_token');
       if (!token) {
-        console.warn('⚠️ No se encontró token de autenticación');
         return new HttpHeaders({
           'Content-Type': 'application/json',
           'Accept': 'application/json'
@@ -55,12 +55,6 @@ export class BaseApiService {
         return this.http.get(url, { headers }).pipe(
           retry(1),
           catchError(error => {
-            console.error('🔐 API Service - Error in getWithAuth:', {
-              url,
-              status: error.status,
-              statusText: error.statusText,
-              error: error.error
-            });
             return this.handleError(error);
           })
         );
@@ -106,11 +100,8 @@ export class BaseApiService {
     let errorMessage = '';
     
     if (error.status === 0) {
-      // Error de conectividad o CORS
-      console.error('Error de red o CORS:', error);
       errorMessage = 'Error de conexión: verifica tu conexión a internet o si el servidor está disponible.';
       
-      // Podemos intentar utilizar un proxy CORS si es un error de CORS
       if (error.message && error.message.includes('CORS')) {
         return throwError(() => ({
           error: error,

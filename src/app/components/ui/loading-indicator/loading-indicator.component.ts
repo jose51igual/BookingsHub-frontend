@@ -60,9 +60,9 @@ import { IonicModule } from '@ionic/angular';
 })
 export class LoadingIndicatorComponent {
   // Inputs
-  readonly show = input(false);
-  readonly message = input<string>('');
-  readonly spinnerType = input<string>('crescent');
-  readonly color = input<string>('primary');
-  readonly fullscreen = input(false);
+ show = input(false);
+ message = input<string>('');
+ spinnerType = input<string>('crescent');
+ color = input<string>('primary');
+ fullscreen = input(false);
 }

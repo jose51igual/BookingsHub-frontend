@@ -22,29 +22,29 @@ import { formatRating } from '@utils/common.utils';
 })
 export class BusinessManagementPage {
   // Signals reactivos para el estado
-  readonly businessData = signal<Business | null>(null);
-  readonly services = signal<Service[]>([]);
-  readonly employees = signal<Employee[]>([]);
-  readonly recentBookings = signal<Booking[]>([]);
-  readonly weeklyStats = signal<WeeklyStats>({ bookings: 0, revenue: 0, rating: 0 });
-  readonly isLoading = signal<boolean>(false);
-  readonly errorMessage = signal<string | null>(null);
+ businessData = signal<Business | null>(null);
+ services = signal<Service[]>([]);
+ employees = signal<Employee[]>([]);
+ recentBookings = signal<Booking[]>([]);
+ weeklyStats = signal<WeeklyStats>({ bookings: 0, revenue: 0, rating: 0 });
+ isLoading = signal<boolean>(false);
+ errorMessage = signal<string | null>(null);
   
   // Computed signals
-  readonly hasBusinessData = computed(() => !!this.businessData());
-  readonly servicesCount = computed(() => this.services().length);
-  readonly employeesCount = computed(() => this.employees().length);
-  readonly bookingsCount = computed(() => this.recentBookings().length);
+ hasBusinessData = computed(() => !!this.businessData());
+ servicesCount = computed(() => this.services().length);
+ employeesCount = computed(() => this.employees().length);
+ bookingsCount = computed(() => this.recentBookings().length);
   
   // Inyección moderna de servicios
-  private readonly router = inject(Router);
-  private readonly businessService = inject(BusinessService);
-  private readonly serviceService = inject(ServiceService);
-  private readonly employeeService = inject(EmployeeService);
-  private readonly bookingService = inject(BookingService);
-  private readonly analyticsService = inject(AnalyticsService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly dataLoader = inject(BaseDataLoaderService);
+  private router = inject(Router);
+  private businessService = inject(BusinessService);
+  private serviceService = inject(ServiceService);
+  private employeeService = inject(EmployeeService);
+  private bookingService = inject(BookingService);
+  private analyticsService = inject(AnalyticsService);
+  private notificationService = inject(NotificationService);
+  private dataLoader = inject(BaseDataLoaderService);
 
   constructor() {
     this.loadAllData();
@@ -134,35 +134,35 @@ export class BusinessManagementPage {
   }
 
   // Métodos de navegación simplificados usando constantes
-  readonly navigateToServices = (): void => {
+ navigateToServices = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_SERVICES]);
   };
 
-  readonly navigateToAvailability = (): void => {
+ navigateToAvailability = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_AVAILABILITY]);
   };
 
-  readonly navigateToBookings = (): void => {
+ navigateToBookings = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_BOOKINGS]);
   };
 
-  readonly navigateToAnalytics = (): void => {
+ navigateToAnalytics = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_ANALYTICS]);
   };
 
-  readonly navigateToSettings = (): void => {
+ navigateToSettings = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_SETTINGS]);
   };
 
-  readonly navigateToEmployees = (): void => {
+ navigateToEmployees = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_EMPLOYEES]);
   };
 
-  readonly editService = (serviceId: number): void => {
+ editService = (serviceId: number): void => {
     this.router.navigate([APP_ROUTES.SERVICE_EDIT(serviceId)]);
   };
 
-  readonly createNewService = (): void => {
+ createNewService = (): void => {
     const business = this.businessData();
     if (business) {
       this.router.navigate([APP_ROUTES.SERVICE_CREATE]);
@@ -171,14 +171,14 @@ export class BusinessManagementPage {
     }
   };
 
-  readonly openBusinessSettings = (): void => {
+ openBusinessSettings = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_SETTINGS]);
   };
 
-  readonly clearError = (): void => {
+ clearError = (): void => {
     this.errorMessage.set(null);
   };
 
   // Utilidades para el template
-  readonly formatRating = formatRating;
+ formatRating = formatRating;
 }

@@ -6,11 +6,11 @@ import { NotificationConfig } from '@interfaces/index';
   providedIn: 'root'
 })
 export class NotificationService {
-  private readonly alertController = inject(AlertController);
-  private readonly toastController = inject(ToastController);
+  private alertController = inject(AlertController);
+  private toastController = inject(ToastController);
 
   // Signals para estado de notificaciones
-  readonly activeNotifications = signal<NotificationConfig[]>([]);
+ activeNotifications = signal<NotificationConfig[]>([]);
 
   // Métodos para mostrar diferentes tipos de notificaciones
   async showSuccess(title: string, message: string, duration = 3000): Promise<void> {

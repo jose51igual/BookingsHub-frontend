@@ -19,24 +19,24 @@ import { getRatingArray, getRatingText } from '@utils/rating.utils';
 })
 export class CreateReviewPage {
   // Signals para estado reactivo
-  readonly businessId = signal<number>(0);
-  readonly bookingId = signal<number | undefined>(undefined);
-  readonly businessName = signal<string>('');
-  readonly review = signal({
+ businessId = signal<number>(0);
+ bookingId = signal<number | undefined>(undefined);
+ businessName = signal<string>('');
+ review = signal({
     rating: 0,
     comment: ''
   });
-  readonly isSubmitting = signal<boolean>(false);
-  readonly showAlert = signal<boolean>(false);
-  readonly alertType = signal<'success' | 'error'>('success');
-  readonly alertMessage = signal<string>('');
+ isSubmitting = signal<boolean>(false);
+ showAlert = signal<boolean>(false);
+ alertType = signal<'success' | 'error'>('success');
+ alertMessage = signal<string>('');
 
   // Servicios inyectados
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
-  private readonly reviewService = inject(ReviewService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly dataLoader = inject(BaseDataLoaderService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private reviewService = inject(ReviewService);
+  private notificationService = inject(NotificationService);
+  private dataLoader = inject(BaseDataLoaderService);
 
   constructor() {
     // Cargar datos desde los query params de la URL
@@ -63,27 +63,55 @@ export class CreateReviewPage {
     });
   }
 
-  readonly setRating = (rating: number): void => {
+ setRating = (rating: number): void => {
     this.review.update(current => ({ ...current, rating }));
   };
 
-  readonly updateComment = (comment: string): void => {
+ updateComment = (comment: string): void => {
     this.review.update(current => ({ ...current, comment }));
   };
 
-  readonly submitReview = async (): Promise<void> => {
+ submitReview = async (): Promise<void> => {
     if (!this.isValidReview()) {
-      this.notificationService.showError('Error', 'Por favor completa todos los campos requeridos');
+      const businessId = this.businessId();
+      const currentReview = this.review();
+      const trimmedComment = currentReview.comment.trim();
+      
+      let errorMessage = 'Por favor completa todos los campos requeridos:';
+      
+      if (businessId <= 0) {
+        errorMessage = 'Error: No se pudo identificar el negocio';
+      } else if (currentReview.rating <= 0) {
+        errorMessage = 'Por favor selecciona una calificación';
+      } else if (trimmedComment.length > 0 && trimmedComment.length < 10) {
+        errorMessage = 'El comentario debe tener al menos 10 caracteres';
+      }
+      
+      this.notificationService.showError('Error', errorMessage);
       return;
     }
 
     const currentReview = this.review();
-    const reviewData = {
+    const trimmedComment = currentReview.comment.trim();
+    
+    // Construir datos limpios para el backend
+    const reviewData: any = {
       business_id: this.businessId(),
-      rating: currentReview.rating,
-      comment: currentReview.comment.trim() || undefined,
-      ...(this.bookingId() && { booking_id: this.bookingId() })
+      rating: currentReview.rating
     };
+    
+    // Solo incluir comentario si no está vacío
+    if (trimmedComment.length > 0) {
+      reviewData.comment = trimmedComment;
+    }
+    
+    // Solo incluir booking_id si existe y es válido
+    const bookingId = this.bookingId();
+    if (bookingId && bookingId > 0) {
+      reviewData.booking_id = bookingId;
+    }
+
+    console.log('Enviando datos de reseña:', reviewData);
 
     const created = await this.dataLoader.fromObservable(
       this.reviewService.createReview(reviewData),
@@ -103,14 +131,26 @@ export class CreateReviewPage {
   };
 
   // Utilidades de rating
-  readonly getRatingText = (): string => getRatingText(this.review().rating);
-  readonly getRatingArray = getRatingArray;
+ getRatingText = (): string => getRatingText(this.review().rating);
+ getRatingArray = getRatingArray;
 
-  readonly isValidReview = (): boolean => {
-    return this.review().rating > 0 && !this.isSubmitting();
+ isValidReview = (): boolean => {
+    const currentReview = this.review();
+    const businessId = this.businessId();
+    
+    // Validaciones básicas
+    if (this.isSubmitting()) return false;
+    if (businessId <= 0) return false;
+    if (currentReview.rating <= 0 || currentReview.rating > 5) return false;
+    
+    // Validar comentario si existe (mínimo 10 caracteres si no está vacío)
+    const trimmedComment = currentReview.comment.trim();
+    if (trimmedComment.length > 0 && trimmedComment.length < 10) return false;
+    
+    return true;
   };
 
-  readonly onAlertDismiss = (): void => {
+ onAlertDismiss = (): void => {
     this.showAlert.set(false);
   };
 }

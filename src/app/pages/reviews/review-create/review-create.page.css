@@ -85,6 +85,20 @@
   color: var(--ion-color-danger);
 }
 
+.validation-error {
+  color: var(--ion-color-danger);
+  font-size: 12px;
+  margin: 4px 0 0 0;
+  font-style: italic;
+}
+
+.char-count {
+  font-size: 12px;
+  color: var(--ion-color-medium);
+  text-align: right;
+  margin: 4px 0 0 0;
+}
+
 .action-buttons {
   display: flex;
   gap: 12px;

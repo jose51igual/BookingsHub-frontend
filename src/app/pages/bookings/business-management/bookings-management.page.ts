@@ -29,24 +29,24 @@ import { Booking } from '@interfaces/index';
   ]
 })
 export class BookingsManagementPage {
-  private readonly businessService = inject(BusinessService);
-  private readonly bookingService = inject(BookingService);
-  private readonly alertController = inject(AlertController);
-  private readonly actionSheetController = inject(ActionSheetController);
-  private readonly dataLoader = inject(BaseDataLoaderService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly alertHelper = createAlertHelper(this.alertController, this.actionSheetController);
+  private businessService = inject(BusinessService);
+  private bookingService = inject(BookingService);
+  private alertController = inject(AlertController);
+  private actionSheetController = inject(ActionSheetController);
+  private dataLoader = inject(BaseDataLoaderService);
+  private notificationService = inject(NotificationService);
+  private alertHelper = createAlertHelper(this.alertController, this.actionSheetController);
 
-  readonly bookings = signal<Booking[]>([]);
-  readonly isLoading = signal<boolean>(true);
-  readonly errorMessage = signal<string | null>(null);
-  readonly selectedStatus = signal<string>('all');
-  readonly searchTerm = signal<string>('');
-  readonly selectedDate = signal<string>('');
+ bookings = signal<Booking[]>([]);
+ isLoading = signal<boolean>(true);
+ errorMessage = signal<string | null>(null);
+ selectedStatus = signal<string>('all');
+ searchTerm = signal<string>('');
+ selectedDate = signal<string>('');
 
-  readonly availableStatuses = availableStatuses;
+ availableStatuses = availableStatuses;
 
-  readonly filteredBookings = computed(() => {
+ filteredBookings = computed(() => {
     const bookings = this.bookings();
     const status = this.selectedStatus();
     const search = this.searchTerm().toLowerCase();
@@ -69,7 +69,7 @@ export class BookingsManagementPage {
     });
   });
 
-  readonly datesWithBookings = computed(() => {
+ datesWithBookings = computed(() => {
     const dates = new Set<string>();
     this.bookings().forEach(booking => {
       if (booking.booking_date) {
@@ -79,21 +79,21 @@ export class BookingsManagementPage {
     return Array.from(dates);
   });
 
-  readonly todaysBookings = computed(() => {
+ todaysBookings = computed(() => {
     const today = new Date().toISOString().split('T')[0];
     return this.bookings().filter(booking => booking.booking_date === today);
   });
 
-  readonly upcomingBookings = computed(() => {
+ upcomingBookings = computed(() => {
     const today = new Date().toISOString().split('T')[0];
     return this.bookings().filter(booking => booking.booking_date > today);
   });
 
-  readonly totalBookings = computed(() => this.bookings().length);
-  readonly confirmedBookings = computed(() => 
+ totalBookings = computed(() => this.bookings().length);
+ confirmedBookings = computed(() => 
     this.bookings().filter(b => b.status === 'confirmada').length
   );
-  readonly completedBookings = computed(() => 
+ completedBookings = computed(() => 
     this.bookings().filter(b => b.status === 'completada').length
   );
 
@@ -101,7 +101,7 @@ export class BookingsManagementPage {
     this.loadBookings();
   }
 
-  readonly loadBookings = async (): Promise<void> => {
+ loadBookings = async (): Promise<void> => {
     const response = await this.dataLoader.fromObservable(
       this.businessService.getBusinessByUserId(),
       {
@@ -169,15 +169,15 @@ export class BookingsManagementPage {
   };
 
   // Manejadores de filtros
-  readonly onStatusChange = (event: any): void => {
+ onStatusChange = (event: any): void => {
     this.selectedStatus.set(event.detail.value);
   };
 
-  readonly onSearchChange = (event: any): void => {
+ onSearchChange = (event: any): void => {
     this.searchTerm.set(event.detail.value);
   };
 
-  readonly onDateChange = (event: any): void => {
+ onDateChange = (event: any): void => {
     const value = event.detail.value;
     if (value) {
       // Extraer solo la fecha (YYYY-MM-DD) del valor del ion-datetime
@@ -189,19 +189,19 @@ export class BookingsManagementPage {
   };
 
   // Limpiar filtro de fecha
-  readonly clearDateFilter = (): void => {
+ clearDateFilter = (): void => {
     this.selectedDate.set('');
   };
 
   // Limpiar todos los filtros
-  readonly clearAllFilters = (): void => {
+ clearAllFilters = (): void => {
     this.selectedStatus.set('all');
     this.searchTerm.set('');
     this.selectedDate.set('');
   };
 
   // Configuración para fechas destacadas en el calendario
-  readonly getHighlightedDates = () => {
+ getHighlightedDates = () => {
     const datesWithBookings = this.datesWithBookings();
     return datesWithBookings.map(date => ({
       date: date,
@@ -211,13 +211,13 @@ export class BookingsManagementPage {
   };
 
   // Obtener color del estado usando utilidad centralizada
-  readonly getStatusColor = getStatusColor;
+ getStatusColor = getStatusColor;
 
   // Obtener etiqueta del estado usando utilidad centralizada
-  readonly getStatusLabel = getStatusText;
+ getStatusLabel = getStatusText;
 
   // Actualizar estado de reserva usando NotificationService
-  readonly updateBookingStatus = async (booking: Booking, newStatus?: any): Promise<void> => {
+ updateBookingStatus = async (booking: Booking, newStatus?: any): Promise<void> => {
     const normalizedStatus = mapBackendStatusToFrontend(newStatus || 'cancelada');
     
       await firstValueFrom(this.bookingService.updateBookingStatus(booking.id, normalizedStatus));
@@ -232,7 +232,7 @@ export class BookingsManagementPage {
   };
 
   // Ver detalle de reserva usando un modal más elegante
-  readonly viewBookingDetail = async (booking: Booking): Promise<void> => {
+ viewBookingDetail = async (booking: Booking): Promise<void> => {
     const alert = await this.alertController.create({
       header: `Reserva #${booking.id}`,
       cssClass: 'booking-detail-alert',
@@ -291,7 +291,7 @@ export class BookingsManagementPage {
   };
 
   // Cancelar reserva
-  readonly cancelBooking = async (booking: Booking): Promise<void> => {
+ cancelBooking = async (booking: Booking): Promise<void> => {
     const confirmed = await this.alertHelper.showConfirmation(
       'Cancelar Reserva',
       `¿Estás seguro de que deseas cancelar la reserva de ${booking.customer_name}?`,
@@ -305,7 +305,7 @@ export class BookingsManagementPage {
   };
 
   // Mostrar opciones de cambio de estado usando AlertHelper
-  readonly showStatusChangeOptions = async (booking: Booking): Promise<void> => {
+ showStatusChangeOptions = async (booking: Booking): Promise<void> => {
     const result = await this.alertHelper.showStatusOptions(booking.status);
     
     if (result && result !== booking.status) {

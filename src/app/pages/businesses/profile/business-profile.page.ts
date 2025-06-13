@@ -34,24 +34,24 @@ import { BusinessProfile } from '@interfaces/index';
 })
 export class BusinessProfilePage {
   // Servicios inyectados con inject() - patrón estándar
-  private readonly formBuilder = inject(FormBuilder);
-  private readonly router = inject(Router);
-  private readonly businessService = inject(BusinessService);
-  private readonly authService = inject(AuthSignalService);
-  private readonly notificationService = inject(NotificationService);
+  private formBuilder = inject(FormBuilder);
+  private router = inject(Router);
+  private businessService = inject(BusinessService);
+  private authService = inject(AuthSignalService);
+  private notificationService = inject(NotificationService);
 
   // LinkedSignal para derivar automáticamente del AuthService - Angular 19
-  readonly currentUser = linkedSignal(() => this.authService.user);
+ currentUser = linkedSignal(() => this.authService.user);
 
   // Signals de estado - patrón estándar
-  readonly isLoading = signal<boolean>(true);
-  readonly isEditMode = signal<boolean>(false);
-  readonly isSaving = signal<boolean>(false);
-  readonly errorMessage = signal<string | null>(null);
-  readonly businessData = signal<BusinessProfile | null>(null);
+ isLoading = signal<boolean>(true);
+ isEditMode = signal<boolean>(false);
+ isSaving = signal<boolean>(false);
+ errorMessage = signal<string | null>(null);
+ businessData = signal<BusinessProfile | null>(null);
 
   // Formulario reactivo - patrón estándar
-  readonly businessForm = this.formBuilder.group({
+ businessForm = this.formBuilder.group({
     name: ['', [Validators.required]],
     description: [''],
     phone: ['', [Validators.required]],
@@ -61,10 +61,10 @@ export class BusinessProfilePage {
   });
 
   // Computed signals - patrón estándar
-  readonly isFormValid = computed(() => this.businessForm.valid);
-  readonly canSave = computed(() => this.isFormValid() && !this.isSaving());
-  readonly hasBusinessData = computed(() => !!this.businessData());
-  readonly displayName = computed(() => {
+ isFormValid = computed(() => this.businessForm.valid);
+ canSave = computed(() => this.isFormValid() && !this.isSaving());
+ hasBusinessData = computed(() => !!this.businessData());
+ displayName = computed(() => {
     const data = this.businessData();
     return data?.name || 'Mi Negocio';
   });
@@ -80,12 +80,12 @@ export class BusinessProfilePage {
   }
 
   // Método para limpiar errores - patrón estándar
-  readonly clearError = (): void => {
+ clearError = (): void => {
     this.errorMessage.set(null);
   };
 
   // Método principal para cargar perfil del negocio - async/await pattern
-  readonly loadBusinessProfile = async (): Promise<void> => {
+ loadBusinessProfile = async (): Promise<void> => {
     try {
       this.isLoading.set(true);
       this.errorMessage.set(null);
@@ -150,7 +150,7 @@ export class BusinessProfilePage {
   };
 
   // Método helper para popular el formulario - patrón estándar
-  private readonly populateForm = (business: BusinessProfile): void => {
+  private populateForm = (business: BusinessProfile): void => {
     this.businessForm.patchValue({
       name: business.name,
       description: business.description || '',
@@ -162,11 +162,11 @@ export class BusinessProfilePage {
   };
 
   // Métodos de navegación y control - patrón estándar
-  readonly enterEditMode = (): void => {
+ enterEditMode = (): void => {
     this.isEditMode.set(true);
   };
 
-  readonly cancelEdit = (): void => {
+ cancelEdit = (): void => {
     this.isEditMode.set(false);
     // Recargar los datos originales desde el signal
     const business = this.businessData();
@@ -175,12 +175,12 @@ export class BusinessProfilePage {
     }
   };
 
-  readonly viewStatistics = (): void => {
+ viewStatistics = (): void => {
     this.router.navigate(['/panel-negocio/estadisticas']);
   };
 
   // Método principal para guardar negocio - async/await pattern
-  readonly saveBusiness = async (): Promise<void> => {
+ saveBusiness = async (): Promise<void> => {
     if (!this.canSave()) return;
 
     try {

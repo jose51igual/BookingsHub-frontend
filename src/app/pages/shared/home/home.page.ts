@@ -22,14 +22,14 @@ import { BUSINESS_CATEGORIES } from '@utils/constants';
 })
 export class HomePage {
   // Servicios inyectados con inject()
-  private readonly authService = inject(AuthSignalService);
-  private readonly router = inject(Router);
+  private  authService = inject(AuthSignalService);
+  private  router = inject(Router);
 
   // Signal para el estado de carga de categorías
-  readonly categoriesLoaded = signal<boolean>(false);
+   categoriesLoaded = signal<boolean>(false);
 
   // Categorías populares usando las categorías unificadas
-  readonly popularCategories = signal<readonly CategoryData[]>(
+   popularCategories = signal< CategoryData[]>(
     BUSINESS_CATEGORIES.slice(0, 6).map(cat => ({
       id: cat.id,
       name: cat.name,
@@ -40,22 +40,22 @@ export class HomePage {
   );
 
   // Computed signals para estado derivado
-  readonly isAuthenticated = computed(() => !!this.authService.user);
+   isAuthenticated = computed(() => !!this.authService.user);
   
-  readonly userName = computed(() => 
+   userName = computed(() => 
     this.authService.user?.name || 'Usuario'
   );
   
-  readonly isBusinessOwner = computed(() => 
+   isBusinessOwner = computed(() => 
     this.authService.user?.role === 'negocio'
   );
   
-  readonly hasBusinessId = computed(() => {
+   hasBusinessId = computed(() => {
     const user = this.authService.user;
     return !!(user && (user as any).business_id);
   });
   
-  readonly userBusinessId = computed(() => {
+   userBusinessId = computed(() => {
     const user = this.authService.user;
     return user ? (user as any).business_id || null : null;
   });
@@ -106,7 +106,7 @@ export class HomePage {
   }
 
   // Navegar a una categoría específica
-  readonly navigateToCategory = (category: CategoryData): void => {
+   navigateToCategory = (category: CategoryData): void => {
     console.log('Navegando a categoría:', category.name);
     this.router.navigate(['/negocios'], { 
       queryParams: { category: category.id }
@@ -114,17 +114,17 @@ export class HomePage {
   };
 
   // Navegación a la página de servicios
-  readonly navigateToServices = (): void => {
+   navigateToServices = (): void => {
     this.router.navigate(['/negocios']);
   };
 
   // Navegación al login
-  readonly navigateToLogin = (): void => {
+   navigateToLogin = (): void => {
     this.router.navigate(['/iniciar-sesion']);
   };
 
   // Navegación al registro
-  readonly navigateToRegister = (): void => {
+   navigateToRegister = (): void => {
     this.router.navigate(['/tipo-registro']);
   };
 }

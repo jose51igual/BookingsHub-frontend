@@ -21,26 +21,26 @@ import { showConfirmAlert } from '@utils/alert.utils';
 })
 export class BookingDetailPage {
   // Signals para estado reactivo
-  readonly booking = signal<any>(null);
-  readonly business = signal<any>(null);
-  readonly isLoading = signal<boolean>(false);
+ booking = signal<any>(null);
+ business = signal<any>(null);
+ isLoading = signal<boolean>(false);
 
   // Computed properties
-  readonly hasBooking = computed(() => !!this.booking());
-  readonly canCancel = computed(() => 
+ hasBooking = computed(() => !!this.booking());
+ canCancel = computed(() => 
     this.booking() && this.booking().status !== 'cancelada'
   );
-  readonly statusColor = computed(() => 
+ statusColor = computed(() => 
     getBookingStatusColor(this.booking()?.status)
   );
 
   // Servicios inyectados
-  private readonly router = inject(Router);
-  private readonly location = inject(Location);
-  private readonly businessService = inject(BusinessService);
-  private readonly bookingService = inject(BookingService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly dataLoader = inject(BaseDataLoaderService);
+  private router = inject(Router);
+  private location = inject(Location);
+  private businessService = inject(BusinessService);
+  private bookingService = inject(BookingService);
+  private notificationService = inject(NotificationService);
+  private dataLoader = inject(BaseDataLoaderService);
 
   constructor() {
     this.initializeFromNavigation();
@@ -82,19 +82,19 @@ export class BookingDetailPage {
     }
   }
 
-  readonly goBack = (): void => {
+ goBack = (): void => {
     this.location.back();
   };
 
-  readonly formatDate = (date: string): string => {
+ formatDate = (date: string): string => {
     return formatDate(date);
   };
 
-  readonly formatBookingTime = (bookingTime: any): string => {
+ formatBookingTime = (bookingTime: any): string => {
     return formatTime(bookingTime);
   };
 
-  readonly openMap = (): void => {
+ openMap = (): void => {
     const businessData = this.business();
     if (!businessData || !businessData.address) return;
     
@@ -103,7 +103,7 @@ export class BookingDetailPage {
     window.open(mapUrl, '_blank');
   };
 
-  readonly cancelBooking = async (): Promise<void> => {
+ cancelBooking = async (): Promise<void> => {
     const bookingData = this.booking();
     if (!bookingData || bookingData.status === 'cancelada') return;
     
@@ -129,7 +129,7 @@ export class BookingDetailPage {
     }
   };
 
-  readonly leaveReview = (): void => {
+ leaveReview = (): void => {
     const bookingData = this.booking();
     if (bookingData) {
       this.router.navigate([APP_ROUTES.CREATE_REVIEW], {

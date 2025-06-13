@@ -24,20 +24,20 @@ import { firstValueFrom } from 'rxjs';
 })
 export class ReviewsListPage {
   // Signals para estado reactivo
-  readonly businessId = signal<number | undefined>(undefined);
-  readonly business = signal<Business | undefined>(undefined);
-  readonly allReviews = signal<Review[]>([]);
-  readonly isLoading = signal<boolean>(false);
-  readonly error = signal<string | null>(null);
-  readonly isFromBusinessPanel = signal<boolean>(false);
+ businessId = signal<number | undefined>(undefined);
+ business = signal<Business | undefined>(undefined);
+ allReviews = signal<Review[]>([]);
+ isLoading = signal<boolean>(false);
+ error = signal<string | null>(null);
+ isFromBusinessPanel = signal<boolean>(false);
   
   // Filtros
-  readonly sortBy = signal<string>('newest');
-  readonly filterRating = signal<string>('all');
-  readonly searchTerm = signal<string>('');
+ sortBy = signal<string>('newest');
+ filterRating = signal<string>('all');
+ searchTerm = signal<string>('');
 
   // Reviews filtrados y ordenados
-  readonly filteredReviews = computed(() => {
+ filteredReviews = computed(() => {
     let reviews = [...this.allReviews()];
     
     // Filtrar por rating
@@ -75,13 +75,13 @@ export class ReviewsListPage {
   });
 
   // Servicios inyectados
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
-  private readonly reviewService = inject(ReviewService);
-  private readonly businessService = inject(BusinessService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly dataLoader = inject(BaseDataLoaderService);
-  private readonly authService = inject(AuthSignalService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private reviewService = inject(ReviewService);
+  private businessService = inject(BusinessService);
+  private notificationService = inject(NotificationService);
+  private dataLoader = inject(BaseDataLoaderService);
+  private authService = inject(AuthSignalService);
 
   constructor() {
     this.initializeFromRoute();
@@ -203,24 +203,24 @@ export class ReviewsListPage {
     }
   }
 
-  readonly onRefresh = async (event: any): Promise<void> => {
+ onRefresh = async (event: any): Promise<void> => {
     await this.loadData();
     event.target.complete();
   };
 
-  readonly onSortChange = (value: string): void => {
+ onSortChange = (value: string): void => {
     this.sortBy.set(value);
   };
 
-  readonly onFilterChange = (value: string): void => {
+ onFilterChange = (value: string): void => {
     this.filterRating.set(value);
   };
 
-  readonly onSearchInput = (event: any): void => {
+ onSearchInput = (event: any): void => {
     this.searchTerm.set(event.target.value || '');
   };
 
-  readonly goBack = (): void => {
+ goBack = (): void => {
     if (this.isFromBusinessPanel()) {
       // Si viene del panel de negocio, regresar al dashboard
       this.router.navigate(['/panel-negocio/principal']);
@@ -232,7 +232,7 @@ export class ReviewsListPage {
   };
 
   // Utilidades disponibles en el template
-  readonly getStarArray = getStarArray;
-  readonly getRelativeTime = getRelativeTime;
-  readonly formatRating = formatRating;
+ getStarArray = getStarArray;
+ getRelativeTime = getRelativeTime;
+ formatRating = formatRating;
 }

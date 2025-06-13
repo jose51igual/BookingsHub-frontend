@@ -14,8 +14,8 @@ import { NotificationService } from '@services/index';
 })
 export class TimeSlotsSelectorComponent {
   // Servicios inyectados
-  private readonly availabilityService = inject(AvailabilityService);
-  private readonly notificationService = inject(NotificationService);
+  private  availabilityService = inject(AvailabilityService);
+  private  notificationService = inject(NotificationService);
 
   // Inputs
   serviceId = input.required<number>();

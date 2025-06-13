@@ -26,21 +26,21 @@ import { isBusinessOpen } from '@utils/date.utils';
 })
 export class ServicesPage {
   // Servicios inyectados con inject()
-  private readonly businessService = inject(BusinessService);
-  private readonly authService = inject(AuthSignalService);
-  private readonly dataLoader = inject(BaseDataLoaderService);
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
+  private businessService = inject(BusinessService);
+  private authService = inject(AuthSignalService);
+  private dataLoader = inject(BaseDataLoaderService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   // Signals para estado reactivo
-  readonly services = signal<ServiceBusiness[]>([]);
-  readonly featuredServices = signal<ServiceBusiness[]>([]);
-  readonly isLoading = signal<boolean>(false);
-  readonly searchQuery = signal<string>('');
-  readonly selectedCategory = signal<string>('todas');
+ services = signal<ServiceBusiness[]>([]);
+ featuredServices = signal<ServiceBusiness[]>([]);
+ isLoading = signal<boolean>(false);
+ searchQuery = signal<string>('');
+ selectedCategory = signal<string>('todas');
 
   // Categorías disponibles - usando las categorías unificadas
-  readonly categories: readonly Category[] = [
+ categories: Category[] = [
     { id: 'todas', name: 'Todas', icon: 'apps-outline' },
     ...BUSINESS_CATEGORIES.map(cat => ({
       id: cat.id,
@@ -50,17 +50,17 @@ export class ServicesPage {
   ] as const;
 
   // Computed signals para datos derivados
-  readonly userRole = computed(() => this.authService.user?.role || '');
+ userRole = computed(() => this.authService.user?.role || '');
   
-  readonly isBusinessOwner = computed(() => this.userRole() === 'negocio');
+ isBusinessOwner = computed(() => this.userRole() === 'negocio');
   
-  readonly userHasBusiness = computed(() => {
+ userHasBusiness = computed(() => {
     const user = this.authService.user;
     // Verificar si el usuario tiene un negocio basado en su rol y datos
     return user?.role === 'negocio' && user?.businessId !== null && user?.businessId !== undefined;
   });
   
-  readonly selectedCategoryName = computed(() => {
+ selectedCategoryName = computed(() => {
     const categoryId = this.selectedCategory();
     if (categoryId === 'todas') {
       return 'Todas las categorías';
@@ -68,15 +68,15 @@ export class ServicesPage {
     return this.categories.find(c => c.id === categoryId)?.name || 'Categoría desconocida';
   });
 
-  readonly hasActiveFilters = computed(() => 
+ hasActiveFilters = computed(() => 
     !!(this.searchQuery() || (this.selectedCategory() && this.selectedCategory() !== 'todas'))
   );
 
-  readonly isShowingAllCategories = computed(() => 
+ isShowingAllCategories = computed(() => 
     this.selectedCategory() === 'todas'
   );
 
-  readonly filteredServices = computed(() => {
+ filteredServices = computed(() => {
     let filtered = this.services();
     const searchTerm = this.searchQuery().toLowerCase().trim();
     const category = this.selectedCategory();

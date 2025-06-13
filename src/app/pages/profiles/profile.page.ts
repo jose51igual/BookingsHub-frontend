@@ -28,46 +28,46 @@ import { handleAuthError } from '@utils/user.utils';
 })
 export class ProfilePage {
   // Inyección moderna de servicios usando inject()
-  private readonly formBuilder = inject(FormBuilder);
-  private readonly userService = inject(UserService);
-  private readonly authService = inject(AuthSignalService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly router = inject(Router);
-  private readonly cdr = inject(ChangeDetectorRef);
+  private formBuilder = inject(FormBuilder);
+  private userService = inject(UserService);
+  private authService = inject(AuthSignalService);
+  private notificationService = inject(NotificationService);
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   // Signals de estado
-  readonly isLoading = signal<boolean>(true);
-  readonly showPasswordForm = signal<boolean>(false);
-  readonly errorMessage = signal<string | null>(null);
-  readonly isUpdatingProfile = signal<boolean>(false);
-  readonly isUpdatingPassword = signal<boolean>(false);
+ isLoading = signal<boolean>(true);
+ showPasswordForm = signal<boolean>(false);
+ errorMessage = signal<string | null>(null);
+ isUpdatingProfile = signal<boolean>(false);
+ isUpdatingPassword = signal<boolean>(false);
 
   // linkedSignal para derivar automáticamente el usuario actual del AuthService
-  readonly currentUser = linkedSignal(() => this.authService.user);
+ currentUser = linkedSignal(() => this.authService.user);
 
   // Signals locales para mostrar información actualizada en la UI
-  readonly displayName = signal<string>('');
-  readonly displayEmail = signal<string>('');
+ displayName = signal<string>('');
+ displayEmail = signal<string>('');
 
   // Signals para la validez de los formularios
-  private readonly profileFormValid = signal<boolean>(false);
-  private readonly passwordFormValid = signal<boolean>(false);
+  private profileFormValid = signal<boolean>(false);
+  private passwordFormValid = signal<boolean>(false);
 
   // Computed signals para la UI
-  readonly canUpdateProfile = computed(() => 
+ canUpdateProfile = computed(() => 
     this.profileFormValid() && !this.isUpdatingProfile()
   );
 
-  readonly canUpdatePassword = computed(() => 
+ canUpdatePassword = computed(() => 
     this.passwordFormValid() && !this.isUpdatingPassword()
   );
 
-  readonly userRole = computed(() => {
+ userRole = computed(() => {
     const role = this.currentUser()?.role;
     return role === 'negocio' ? 'Propietario de Negocio' : 'Cliente';
   });
 
-  readonly memberSince = computed(() => {
+ memberSince = computed(() => {
     const createdAt = this.currentUser()?.created_at;
     return createdAt ? new Date(createdAt).toLocaleDateString('es-ES') : '';
   });
@@ -75,12 +75,12 @@ export class ProfilePage {
   // Validador personalizado para contraseñas coincidentes usando utilidad centralizada
   
   // Formularios reactivos
-  readonly profileForm = this.formBuilder.group({
+ profileForm = this.formBuilder.group({
     name: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]]
   });
 
-  readonly passwordForm = this.formBuilder.group({
+ passwordForm = this.formBuilder.group({
     current_password: ['', [Validators.required]],
     new_password: ['', [Validators.required, Validators.minLength(6)]],
     confirm_password: ['', [Validators.required]]
@@ -125,7 +125,7 @@ export class ProfilePage {
   }
 
   // Método para limpiar errores cuando se cierra la alerta
-  readonly clearError = () => this.errorMessage.set(null);
+ clearError = () => this.errorMessage.set(null);
 
   async loadUserProfile(): Promise<void> {
     try {
@@ -244,7 +244,7 @@ export class ProfilePage {
     }
   }
 
-  readonly togglePasswordForm = (): void => {
+ togglePasswordForm = (): void => {
     const current = this.showPasswordForm();
     this.showPasswordForm.set(!current);
     if (!this.showPasswordForm()) {

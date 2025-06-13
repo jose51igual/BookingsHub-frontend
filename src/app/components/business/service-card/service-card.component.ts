@@ -74,11 +74,11 @@ import { ServiceBusiness } from '@interfaces/index';
 })
 export class ServiceCardComponent {
   // Input signals
-  readonly business = input.required<ServiceBusiness>();
-  readonly animationOrder = input<number>(0);
+   business = input.required<ServiceBusiness>();
+   animationOrder = input<number>(0);
   
   // Output events
-  readonly cardClick = output<ServiceBusiness>();
+   cardClick = output<ServiceBusiness>();
 
   onCardClick(): void {
     this.cardClick.emit(this.business());

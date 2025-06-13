@@ -18,7 +18,7 @@ import { showConfirmAlert, showDestructiveAlert } from '@utils/alert.utils';
 })
 export class BusinessSettingsPage {
   // Signals para estado reactivo
-  readonly settings = signal<BusinessSettings>({
+ settings = signal<BusinessSettings>({
     business_name: '',
     business_description: '',
     business_phone: '',
@@ -54,17 +54,16 @@ export class BusinessSettingsPage {
     }
   });
 
-  readonly isLoading = signal<boolean>(false);
-  readonly isSaving = signal<boolean>(false);
+ isLoading = signal<boolean>(false);
+ isSaving = signal<boolean>(false);
 
   // Constantes
-  readonly days = DAYS_OF_WEEK;
+ days = DAYS_OF_WEEK;
 
   // Servicios inyectados
-  private readonly router = inject(Router);
-  private readonly businessService = inject(BusinessService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly dataLoader = inject(BaseDataLoaderService);
+  private router = inject(Router);
+  private businessService = inject(BusinessService);
+  private dataLoader = inject(BaseDataLoaderService);
 
   constructor() {
     this.loadSettings();
@@ -234,11 +233,11 @@ export class BusinessSettingsPage {
   }
 
   // Métodos de navegación simplificados
-  readonly goToAvailability = (): void => {
+ goToAvailability = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_AVAILABILITY]);
   };
 
-  readonly goToAnalytics = (): void => {
+ goToAnalytics = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_ANALYTICS]);
   };
 }

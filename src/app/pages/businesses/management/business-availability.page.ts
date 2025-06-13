@@ -28,12 +28,12 @@ interface BusinessHourTemplate {
 })
 export class BusinessAvailabilityPage {
   // Signals para estado reactivo
-  readonly businessId = signal<number>(0);
-  readonly services = signal<Service[]>([]);
-  readonly selectedServices = signal<number[]>([]);
-  readonly isLoading = signal<boolean>(false);
-  readonly isSaving = signal<boolean>(false);
-  readonly weekDays = signal<WeekDay[]>([
+ businessId = signal<number>(0);
+ services = signal<Service[]>([]);
+ selectedServices = signal<number[]>([]);
+ isLoading = signal<boolean>(false);
+ isSaving = signal<boolean>(false);
+ weekDays = signal<WeekDay[]>([
     { name: 'Lunes', key: 'monday', enabled: false, slots: [] },
     { name: 'Martes', key: 'tuesday', enabled: false, slots: [] },
     { name: 'Miércoles', key: 'wednesday', enabled: false, slots: [] },
@@ -44,13 +44,13 @@ export class BusinessAvailabilityPage {
   ]);
 
   // Computed signals
-  readonly hasServices = computed(() => this.services().length > 0);
-  readonly hasSelectedServices = computed(() => this.selectedServices().length > 0);
-  readonly enabledDays = computed(() => this.weekDays().filter(day => day.enabled && day.slots.length > 0));
-  readonly canSave = computed(() => this.hasSelectedServices() && this.enabledDays().length > 0);
+ hasServices = computed(() => this.services().length > 0);
+ hasSelectedServices = computed(() => this.selectedServices().length > 0);
+ enabledDays = computed(() => this.weekDays().filter(day => day.enabled && day.slots.length > 0));
+ canSave = computed(() => this.hasSelectedServices() && this.enabledDays().length > 0);
 
   // Templates de horarios predefinidos
-  readonly hourTemplates: BusinessHourTemplate[] = [
+ hourTemplates: BusinessHourTemplate[] = [
     {
       name: 'Oficina (Lun-Vie 9:00-18:00)',
       key: 'business',
@@ -74,12 +74,12 @@ export class BusinessAvailabilityPage {
   ];
 
   // Servicios inyectados
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
-  private readonly serviceService = inject(ServiceService);
-  private readonly availabilityService = inject(AvailabilityService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly dataLoader = inject(BaseDataLoaderService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private serviceService = inject(ServiceService);
+  private availabilityService = inject(AvailabilityService);
+  private notificationService = inject(NotificationService);
+  private dataLoader = inject(BaseDataLoaderService);
 
   constructor() {
     const businessIdParam = this.route.snapshot.paramMap.get('businessId');
@@ -149,7 +149,7 @@ export class BusinessAvailabilityPage {
     this.selectedServices.set(serviceIds.filter((id): id is number => typeof id === 'number'));
   }
 
-  readonly toggleServiceSelection = (service: Service): void => {
+ toggleServiceSelection = (service: Service): void => {
     const selected = this.selectedServices();
     const index = selected.indexOf(service.id);
     
@@ -160,7 +160,7 @@ export class BusinessAvailabilityPage {
     }
   };
 
-  readonly onDayToggle = (dayIndex: number): void => {
+ onDayToggle = (dayIndex: number): void => {
     const days = [...this.weekDays()];
     const day = days[dayIndex];
     
@@ -173,7 +173,7 @@ export class BusinessAvailabilityPage {
     this.weekDays.set(days);
   };
 
-  readonly addTimeSlot = (dayIndex: number): void => {
+ addTimeSlot = (dayIndex: number): void => {
     const days = [...this.weekDays()];
     days[dayIndex].slots.push({
       startTime: '09:00',
@@ -182,13 +182,13 @@ export class BusinessAvailabilityPage {
     this.weekDays.set(days);
   };
 
-  readonly removeTimeSlot = (dayIndex: number, slotIndex: number): void => {
+ removeTimeSlot = (dayIndex: number, slotIndex: number): void => {
     const days = [...this.weekDays()];
     days[dayIndex].slots.splice(slotIndex, 1);
     this.weekDays.set(days);
   };
 
-  readonly applyTemplate = (templateKey: string): void => {
+ applyTemplate = (templateKey: string): void => {
     const template = this.hourTemplates.find(t => t.key === templateKey);
     if (template) {
       const newDays = this.weekDays().map((day, index) => ({
@@ -200,7 +200,7 @@ export class BusinessAvailabilityPage {
     }
   };
 
-  readonly resetToDefault = (): void => {
+ resetToDefault = (): void => {
     const resetDays = this.weekDays().map(day => ({
       ...day,
       enabled: false,
@@ -210,7 +210,7 @@ export class BusinessAvailabilityPage {
     this.selectedServices.set([]);
   };
 
-  readonly saveAvailability = async (): Promise<void> => {
+ saveAvailability = async (): Promise<void> => {
     if (!this.canSave()) {
       if (!this.hasSelectedServices()) {
         this.notificationService.showError('Error', 'Debes seleccionar al menos un servicio');

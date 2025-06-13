@@ -75,10 +75,10 @@ import { EmptyStateConfig } from '@interfaces/index';
 })
 export class EmptyStateComponent {
   // Inputs
-  readonly config = input.required<EmptyStateConfig>();
+   config = input.required<EmptyStateConfig>();
 
   // Outputs
-  readonly actionClick = output<void>();
+   actionClick = output<void>();
 
   // Methods
   onActionClick = (): void => {

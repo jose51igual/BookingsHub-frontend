@@ -21,36 +21,36 @@ import { ServiceFormData } from '@interfaces/index';
 })
 export class ServiceCreatePage {
   // Servicios inyectados con inject()
-  private readonly serviceService = inject(ServiceService);
-  private readonly businessService = inject(BusinessService);
-  private readonly authService = inject(AuthSignalService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly dataLoader = inject(BaseDataLoaderService);
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
-  private readonly formBuilder = inject(FormBuilder);
+  private serviceService = inject(ServiceService);
+  private businessService = inject(BusinessService);
+  private authService = inject(AuthSignalService);
+  private notificationService = inject(NotificationService);
+  private dataLoader = inject(BaseDataLoaderService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  private formBuilder = inject(FormBuilder);
 
   // Signals para estado reactivo
-  readonly errorMessage = signal<string>('');
-  readonly isSubmitting = signal(false);
-  readonly businessId = signal<number | null>(null);
-  readonly serviceId = signal<number | null>(null);
-  readonly isEditMode = signal(false);
+ errorMessage = signal<string>('');
+ isSubmitting = signal(false);
+ businessId = signal<number | null>(null);
+ serviceId = signal<number | null>(null);
+ isEditMode = signal(false);
 
   // Computed signals para validaciones y UI
-  readonly pageTitle = computed(() => 
+ pageTitle = computed(() => 
     this.isEditMode() ? 'Editar Servicio' : 'Crear Servicio'
   );
   
-  readonly submitButtonText = computed(() => 
+ submitButtonText = computed(() => 
     this.isEditMode() ? 'Actualizar Servicio' : 'Crear Servicio'
   );
 
-  readonly loadingText = computed(() => 
+ loadingText = computed(() => 
     this.isSubmitting() ? (this.isEditMode() ? 'Actualizando...' : 'Creando...') : this.submitButtonText()
   );
 
-  readonly businessStatus = computed(() => {
+ businessStatus = computed(() => {
     const businessId = this.businessId();
     if (businessId) {
       return { loaded: true, message: '' };
@@ -74,7 +74,7 @@ export class ServiceCreatePage {
   }
 
   // Formulario reactivo usando validadores centralizados
-  readonly serviceForm: FormGroup = this.formBuilder.group({
+ serviceForm: FormGroup = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
     description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
     duration: [60, [Validators.required, Validators.min(1), Validators.max(480)]],
@@ -84,8 +84,8 @@ export class ServiceCreatePage {
     benefits: ['']
   });
 
-  // Categorías como readonly
-  readonly categories = [
+  // Categorías como
+ categories = [
     'Belleza y cuidado personal',
     'Salud y bienestar', 
     'Consultoría',
@@ -100,20 +100,16 @@ export class ServiceCreatePage {
 
   constructor() {
     effect(() => {
-      console.log('=== SERVICE EDITOR EFFECT TRIGGERED ===');
       const serviceIdParam = this.route.snapshot.paramMap.get('id');
-      console.log('Service ID param from route:', serviceIdParam);
       
       if (serviceIdParam) {
         const id = parseInt(serviceIdParam);
-        console.log('Parsed service ID:', id);
         if (!isNaN(id)) {
           this.serviceId.set(id);
           this.isEditMode.set(true);
           this.loadServiceData();
         }
       } else {
-        // Solo cargar info del negocio en modo creación
         this.isEditMode.set(false);
         this.loadBusinessInfo();
       }
@@ -130,29 +126,22 @@ export class ServiceCreatePage {
         return;
       }
 
-      console.log('Calling getUserBusinesses for user ID:', user.id);
       const response = await firstValueFrom(this.businessService.getUserBusinesses());
-      console.log('Retrieved businesses:', response);
-      
-      // Verificar si la respuesta es un objeto con estructura {success, data, message}
+
       if (response && typeof response === 'object' && 'success' in response && 'data' in response) {
-        const apiResponse = response as any; // Type assertion temporal
+        const apiResponse = response as any;
         if (apiResponse.success && apiResponse.data) {
           const businessData = apiResponse.data;
           
           // Verificar si data contiene un negocio directamente o es un array
           if (businessData.id) {
             // Si data es un objeto negocio directamente
-            console.log('Setting business ID from single business:', businessData.id);
             this.businessId.set(businessData.id);
             this.errorMessage.set('');
-            console.log('Business ID set successfully:', this.businessId());
           } else if (Array.isArray(businessData) && businessData.length > 0) {
             // Si data es un array de negocios
-            console.log('Setting business ID from first business:', businessData[0].id);
             this.businessId.set(businessData[0].id);
             this.errorMessage.set('');
-            console.log('Business ID set successfully:', this.businessId());
           } else {
             console.error('No valid business data found');
             this.errorMessage.set('No se encontró información del negocio');
@@ -163,10 +152,9 @@ export class ServiceCreatePage {
         }
       } else if (Array.isArray(response) && response.length > 0) {
         // Si la respuesta es directamente un array de negocios
-        console.log('Setting business ID from first business in array:', response[0].id);
+        this.businessId.set(response[0].id);
         this.businessId.set(response[0].id);
         this.errorMessage.set('');
-        console.log('Business ID set successfully:', this.businessId());
       } else {
         console.error('No businesses found for user');
         this.errorMessage.set('No se encontró información del negocio');
@@ -181,8 +169,6 @@ export class ServiceCreatePage {
     const serviceId = this.serviceId();
     if (!serviceId) return;
 
-    console.log('Loading service data for ID:', serviceId);
-
     const service = await this.dataLoader.withLoadingAndError(
       async () => {
         return await firstValueFrom(this.serviceService.getServiceById(serviceId));
@@ -194,9 +180,6 @@ export class ServiceCreatePage {
     );
 
     if (service) {
-      console.log('Service loaded:', service);
-      
-      // Convertir y validar los valores antes de hacer patch
       const formData = {
         name: service.name || '',
         description: service.description || '',
@@ -206,8 +189,6 @@ export class ServiceCreatePage {
         image: service.image || '',
         benefits: '' // Los benefits no están en el servicio, mantener vacío
       };
-      
-      console.log('Form data to patch:', formData);
       this.serviceForm.patchValue(formData);
       
       // Marcar todos los campos como touched para que las validaciones se activen
@@ -283,7 +264,7 @@ export class ServiceCreatePage {
   }
 
   // Métodos helper para validaciones del template usando computed
-  readonly getFieldErrors = computed(() => {
+ getFieldErrors = computed(() => {
     const errors: Record<string, string> = {};
     
     Object.keys(this.serviceForm.controls).forEach(fieldName => {

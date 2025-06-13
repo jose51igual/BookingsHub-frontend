@@ -42,12 +42,15 @@
         <ion-textarea
           [ngModel]="review().comment"
           (ngModelChange)="updateComment($event)"
-          placeholder="Describe tu experiencia (mínimo 10 caracteres)"
+          placeholder="Describe tu experiencia (opcional, mínimo 10 caracteres si decides escribir)"
           rows="5"
           maxlength="1000">
         </ion-textarea>
       </ion-item>
       <p class="char-count">{{ review().comment.length }}/1000 caracteres</p>
+      @if (review().comment.trim().length > 0 && review().comment.trim().length < 10) {
+        <p class="validation-error">El comentario debe tener al menos 10 caracteres</p>
+      }
     </div>
 
     <div class="submit-section">

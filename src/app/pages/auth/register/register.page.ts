@@ -24,25 +24,25 @@ import { AccountType, BaseFormData, ClientFormData, BusinessFormData } from '@in
 })
 export class RegisterPage {
   // Servicios inyectados con inject()
-  private readonly formBuilder = inject(FormBuilder);
-  private readonly authService = inject(AuthSignalService);
-  private readonly notificationService = inject(NotificationService);
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
+  private formBuilder = inject(FormBuilder);
+  private authService = inject(AuthSignalService);
+  private notificationService = inject(NotificationService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   // Signals para estado reactivo
-  readonly accountType = signal<AccountType>('client');
-  readonly termsAccepted = signal(false);
-  readonly isSubmitting = signal(false);
-  readonly errorMessage = signal<string>('');
-  readonly formValid = signal<boolean>(false);
+ accountType = signal<AccountType>('client');
+ termsAccepted = signal(false);
+ isSubmitting = signal(false);
+ errorMessage = signal<string>('');
+ formValid = signal<boolean>(false);
 
   // Computed signals
-  readonly pageTitle = computed(() => 
+ pageTitle = computed(() => 
     this.accountType() === 'business' ? 'Registro de Negocio' : 'Registro de Cliente'
   );
 
-  readonly submitButtonText = computed(() => 
+ submitButtonText = computed(() => 
     this.isSubmitting() 
       ? 'Creando cuenta...' 
       : this.accountType() === 'client' 
@@ -50,18 +50,18 @@ export class RegisterPage {
         : 'Crear mi cuenta de negocio'
   );
 
-  readonly canSubmit = computed(() => 
+ canSubmit = computed(() => 
     this.formValid() && this.termsAccepted() && !this.isSubmitting()
   );
 
-  readonly isFormInvalid = computed(() =>
+ isFormInvalid = computed(() =>
     this.registerForm.invalid || !this.termsAccepted()
   );
 
   registerForm!: FormGroup;
 
-  // Categorías de negocio como readonly
-  readonly businessCategories = [
+  // Categorías de negocio como
+ businessCategories = [
     'Belleza y cuidado personal',
     'Salud y bienestar',
     'Consultoría',

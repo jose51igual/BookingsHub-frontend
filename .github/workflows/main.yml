@@ -60,6 +60,14 @@ jobs:
         else
           echo "Directorio dist no encontrado"
         fi
+        echo "Contenido del directorio dist/app:"
+        if [ -d "dist/app" ]; then
+          ls -la dist/app/
+          echo "Verificando index.html en dist/app:"
+          [ -f "dist/app/index.html" ] && echo "✅ index.html encontrado" || echo "❌ index.html no encontrado"
+        else
+          echo "Directorio dist/app no encontrado"
+        fi
         
     - name: Create directories on server
       uses: appleboy/ssh-action@v1.0.3
@@ -89,9 +97,9 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT || 22 }}
-        source: "dist/*"
+        source: "dist/app/*"
         target: "/var/www/bookings-hub-frontend/current"
-        strip_components: 1
+        strip_components: 2
         
     - name: Configure Nginx and finalize deployment
       uses: appleboy/ssh-action@v1.0.3

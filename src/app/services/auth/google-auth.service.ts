@@ -111,12 +111,12 @@ export class GoogleAuthService {
   }
 
   /**
-   * Maneja el inicio de sesión con Google (flujo actual con token directo)
+   * Maneja el inicio de sesión con Google usando un enfoque más directo
    */
   signInWithGoogle(): Observable<any> {
     return from(this.initGoogleAuth()).pipe(
       switchMap(() => {
-        return this.handleGoogleSignIn();
+        return this.handleGoogleSignInDirect();
       }),
       switchMap(credential => {
         return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/google`, {
@@ -124,9 +124,7 @@ export class GoogleAuthService {
         });
       }),
       tap((response: AuthResponse) => {
-        // Procesamos la respuesta del servidor directamente con handleAuthSuccess
         if (response && response.data?.user && response.data?.token) {
-          // Llamamos directamente a handleGoogleAuthSuccess
           this.authService.handleGoogleAuthSuccess(response);
         } else {
           throw new Error('La respuesta del servidor no contiene los datos esperados');
@@ -189,49 +187,105 @@ export class GoogleAuthService {
   }
 
   /**
-   * Maneja el proceso de inicio de sesión con Google
+   * Maneja el proceso de inicio de sesión con Google usando popup directo (más confiable)
    */
-  private handleGoogleSignIn(): Observable<any> {
+  private handleGoogleSignInDirect(): Observable<any> {
     return new Observable(observer => {
       try {
-        // Verificamos que el ID de cliente esté configurado
-        if (!environment.googleClientId || environment.googleClientId === 'TU_GOOGLE_CLIENT_ID') {
-          const error = new Error('Google Client ID no está configurado');
-          observer.error(error);
-          return;
+        console.log('🔄 Iniciando Google Sign-In con popup directo...');
+        console.log('🌐 Current origin:', window.location.origin);
+        console.log('🔑 Client ID:', environment.googleClientId);
+        
+        // Verificar que Google API esté disponible
+        if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
+          throw new Error('Google Identity Services API no está disponible');
         }
         
+        // Verificar configuración del Client ID
+        if (!environment.googleClientId || environment.googleClientId === 'TU_GOOGLE_CLIENT_ID' || environment.googleClientId === 'falta configurar') {
+          throw new Error('Google Client ID no está configurado correctamente');
+        }
+        
+        // Inicializar Google Identity Services
         google.accounts.id.initialize({
           client_id: environment.googleClientId,
           callback: (credential: any) => {
+            console.log('✅ Credencial recibida exitosamente');
             observer.next(credential);
             observer.complete();
           },
           error_callback: (error: any) => {
-            console.error('Error en Google Sign-In:', error);
-            observer.error(error);
+            console.error('❌ Error en callback de Google:', error);
+            observer.error(new Error(`Error en Google callback: ${JSON.stringify(error)}`));
           }
         });
         
-        google.accounts.id.prompt((notification: any) => {
-          console.log('🔍 Google prompt notification:', notification);
-          console.log('🌐 Current origin:', window.location.origin);
-          console.log('🔑 Client ID being used:', environment.googleClientId);
-          
-          if (notification.isNotDisplayed()) {
-            const reason = notification.getNotDisplayedReason ? notification.getNotDisplayedReason() : 'unknown';
-            console.error('❌ Prompt not displayed. Reason:', reason);
-            const error = new Error(`Google Sign-In prompt no fue mostrado. Razón: ${reason}. Verifica la configuración de orígenes autorizados en Google Cloud Console para el dominio ${window.location.origin}`);
-            observer.error(error);
-          } else if (notification.isSkippedMoment()) {
-            const reason = notification.getSkippedReason ? notification.getSkippedReason() : 'unknown';
-            console.warn('⚠️ Prompt skipped. Reason:', reason);
-            const error = new Error(`Google Sign-In prompt fue omitido. Razón: ${reason}`);
-            observer.error(error);
-          }
+        console.log('🚀 Abriendo popup de Google...');
+        
+        // Usar renderButton para crear un botón temporal y hacer click automáticamente
+        const buttonContainer = document.createElement('div');
+        buttonContainer.id = 'google-signin-button-temp';
+        buttonContainer.style.position = 'fixed';
+        buttonContainer.style.top = '-9999px';
+        buttonContainer.style.left = '-9999px';
+        document.body.appendChild(buttonContainer);
+        
+        google.accounts.id.renderButton(buttonContainer, {
+          theme: 'outline',
+          size: 'large',
+          type: 'standard',
+          width: 250
         });
-      } catch (error) {
-        console.error('Error en Google Sign-In:', error);
+        
+        // Esperar un poco y hacer click automáticamente
+        setTimeout(() => {
+          const button = buttonContainer.querySelector('div[role="button"]') as HTMLElement;
+          if (button) {
+            console.log('�️ Simulando click en botón de Google...');
+            button.click();
+            // Limpiar el botón temporal después de un tiempo
+            setTimeout(() => {
+              if (buttonContainer.parentNode) {
+                buttonContainer.parentNode.removeChild(buttonContainer);
+              }
+            }, 1000);
+          } else {
+            // Si no se puede renderizar el botón, intentar con prompt como fallback
+            console.warn('⚠️ No se pudo renderizar botón, intentando con prompt...');
+            this.fallbackToPrompt(observer);
+          }
+        }, 500);
+        
+      } catch (error: any) {
+        console.error('❌ Error general en handleGoogleSignInDirect:', error.message);
+        observer.error(error);
+      }
+    });
+  }
+
+  /**
+   * Método fallback usando prompt (para casos donde el botón no funciona)
+   */
+  private fallbackToPrompt(observer: any): void {
+    google.accounts.id.prompt((notification: any) => {
+      console.log('🔍 Google prompt notification (fallback):', notification);
+      
+      if (notification.isNotDisplayed()) {
+        const reason = notification.getNotDisplayedReason ? notification.getNotDisplayedReason() : 'unknown';
+        console.error('❌ Prompt not displayed. Reason:', reason);
+        
+        if (reason === 'opt_out_or_no_session') {
+          // En este caso, mostrar un mensaje más amigable
+          const error = new Error('Para iniciar sesión con Google, necesitas estar logueado en tu cuenta de Google en este navegador. Por favor, inicia sesión en Google primero y vuelve a intentar.');
+          observer.error(error);
+        } else {
+          const error = new Error(`Google Sign-In no disponible. Razón: ${reason}. Asegúrate de estar logueado en Google y tener popups habilitados.`);
+          observer.error(error);
+        }
+      } else if (notification.isSkippedMoment()) {
+        const reason = notification.getSkippedReason ? notification.getSkippedReason() : 'unknown';
+        console.warn('⚠️ Prompt skipped. Reason:', reason);
+        const error = new Error(`Google Sign-In fue omitido. Razón: ${reason}`);
         observer.error(error);
       }
     });

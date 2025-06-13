@@ -14,12 +14,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      
-    - name: Build Frontend in Docker
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        
+    - name: Create production environment file
       run: |
-        # Crear el archivo de entorno para producción
         cat > src/environments/environment.prod.ts << 'EOF'
         export const environment = {
           production: true,
@@ -35,47 +37,23 @@ jobs:
         };
         EOF
         
-        # Crear Dockerfile temporal para la compilación
-        cat > Dockerfile.build << 'EOF'
-        FROM node:22-alpine
-        WORKDIR /app
-        
-        # Instalar dependencias necesarias
-        RUN apk add --no-cache git python3 make g++
-        
-        # Copiar archivos de configuración
-        COPY package*.json ./
-        COPY tsconfig*.json ./
-        COPY angular.json ./
-        COPY vite.config.ts ./
-        COPY ionic.config.json ./
-        
-        # Configurar npm y instalar dependencias (incluyendo dev dependencies para build)
-        RUN npm config set registry https://registry.npmjs.org/
-        RUN npm ci --prefer-offline
-        
-        # Verificar que Angular CLI esté disponible
-        RUN npx ng version
-        
-        # Copiar código fuente
-        COPY . .
-        
-        # Construir la aplicación
-        RUN npm run build:prod
-        
-        # Construir la imagen
-        docker build -t bookingshub-frontend -f Dockerfile.build .
-        
-        # Extraer los archivos de distribución
-        docker create --name temp bookingshub-frontend
-        mkdir -p deploy/dist
-        docker cp temp:/app/dist/. deploy/dist/
-        docker rm temp
-        
-        # Verificar que los archivos se extrajeron correctamente
-        ls -la deploy/dist/
-        [ -f "deploy/dist/index.html" ] || (echo "Deployment failed: index.html not found" && exit 1)
+    - name: Install dependencies
+      run: npm ci
       
+    - name: Build application
+      run: npm run build:prod
+      
+    - name: Debug - List build output
+      run: |
+        echo "Contenido del directorio raíz:"
+        ls -la
+        echo "Contenido del directorio dist:"
+        if [ -d "dist" ]; then
+          ls -la dist/
+        else
+          echo "Directorio dist no encontrado"
+        fi
+        
     - name: Create directories on server
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -104,9 +82,9 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT || 22 }}
-        source: "deploy/dist/*"
+        source: "dist/*"
         target: "/var/www/bookings-hub-frontend/current"
-        strip_components: 2
+        strip_components: 1
         
     - name: Configure Nginx and finalize deployment
       uses: appleboy/ssh-action@v1.0.3
@@ -131,12 +109,19 @@ jobs:
             sudo systemctl enable nginx
           fi
           
+          # Verificar que el deployment fue exitoso
+          if [ -f "/var/www/bookings-hub-frontend/current/index.html" ]; then
+            echo "✅ Deployment exitoso - index.html encontrado"
+          else
+            echo "❌ Error - index.html no encontrado"
+            exit 1
+          fi
+          
           # Limpiar backups antiguos (mantener solo los últimos 5)
           cd /var/www/bookings-hub-frontend/backups
           if [ "$(ls -1 | wc -l)" -gt 5 ]; then
             sudo ls -1t | tail -n +6 | xargs -r sudo rm -rf
             echo "Backups antiguos limpiados"
           fi
-          fi
           
-          echo "Frontend deployment completed successfully!"
+          echo "✅ Frontend deployment completed successfully!"

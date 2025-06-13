@@ -40,6 +40,7 @@
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
+              "inlineStyleLanguage": "css",
               "budgets": [
                 {
                   "type": "initial",

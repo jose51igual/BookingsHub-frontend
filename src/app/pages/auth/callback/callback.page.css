@@ -1,0 +1,134 @@
+.callback-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  text-align: center;
+  padding: 24px;
+}
+
+/* Sección de procesamiento */
+.processing-section {
+  max-width: 400px;
+}
+
+.spinner-container {
+  margin-bottom: 24px;
+}
+
+.spinner-container ion-spinner {
+  transform: scale(1.5);
+}
+
+.processing-section h2 {
+  color: var(--ion-color-primary);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.processing-section p {
+  color: var(--ion-color-medium);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Sección de error */
+.error-section {
+  max-width: 500px;
+}
+
+.error-icon {
+  margin-bottom: 24px;
+}
+
+.error-icon ion-icon {
+  font-size: 80px;
+}
+
+.error-section h2 {
+  color: var(--ion-color-danger);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.error-section p {
+  color: var(--ion-color-medium);
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 32px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.action-buttons ion-button {
+  --border-radius: 12px;
+  height: 48px;
+  font-weight: 600;
+}
+
+/* Sección de éxito */
+.success-section {
+  max-width: 400px;
+}
+
+.success-icon {
+  margin-bottom: 24px;
+}
+
+.success-icon ion-icon {
+  font-size: 80px;
+}
+
+.success-section h2 {
+  color: var(--ion-color-success);
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.success-section p {
+  color: var(--ion-color-medium);
+  font-size: 16px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.loading-indicator {
+  margin-top: 16px;
+}
+
+.loading-indicator ion-spinner {
+  transform: scale(1.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .callback-container {
+    min-height: 60vh;
+    padding: 16px;
+  }
+  
+  .error-icon ion-icon,
+  .success-icon ion-icon {
+    font-size: 64px;
+  }
+  
+  .processing-section h2,
+  .error-section h2,
+  .success-section h2 {
+    font-size: 20px;
+  }
+  
+  .processing-section p,
+  .error-section p,
+  .success-section p {
+    font-size: 14px;
+  }
+}

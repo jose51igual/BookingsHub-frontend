@@ -8,7 +8,6 @@ export { AuthSignalService } from './auth/auth-signal.service';
 export { GoogleAuthService } from './auth/google-auth.service';
 
 // Servicios core
-export { LoadingSignalService } from './core/loading-signal.service';
 export { NotificationService } from './core/notification.service';
 export { BaseDataLoaderService } from './core/base-data-loader.service';
 

@@ -2,6 +2,12 @@
   <div class="time-slots-container">
     <h4>Horarios disponibles para {{ formatSelectedDate() }}</h4>
     
+    @if (isLoading()) {
+      <div class="loading-slots">
+        <ion-spinner name="crescent"></ion-spinner>
+        <p>Cargando horarios...</p>
+      </div>
+    } @else {
       @if (availableTimeSlots().length === 0) {
         <div class="no-slots">
           <ion-icon name="time-outline"></ion-icon>
@@ -20,5 +26,6 @@
           }
         </div>
       }
+    }
   </div>
 }

@@ -82,7 +82,6 @@ export class BusinessDashboardMainPage {
   private async loadDashboardData() {
     try {
       // Obtener analíticas para el dashboard (período de 1 mes)
-      await this.notificationService.withLoading(async () => {
         const response = await firstValueFrom(this.analyticsService.getBusinessAnalytics('1month'));
         
         if (response && response.success) {
@@ -128,7 +127,6 @@ export class BusinessDashboardMainPage {
             }
           ]);
         }
-      }, 'Cargando datos del dashboard...');
       
     } catch (error) {
       console.error('Error al cargar datos del dashboard:', error);

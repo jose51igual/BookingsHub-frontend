@@ -65,7 +65,6 @@ export class BusinessServicesPage {
       // Obtener el negocio del usuario
       const response = await firstValueFrom(this.businessService.getBusinessByUserId());
       
-
       let business;
       if (response && typeof response === 'object') {
         if ((response as any).success && (response as any).data) {

@@ -1,9 +1,12 @@
 <div class="map-container" [style.height]="height">
   <!-- Elemento nativo capacitor-google-map -->
-  <capacitor-google-map #map class="map-element" *ngIf="!hasError"></capacitor-google-map>
+  @if (!hasError) {
+    <capacitor-google-map #map class="map-element"></capacitor-google-map>
+  }
   
   <!-- Placeholder cuando no hay coordenadas o hay un error -->
-  <div *ngIf="hasError" class="map-placeholder">
+  @if (hasError) {
+    <div class="map-placeholder">
     <div class="error-content">
       <ion-icon name="map-outline" class="error-icon"></ion-icon>
       <div class="error-text">
@@ -15,11 +18,14 @@
         Reintentar
       </ion-button>
     </div>
-  </div>
+    </div>
+  }
   
   <!-- Indicador de carga -->
-  <div class="map-loading" *ngIf="!hasError && !isMapLoaded">
-    <ion-spinner name="dots" color="primary"></ion-spinner>
-    <p>Cargando mapa de ubicación...</p>
-  </div>
+  @if (!hasError && !isMapLoaded) {
+    <div class="map-loading">
+      <ion-spinner name="dots" color="primary"></ion-spinner>
+      <p>Cargando mapa de ubicación...</p>
+    </div>
+  }
 </div>

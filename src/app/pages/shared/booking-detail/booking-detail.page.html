@@ -1,14 +1,8 @@
 <ion-content class="booking-detail-content">
   <!-- Mensaje de carga -->
-  @if (isLoading()) {
-    <div class="loading-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p>Cargando detalles...</p>
-    </div>
-  }
 
   <!-- Detalle de la reserva -->
-  @if (!isLoading() && hasBooking()) {
+  @if (hasBooking()) {
     <div class="booking-detail-container">
       <!-- Estado de la reserva -->
       <div class="booking-status-container">
@@ -125,7 +119,7 @@
   }
   
   <!-- Mensaje si no hay datos de reserva -->
-  @if (!isLoading() && !hasBooking()) {
+  @if (!hasBooking()) {
     <div class="no-booking-container">
       <ion-icon name="alert-circle-outline" class="no-data-icon"></ion-icon>
       <h3>Datos de reserva no disponibles</h3>

@@ -10,23 +10,34 @@
 </ion-header>
 
 <ion-content>
-  <!-- Componente de alerta de error mejorado -->
-  <app-error-alert 
-    [error]="errorMessage()" 
-    [floating]="true" 
-    (dismissed)="clearError()">
-  </app-error-alert>
+  <!-- Error Alert -->
+  @if (errorMessage()) {
+    <ion-card color="danger" class="error-card">
+      <ion-card-content>
+        <div class="error-content">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <p>{{ errorMessage() }}</p>
+          <ion-button fill="clear" size="small" (click)="clearError()">
+            <ion-icon name="close-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  }
 
-  <div *ngIf="isLoading()" class="loading-container">
-    <ion-spinner></ion-spinner>
-    <p>Cargando información del negocio...</p>
-  </div>
+  @if (isLoading()) {
+    <div class="loading-container">
+      <ion-spinner></ion-spinner>
+      <p>Cargando información del negocio...</p>
+    </div>
+  }
 
-  <div *ngIf="!isLoading()" class="business-dashboard">
+  @if (!isLoading()) {
+    <div class="business-dashboard">
     
-    <!-- Header del negocio -->
-     @if(businessData()) { 
-      <div class="business-header">
+      <!-- Header del negocio -->
+      @if (businessData()) {
+        <div class="business-header">
         <div class="business-info">
           <h1>{{ businessData()?.name }}</h1>
           <div class="rating-info">
@@ -36,14 +47,16 @@
           </div>
           <p class="business-category">{{ businessData()?.category }}</p>
         </div>
-        <div class="business-image" *ngIf="businessData()?.image">
-          <img [src]="businessData()?.image" alt="Negocio">
-        </div>
+        @if (businessData()?.image) {
+          <div class="business-image">
+            <img [src]="businessData()?.image" alt="Negocio">
+          </div>
+        }
       </div>
-     }
+      }
 
     <!-- Estado si no hay negocio -->
-    @if(!businessData) {
+    @if (!businessData()) {
       <div class="no-business-header">
         <ion-icon name="business-outline" class="no-business-icon"></ion-icon>
         <h2>¡Aún no tienes un negocio configurado!</h2>
@@ -67,21 +80,29 @@
           </div>
         </ion-card-header>
         <ion-card-content>
-          <div *ngIf="services().length > 0" class="service-preview">
-            <div *ngFor="let service of services().slice(0, 2)" class="service-item">
-              <span class="service-name">{{ service.name }}</span>
-              <span class="service-price">{{ service.price | currency:'EUR':'symbol' }}</span>
+          @if (services().length > 0) {
+            <div class="service-preview">
+              @for (service of services().slice(0, 2); track service) {
+                <div class="service-item">
+                  <span class="service-name">{{ service.name }}</span>
+                  <span class="service-price">{{ service.price | currency:'EUR':'symbol' }}</span>
+                </div>
+              }
+              @if (services().length > 2) {
+                <div class="more-services">
+                  +{{ services().length - 2 }} más
+                </div>
+              }
             </div>
-            <div *ngIf="services().length > 2" class="more-services">
-              +{{ services().length - 2 }} más
+          }
+          @if (services().length === 0) {
+            <div class="empty-state">
+              <p>No hay servicios</p>
             </div>
-          </div>
-          <div *ngIf="services.length === 0" class="empty-state">
-            <p>No hay servicios</p>
-          </div>
+          }
           <ion-button expand="block" fill="outline" size="small" routerLink="/panel-negocio/crear-servicio">
             <ion-icon name="add-outline" slot="start"></ion-icon>
-            {{ services.length === 0 ? 'Crear servicio' : 'Gestionar' }}
+            {{ services().length === 0 ? 'Crear servicio' : 'Gestionar' }}
           </ion-button>
         </ion-card-content>
       </ion-card>
@@ -98,21 +119,29 @@
           </div>
         </ion-card-header>
         <ion-card-content>
-          <div *ngIf="employees().length > 0" class="employee-preview">
-            <div *ngFor="let employee of employees().slice(0, 2)" class="employee-item">
-              <span class="employee-name">{{ employee.name }}</span>
-              <span class="employee-position">{{ employee.position || 'Sin cargo' }}</span>
+          @if (employees().length > 0) {
+            <div class="employee-preview">
+              @for (employee of employees().slice(0, 2); track employee) {
+                <div class="employee-item">
+                  <span class="employee-name">{{ employee.name }}</span>
+                  <span class="employee-position">{{ employee.position || 'Sin cargo' }}</span>
+                </div>
+              }
+              @if (employees().length > 2) {
+                <div class="more-employees">
+                  +{{ employees().length - 2 }} más
+                </div>
+              }
             </div>
-            <div *ngIf="employees().length > 2" class="more-employees">
-              +{{ employees().length - 2 }} más
+          }
+          @if (employees().length === 0) {
+            <div class="empty-state">
+              <p>No hay empleados</p>
             </div>
-          </div>
-          <div *ngIf="employees.length === 0" class="empty-state">
-            <p>No hay empleados</p>
-          </div>
+          }
           <ion-button expand="block" fill="outline" size="small" routerLink="/employee-management">
             <ion-icon name="add-outline" slot="start"></ion-icon>
-            {{ employees.length === 0 ? 'Agregar empleado' : 'Gestionar' }}
+            {{ employees().length === 0 ? 'Agregar empleado' : 'Gestionar' }}
           </ion-button>
         </ion-card-content>
       </ion-card>
@@ -129,18 +158,26 @@
           </div>
         </ion-card-header>
         <ion-card-content>
-          <div *ngIf="recentBookings().length > 0" class="booking-preview">
-            <div *ngFor="let booking of recentBookings().slice(0, 2)" class="booking-item">
-              <span class="booking-time">{{ booking.booking_time }}</span>
-              <span class="booking-service">{{ booking.service_name }}</span>
+          @if (recentBookings().length > 0) {
+            <div class="booking-preview">
+              @for (booking of recentBookings().slice(0, 2); track booking) {
+                <div class="booking-item">
+                  <span class="booking-time">{{ booking.booking_time }}</span>
+                  <span class="booking-service">{{ booking.service_name }}</span>
+                </div>
+              }
+              @if (recentBookings().length > 2) {
+                <div class="more-bookings">
+                  +{{ recentBookings().length - 2 }} más
+                </div>
+              }
             </div>
-            <div *ngIf="recentBookings().length > 2" class="more-bookings">
-              +{{ recentBookings().length - 2 }} más
+          }
+          @if (recentBookings().length === 0) {
+            <div class="empty-state">
+              <p>No hay reservas hoy</p>
             </div>
-          </div>
-          <div *ngIf="recentBookings().length === 0" class="empty-state">
-            <p>No hay reservas hoy</p>
-          </div>
+          }
           <ion-button expand="block" fill="outline" size="small" routerLink="/business-bookings">
             <ion-icon name="eye-outline" slot="start"></ion-icon>
             Ver todas
@@ -180,7 +217,8 @@
     </div>
 
     <!-- Acciones rápidas -->
-    <div class="quick-actions" *ngIf="businessData">
+    @if (businessData()) {
+      <div class="quick-actions">
       <h3>Acciones rápidas</h3>
       <div class="actions-grid">
         <ion-button fill="outline" routerLink="/panel-negocio/crear-servicio">
@@ -200,7 +238,10 @@
           Configuración
         </ion-button>
       </div>
-    </div>
+      </div>
     }
+    }
+
   </div>
+  }
 </ion-content>

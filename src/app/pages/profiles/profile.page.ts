@@ -129,21 +129,19 @@ export class ProfilePage {
 
   async loadUserProfile(): Promise<void> {
     try {
-      await this.notificationService.withLoading(async () => {
-        const response = await firstValueFrom(this.userService.getUserProfile());
-        const user = response.data;
-        
-        this.profileForm.patchValue({
-          name: user.name,
-          email: user.email
-        });
+      const response = await firstValueFrom(this.userService.getUserProfile());
+      const user = response.data;
+      
+      this.profileForm.patchValue({
+        name: user.name,
+        email: user.email
+      });
 
-        // Actualizar los signals de display
-        this.displayName.set(user.name || '');
-        this.displayEmail.set(user.email || '');
-        
-        this.isLoading.set(false);
-      }, 'Cargando perfil...');
+      // Actualizar los signals de display
+      this.displayName.set(user.name || '');
+      this.displayEmail.set(user.email || '');
+      
+      this.isLoading.set(false);
       
     } catch (error: any) {
       console.error('Error loading profile', error);
@@ -173,9 +171,7 @@ export class ProfilePage {
       
       console.log('Update data being sent:', updateData);
 
-      await this.notificationService.withLoading(async () => {
-        await firstValueFrom(this.authService.updateUserProfile(updateData));
-      }, 'Actualizando perfil...');
+      await firstValueFrom(this.authService.updateUserProfile(updateData));
       
       console.log('Update successful, updating display signals');
       console.log('Form values:', formValue);
@@ -225,9 +221,7 @@ export class ProfilePage {
         new_password: new_password || undefined 
       };
 
-      await this.notificationService.withLoading(async () => {
-        await firstValueFrom(this.authService.updateUserProfile(updateData));
-      }, 'Actualizando contraseña...');
+      await firstValueFrom(this.authService.updateUserProfile(updateData));
       
       this.showPasswordForm.set(false);
       this.passwordForm.reset();
@@ -260,10 +254,8 @@ export class ProfilePage {
 
   async logout(): Promise<void> {
     try {
-      await this.notificationService.withLoading(async () => {
-        await firstValueFrom(this.authService.logout());
-        await this.router.navigate(['/login'], { replaceUrl: true });
-      }, 'Cerrando sesión...');
+      await firstValueFrom(this.authService.logout());
+      await this.router.navigate(['/login'], { replaceUrl: true });
       
     } catch (error: any) {
       this.errorMessage.set('No se pudo cerrar la sesión');

@@ -18,14 +18,17 @@ export class AuthSignalService {
   private storage = inject(StorageService);
   private notificationService = inject(NotificationService);
 
-  // Estado como signal
-  private readonly state = signal<AuthState>({
+  state = signal<AuthState>({
     user: null,
     token: null,
     isAuthenticated: false,
     isLoading: false,
     error: null
   });
+
+  // Observables para compatibilidad - se inicializan en el constructor
+  public isAuthenticated$!: Observable<boolean>;
+  public userId$!: Observable<number | null>;
 
   // Propiedades públicas simplificadas
   get user() { return this.state().user; }
@@ -34,12 +37,12 @@ export class AuthSignalService {
   get isLoading() { return this.state().isLoading; }
   get error() { return this.state().error; }
   get userId() { return this.state().user?.id || null; }
-  
-  // Observable para compatibilidad con código existente
-  get isAuthenticated$() { return toObservable(computed(() => this.state().isAuthenticated)); }
-  get userId$() { return toObservable(computed(() => this.state().user?.id || null)); }
 
   constructor() {
+    // Inicializar observables dentro del contexto de inyección
+    this.isAuthenticated$ = toObservable(computed(() => this.state().isAuthenticated));
+    this.userId$ = toObservable(computed(() => this.state().user?.id || null));
+    
     this.initializeFromStorage();
   }
 
@@ -98,15 +101,6 @@ export class AuthSignalService {
     return this.http.post<any>(`${environment.apiUrl}/auth/register`, userData).pipe(
       tap(response => console.log('Registro exitoso:', response)),
       catchError(error => this.handleAuthError(error, 'Error durante el registro'))
-    );
-  }
-
-  loginWithSocialCredentials(credentials: any): Observable<any> {
-    this.state.update(state => ({ ...state, isLoading: true, error: null }));
-    
-    return this.http.post<any>(`${environment.apiUrl}/auth/social`, credentials).pipe(
-      tap(response => this.handleAuthSuccess(response)),
-      catchError(error => this.handleAuthError(error, 'Error durante el inicio de sesión social'))
     );
   }
 
@@ -188,6 +182,10 @@ export class AuthSignalService {
     }
   }
 
+  public handleGoogleAuthSuccess(response: any) {
+    this.handleAuthSuccess(response);
+  }
+
   private handleAuthError(error: any, defaultMessage: string): Observable<never> {
     const errorMessage = error.error?.message || defaultMessage;
     
@@ -198,10 +196,6 @@ export class AuthSignalService {
     }));
     
     return throwError(() => error);
-  }
-
-  async presentLoading(message: string): Promise<void> {
-    await this.notificationService.showLoading({ message });
   }
 
   async presentAlert(header: string, message: string): Promise<void> {

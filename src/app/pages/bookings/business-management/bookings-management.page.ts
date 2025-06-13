@@ -220,7 +220,6 @@ export class BookingsManagementPage {
   readonly updateBookingStatus = async (booking: Booking, newStatus?: any): Promise<void> => {
     const normalizedStatus = mapBackendStatusToFrontend(newStatus || 'cancelada');
     
-    await this.notificationService.withLoading(async () => {
       await firstValueFrom(this.bookingService.updateBookingStatus(booking.id, normalizedStatus));
       
       // Actualizar el estado local después de la llamada exitosa
@@ -228,7 +227,6 @@ export class BookingsManagementPage {
         b.id === booking.id ? { ...b, status: normalizedStatus } : b
       );
       this.bookings.set(updatedBookings);
-    }, 'Actualizando estado...');
     
     await this.notificationService.showSuccess('Éxito', 'Estado de reserva actualizado correctamente');
   };

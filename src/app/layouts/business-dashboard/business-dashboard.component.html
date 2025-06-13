@@ -31,7 +31,9 @@
         [routerLinkActiveOptions]="{exact: false}">
         <ion-icon name="calendar-outline" class="nav-icon"></ion-icon>
         <span class="nav-label">Reservas</span>
-        <span *ngIf="getBookingsBadge()" class="nav-badge">{{ getBookingsBadge() }}</span>
+        @if (getBookingsBadge()) {
+          <span class="nav-badge">{{ getBookingsBadge() }}</span>
+        }
       </a>
       
       <a 

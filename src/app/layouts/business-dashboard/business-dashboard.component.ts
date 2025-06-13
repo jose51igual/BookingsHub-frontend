@@ -34,7 +34,7 @@ import { MenuItem } from '@interfaces/index';
     RouterModule,
     IonIcon,
     FooterComponent
-]
+  ]
 })
 export class BusinessDashboardComponent {
   

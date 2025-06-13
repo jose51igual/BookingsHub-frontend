@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 import { GoogleAuthService, AuthSignalService, NotificationService } from '@services/index';
-import { ErrorAlertComponent, LoadingComponent } from '@components/index';
+import { ErrorAlertComponent } from '@components/index';
 import { LoginCredentials } from '@interfaces/index';
 import { FormFactory } from '@utils/form.utils';
 
@@ -95,14 +95,14 @@ export class LoginPage {
     const credentials: LoginCredentials = this.loginForm.value;
 
     try {
-      await this.notificationService.withLoading(async () => {
-        return new Promise<void>((resolve, reject) => {
-          this.authService.login(credentials).subscribe({
-            next: () => resolve(),
-            error: (error) => reject(error)
-          });
+      const credentials: LoginCredentials = this.loginForm.value;
+      
+      await new Promise<void>((resolve, reject) => {
+        this.authService.login(credentials).subscribe({
+          next: () => resolve(),
+          error: (error) => reject(error)
         });
-      }, 'Iniciando sesión...');
+      });
     } catch (error: any) {
       this.errorMessage.set(error.error?.message || 'Credenciales inválidas');
     } finally {
@@ -120,26 +120,19 @@ export class LoginPage {
     this.router.navigateByUrl('/inicio');
   };
 
-  // Login con Google
+  // Login con Google usando token directo
   readonly loginWithGoogle = async (): Promise<void> => {
     try {
-      await this.notificationService.withLoading(async () => {
-        return new Promise<void>((resolve, reject) => {
-          this.googleAuthService.signInWithGoogle().subscribe({
-            next: () => resolve(),
-            error: (error) => reject(error)
-          });
+      await new Promise<void>((resolve, reject) => {
+        this.googleAuthService.signInWithGoogle().subscribe({
+          next: () => resolve(),
+          error: (error) => reject(error)
         });
-      }, 'Iniciando sesión con Google...');
+      });
     } catch (error: any) {
       console.error('Error en inicio de sesión con Google:', error);
       this.errorMessage.set('No se pudo iniciar sesión con Google. Por favor, intenta nuevamente.');
     }
-  };
-
-  // Alternar visibilidad de contraseña
-  readonly togglePasswordVisibility = (): void => {
-    this.showPassword.update(current => !current);
   };
 
   // Limpiar errores

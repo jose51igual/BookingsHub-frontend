@@ -12,14 +12,8 @@
     (dismissed)="clearError()">
   </app-error-alert>
 
-  @if (isLoading()) {
-    <div class="loading-container">
-      <ion-spinner></ion-spinner>
-      <p>Cargando perfil...</p>
-    </div>
-  }
 
-  @if (!isLoading() && currentUser()) {
+  @if (currentUser()) {
     <div class="profile-container">
 
       <!-- Información básica del usuario -->

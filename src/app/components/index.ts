@@ -4,7 +4,6 @@
  */
 
 // UI Components - Componentes de interfaz de usuario
-export { LoadingComponent } from './ui/loading/loading.component';
 export { LoadingIndicatorComponent } from './ui/loading-indicator/loading-indicator.component';
 export { ErrorAlertComponent } from './ui/error-alert/error-alert.component';
 export { EmptyStateComponent } from './ui/empty-state/empty-state.component';

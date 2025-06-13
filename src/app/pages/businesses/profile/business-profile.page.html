@@ -34,14 +34,8 @@
       </div>
     </div>
 
-    @if (isLoading()) {
-      <div class="loading-section">
-        <ion-spinner></ion-spinner>
-        <p>Cargando información...</p>
-      </div>
-    }
 
-    @if (!isLoading() && !isEditMode()) {
+    @if (!isEditMode()) {
       <div class="view-mode">
         <div class="info-section">
           <h3>Información del Negocio</h3>
@@ -114,7 +108,7 @@
       </div>
     }
 
-    @if (!isLoading() && isEditMode()) {
+    @if (isEditMode()) {
       <form [formGroup]="businessForm" (ngSubmit)="saveBusiness()" class="edit-mode">
         <div class="form-section">
           <h3>Editar Información</h3>

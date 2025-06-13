@@ -8,11 +8,15 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
     // Configuración para desarrollo en dispositivos
     cleartext: true
-  },  plugins: {
+  },
+  plugins: {
     SplashScreen: {
       launchShowDuration: 1000,
       backgroundColor: "#222428",
       showSpinner: false
+    },
+    CapacitorGoogleMaps: {
+      apiKey: "AIzaSyCD-VXgLmnUYH0PbvIgn2hIsnKm-77K_W8"
     }
     // GoogleAuth deshabilitado temporalmente para evitar crashes
     // GoogleAuth: {

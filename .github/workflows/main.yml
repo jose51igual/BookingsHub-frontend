@@ -29,6 +29,7 @@ jobs:
           googleMapsApiKey: '${{ secrets.GOOGLE_MAPS_API_KEY || 'falta configurar' }}',
           geocodeApiKey: '${{ secrets.GOOGLE_GEOCODE_API_KEY || 'falta configurar' }}',
           logLevel: 'error',
+          sentryDsn: '',
           version: '1.0.0',
           enableMocks: false
         };
@@ -38,11 +39,28 @@ jobs:
         cat > Dockerfile.build << 'EOF'
         FROM node:22-alpine
         WORKDIR /app
+        
+        # Instalar dependencias necesarias
+        RUN apk add --no-cache git python3 make g++
+        
+        # Copiar archivos de configuración
         COPY package*.json ./
+        COPY tsconfig*.json ./
+        COPY angular.json ./
+        COPY vite.config.ts ./
+        
+        # Configurar npm y instalar dependencias
         RUN npm config set registry https://registry.npmjs.org/
-        RUN npm install --prefer-offline
+        RUN npm ci --only=production --prefer-offline
+        
+        # Copiar código fuente
         COPY . .
+        
+        # Construir la aplicación
         RUN npm run build:prod
+        
+        # Verificar que la construcción fue exitosa
+        RUN ls -la dist/ && [ -f "dist/index.html" ] || (echo "Build failed: index.html not found" && exit 1)
         EOF
         
         # Construir la imagen
@@ -53,6 +71,10 @@ jobs:
         mkdir -p deploy/dist
         docker cp temp:/app/dist/. deploy/dist/
         docker rm temp
+        
+        # Verificar que los archivos se extrajeron correctamente
+        ls -la deploy/dist/
+        [ -f "deploy/dist/index.html" ] || (echo "Deployment failed: index.html not found" && exit 1)
       
     - name: Create directories on server
       uses: appleboy/ssh-action@v1.0.3
@@ -62,10 +84,18 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT || 22 }}
         script: |          
+          # Crear directorio de backups si no existe
+          sudo mkdir -p /var/www/bookings-hub-frontend/backups
+          
+          # Hacer backup del directorio actual si existe
           if [ -d "/var/www/bookings-hub-frontend/current" ]; then
             sudo mv /var/www/bookings-hub-frontend/current /var/www/bookings-hub-frontend/backups/backup_$(date +%Y%m%d_%H%M%S)
           fi
-          mkdir -p /var/www/bookings-hub-frontend/current
+          
+          # Crear el directorio de destino con permisos correctos
+          sudo mkdir -p /var/www/bookings-hub-frontend/current
+          sudo chown -R $USER:$USER /var/www/bookings-hub-frontend/current
+          sudo chmod -R 755 /var/www/bookings-hub-frontend/current
           
     - name: Upload files to server
       uses: appleboy/scp-action@v0.1.7
@@ -86,18 +116,27 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT || 22 }}
         script: |          
+          # Configurar permisos correctos para los archivos subidos
+          sudo chown -R www-data:www-data /var/www/bookings-hub-frontend/current
+          sudo chmod -R 644 /var/www/bookings-hub-frontend/current
+          sudo find /var/www/bookings-hub-frontend/current -type d -exec chmod 755 {} \;
+          
+          # Verificar que Nginx esté funcionando
           if sudo systemctl is-active --quiet nginx; then
             echo "Nginx está ejecutándose"
+            sudo systemctl reload nginx
           else
             echo "Iniciando Nginx..."
             sudo systemctl start nginx
             sudo systemctl enable nginx
           fi
           
+          # Limpiar backups antiguos (mantener solo los últimos 5)
           cd /var/www/bookings-hub-frontend/backups
           if [ "$(ls -1 | wc -l)" -gt 5 ]; then
-            ls -1t | tail -n +6 | xargs -r rm -rf
+            sudo ls -1t | tail -n +6 | xargs -r sudo rm -rf
             echo "Backups antiguos limpiados"
+          fi
           fi
           
           echo "Frontend deployment completed successfully!"

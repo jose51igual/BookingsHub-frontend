@@ -22,10 +22,6 @@ jobs:
         
     - name: Create production environment file
       run: |
-        echo "🔍 Debug - Secrets disponibles:"
-        echo "GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID && 'configurado' || 'NO configurado' }}"
-        echo "GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY && 'configurado' || 'NO configurado' }}"
-        
         cat > src/environments/environment.prod.ts << 'EOF'
         export const environment = {
           production: true,
@@ -40,9 +36,6 @@ jobs:
           enableMocks: false
         };
         EOF
-        
-        echo "📄 Contenido del archivo environment.prod.ts generado:"
-        cat src/environments/environment.prod.ts
         
     - name: Install dependencies
       run: |

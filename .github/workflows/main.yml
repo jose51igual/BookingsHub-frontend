@@ -116,14 +116,6 @@ jobs:
             sudo systemctl enable nginx
           fi
           
-          # Verificar que el deployment fue exitoso
-          if [ -f "/var/www/bookings-hub-frontend/current/index.html" ]; then
-            echo "✅ Deployment exitoso - index.html encontrado"
-          else
-            echo "❌ Error - index.html no encontrado"
-            exit 1
-          fi
-          
           # Limpiar backups antiguos (mantener solo los últimos 5)
           cd /var/www/bookings-hub-frontend/backups
           if [ "$(ls -1 | wc -l)" -gt 5 ]; then

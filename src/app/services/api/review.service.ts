@@ -79,4 +79,104 @@ export class ReviewService extends BaseApiService {
       catchError(error => this.handleError(error))
     );
   }
+
+  /**
+   * Verifica si el usuario ya tiene una reseña para un negocio específico
+   */
+  getUserReviewForBusiness(businessId: number): Observable<Review | null> {
+    return this.getWithAuth(`${this.apiUrl}/reviews/user/business/${businessId}`);
+  }
+
+  /**
+   * Crea o actualiza una reseña según si ya existe
+   * Si el usuario ya tiene una reseña para este negocio, la actualiza
+   * Si no existe, crea una nueva
+   */
+  createOrUpdateReview(reviewData: { 
+    business_id: number; 
+    rating: number; 
+    comment?: string; 
+    booking_id?: number 
+  }): Observable<any> {
+    return new Observable(observer => {
+      // Primero verificar si ya existe una reseña del usuario para este negocio
+      this.getUserReviewForBusiness(reviewData.business_id).subscribe({
+        next: (existingReview) => {
+          if (existingReview && existingReview.id) {
+            // Ya existe una reseña, actualizarla
+            console.log('🔄 Actualizando reseña existente:', existingReview.id);
+            this.updateReview(
+              existingReview.id, 
+              reviewData.rating, 
+              reviewData.comment || ''
+            ).subscribe({
+              next: (updatedReview) => {
+                observer.next({
+                  success: true,
+                  message: 'Reseña actualizada exitosamente',
+                  data: updatedReview,
+                  action: 'updated'
+                });
+                observer.complete();
+              },
+              error: (error) => {
+                console.error('❌ Error al actualizar reseña:', error);
+                observer.error(error);
+              }
+            });
+          } else {
+            // No existe una reseña, crear una nueva
+            console.log('➕ Creando nueva reseña');
+            this.createReview(reviewData).subscribe({
+              next: (newReview) => {
+                observer.next({
+                  success: true,
+                  message: 'Reseña creada exitosamente',
+                  data: newReview,
+                  action: 'created'
+                });
+                observer.complete();
+              },
+              error: (error) => {
+                console.error('❌ Error al crear reseña:', error);
+                observer.error(error);
+              }
+            });
+          }
+        },
+        error: (error) => {
+          // Si hay error al verificar, intentar crear la reseña directamente
+          console.log('⚠️ Error al verificar reseña existente, intentando crear:', error);
+          this.createReview(reviewData).subscribe({
+            next: (newReview) => {
+              observer.next({
+                success: true,
+                message: 'Reseña creada exitosamente',
+                data: newReview,
+                action: 'created'
+              });
+              observer.complete();
+            },
+            error: (createError) => {
+              console.error('❌ Error al crear reseña:', createError);
+              observer.error(createError);
+            }
+          });
+        }
+      });
+    });
+  }
+
+  /**
+   * Método alternativo: Upsert de reseña (crear o actualizar)
+   * Usa un endpoint específico del backend si está disponible
+   */
+  upsertReview(reviewData: { 
+    business_id: number; 
+    rating: number; 
+    comment?: string; 
+    booking_id?: number 
+  }): Observable<any> {
+    return this.postWithAuth(`${this.apiUrl}/reviews/upsert`, reviewData);
+  }
 }

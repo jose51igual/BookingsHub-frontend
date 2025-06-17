@@ -140,14 +140,13 @@ export class GoogleAuthService {
       })
     );
   }
-
   /**
-   * Maneja el inicio de sesión con Google usando un enfoque más directo
+   * Nuevo método usando popup directo con OAuth 2.0 (más confiable)
    */
-  signInWithGoogle(): Observable<any> {
+  signInWithGooglePopup(): Observable<any> {
     return from(this.initGoogleAuth()).pipe(
       switchMap(() => {
-        return this.handleGoogleSignInDirect();
+        return this.handleGoogleOAuthPopup();
       }),
       switchMap(credential => {
         return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/google`, {
@@ -162,6 +161,74 @@ export class GoogleAuthService {
         }
       })
     );
+  }
+
+  /**
+   * Método OAuth 2.0 popup más directo y confiable
+   */
+  private handleGoogleOAuthPopup(): Observable<any> {
+    return new Observable(observer => {
+      try {
+        const clientId = environment.googleClientId;
+        const redirectUri = window.location.origin + '/auth/callback';
+        const scope = 'openid email profile';
+        const responseType = 'code';
+        const state = this.generateRandomState();
+        
+        // Construir URL de autorización
+        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${encodeURIComponent(clientId)}&` +
+          `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+          `scope=${encodeURIComponent(scope)}&` +
+          `response_type=${responseType}&` +
+          `state=${state}&` +
+          `prompt=select_account`;
+
+        console.log('🚀 Abriendo popup de Google OAuth:', authUrl);
+        
+        // Abrir popup
+        const popup = window.open(
+          authUrl,
+          'google-auth',
+          'width=500,height=600,scrollbars=yes,resizable=yes'
+        );
+
+        if (!popup) {
+          throw new Error('El popup fue bloqueado. Por favor permite popups para este sitio.');
+        }
+
+        // Escuchar mensajes del popup
+        const messageListener = (event: MessageEvent) => {
+          if (event.origin !== window.location.origin) return;
+          
+          if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
+            window.removeEventListener('message', messageListener);
+            popup.close();
+            observer.next({ credential: event.data.token });
+            observer.complete();
+          } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
+            window.removeEventListener('message', messageListener);
+            popup.close();
+            observer.error(new Error(event.data.error || 'Error en autenticación'));
+          }
+        };
+
+        window.addEventListener('message', messageListener);
+
+        // Timeout después de 60 segundos
+        setTimeout(() => {
+          if (!popup.closed) {
+            popup.close();
+            window.removeEventListener('message', messageListener);
+            observer.error(new Error('Tiempo de espera agotado'));
+          }
+        }, 60000);
+
+      } catch (error: any) {
+        console.error('❌ Error en popup OAuth:', error);
+        observer.error(error);
+      }
+    });
   }
 
   /**

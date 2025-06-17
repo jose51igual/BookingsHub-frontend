@@ -95,20 +95,35 @@ export class LoginPage {
 
  navigateToHome = (): void => {
     this.router.navigateByUrl('/inicio');
-  };
-
- loginWithGoogle = async (): Promise<void> => {
+  }; loginWithGoogle = async (): Promise<void> => {
     try {
       await new Promise<void>((resolve, reject) => {
-        this.googleAuthService.signInWithGoogle().subscribe({
+        this.googleAuthService.signInWithGooglePopup().subscribe({
           next: () => resolve(),
           error: (error) => reject(error)
         });
       });
     } catch (error: any) {
       console.error('Error en inicio de sesión con Google:', error);
-      this.errorMessage.set('No se pudo iniciar sesión con Google. Por favor, intenta nuevamente.');
+      
+      // Mensaje de error más específico según el tipo de error
+      let errorMessage = 'No se pudo iniciar sesión con Google. Por favor, intenta nuevamente.';
+      
+      if (error.message.includes('popup')) {
+        errorMessage = 'El popup de Google fue bloqueado. Por favor habilita los popups para este sitio.';
+      } else if (error.message.includes('opt_out_or_no_session')) {
+        errorMessage = 'Por favor, inicia sesión en tu cuenta de Google primero y vuelve a intentar.';
+      } else if (error.message.includes('Tiempo de espera')) {
+        errorMessage = 'El inicio de sesión tomó demasiado tiempo. Por favor, intenta de nuevo.';
+      }
+      
+      this.errorMessage.set(errorMessage);
     }
+  };
+
+  loginWithGoogleRedirect = (): void => {
+    // Método alternativo usando redirección completa
+    this.googleAuthService.redirectToGoogleAuth();
   };
 
  clearError = (): void => {

@@ -331,3 +331,11 @@ ion-button[fill="clear"]:hover {
   font-weight: 500;
   margin-bottom: 16px;
 }
+
+.google-redirect-button {
+  --color: #666;
+  --border-radius: 8px;
+  height: 36px;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}

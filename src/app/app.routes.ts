@@ -137,13 +137,13 @@ export const routes: Routes = [
   {
     path: 'iniciar-sesion',
     canActivate: [AuthGuard],
-    data: { allowUnauthenticated: true, redirectAuthenticated: true, preload: true }, // Precargamos la página de login
+    data: { allowUnauthenticated: true, redirectAuthenticated: true, preload: true },
     loadComponent: () => import('./pages/auth/login/login.page').then(m => m.LoginPage)
   },
   {
     path: 'registro',
     canActivate: [AuthGuard],
-    data: { allowUnauthenticated: true, redirectAuthenticated: true, preload: true, preloadDelay: 1000 }, // Precargamos con retraso
+    data: { allowUnauthenticated: true, redirectAuthenticated: true, preload: true }, 
     loadComponent: () => import('./pages/auth/register/register.page').then(m => m.RegisterPage)
   },
   {

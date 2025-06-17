@@ -25,7 +25,6 @@ export class CallbackPage implements OnInit {
   ngOnInit() {
     this.handleAuthCallback();
   }
-
   private async handleAuthCallback() {
     try {
       // Obtener parámetros de la URL
@@ -44,10 +43,9 @@ export class CallbackPage implements OnInit {
         return;
       }
 
-      // Si no hay token, significa que es el callback inicial de Google
-      // y necesitamos procesar el código de autorización
+      // Si hay código de autorización de Google, procesarlo
       if (queryParams['code']) {
-        await this.handleAuthorizationCode(queryParams);
+        await this.handleGoogleAuthCode(queryParams);
         return;
       }
 
@@ -56,6 +54,50 @@ export class CallbackPage implements OnInit {
     } catch (error: any) {
       console.error('❌ Error en callback de autenticación:', error);
       this.handleCallbackError(error.message || 'Error durante la autenticación');
+    }
+  }
+
+  private async handleGoogleAuthCode(params: any) {
+    this.message.set('Procesando autenticación con Google...');
+    
+    try {
+      // Verificar el state para prevenir ataques CSRF
+      const receivedState = params.state;
+      const storedState = localStorage.getItem('google_auth_state');
+      
+      if (receivedState !== storedState) {
+        throw new Error('Estado de seguridad inválido');
+      }
+
+      // Limpiar el state almacenado
+      localStorage.removeItem('google_auth_state');
+
+      // Enviar mensaje al opener (ventana principal)
+      if (window.opener) {
+        window.opener.postMessage({
+          type: 'GOOGLE_AUTH_SUCCESS',
+          code: params.code,
+          state: params.state
+        }, window.location.origin);
+        
+        // Cerrar el popup
+        window.close();
+      } else {
+        throw new Error('No se pudo comunicar con la ventana principal');
+      }
+
+    } catch (error: any) {
+      console.error('❌ Error procesando código de Google:', error);
+      
+      if (window.opener) {
+        window.opener.postMessage({
+          type: 'GOOGLE_AUTH_ERROR',
+          error: error.message
+        }, window.location.origin);
+        window.close();
+      } else {
+        this.handleCallbackError(error.message);
+      }
     }
   }
 
@@ -104,33 +146,6 @@ export class CallbackPage implements OnInit {
     }
   }
 
-  private async handleAuthorizationCode(params: any) {
-    this.message.set('Verificando con Google...');
-    
-    // Verificar el state para prevenir ataques CSRF
-    const receivedState = params.state;
-    const storedState = localStorage.getItem('google_auth_state');
-    
-    if (receivedState !== storedState) {
-      throw new Error('Estado de seguridad inválido');
-    }
-
-    // Limpiar el state almacenado
-    localStorage.removeItem('google_auth_state');
-
-    // En este caso, el código debería ser procesado por el backend
-    // pero como estamos en el frontend, mostraremos un mensaje
-    this.message.set('Redirigiendo al servidor para procesar...');
-    
-    // En una implementación real, esto sería manejado por el backend
-    // El backend recibe el código, lo intercambia por tokens y redirige aquí con el token JWT
-    console.log('📝 Código de autorización recibido:', params.code);
-    
-    // Por ahora, simularemos un error ya que no tenemos backend configurado
-    setTimeout(() => {
-      this.handleCallbackError('Esta funcionalidad requiere configuración del backend');
-    }, 2000);
-  }
 
   private handleCallbackError(errorMessage: string) {
     this.hasError.set(true);

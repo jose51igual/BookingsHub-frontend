@@ -244,15 +244,12 @@ export class GoogleAuthService {
       }
     });
   }
-
   /**
    * Intercambia el código de autorización por un token JWT
    */
   private async exchangeCodeForToken(code: string): Promise<any> {
     try {
-      const response = await this.http.post<AuthResponse>(`${environment.apiUrl}/auth/google/callback`, {
-        code: code
-      }).toPromise();
+      const response = await this.http.get<AuthResponse>(`${environment.apiUrl}/auth/google/callback?code=${encodeURIComponent(code)}`).toPromise();
 
       if (response && response.data?.user && response.data?.token) {
         this.authService.handleGoogleAuthSuccess(response);

@@ -151,9 +151,20 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { allowUnauthenticated: true, redirectAuthenticated: true },
     loadComponent: () => import('./pages/auth/register-type/register-type.page').then(m => m.RegisterTypePage)
+  },  {
+    path: 'auth/callback',
+    canActivate: [AuthGuard],
+    data: { allowUnauthenticated: true },
+    loadComponent: () => import('./pages/auth/callback/callback.page').then(m => m.CallbackPage)
   },
   {
-    path: 'auth/callback',
+    path: 'auth/success',
+    canActivate: [AuthGuard],
+    data: { allowUnauthenticated: true },
+    loadComponent: () => import('./pages/auth/callback/callback.page').then(m => m.CallbackPage)
+  },
+  {
+    path: 'auth/error',
     canActivate: [AuthGuard],
     data: { allowUnauthenticated: true },
     loadComponent: () => import('./pages/auth/callback/callback.page').then(m => m.CallbackPage)

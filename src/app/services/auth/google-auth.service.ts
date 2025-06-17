@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
 import { AuthSignalService } from './auth-signal.service';
 import { environment } from '@environments/environment';
 import { AuthResponse } from '@interfaces/index';
@@ -14,137 +13,97 @@ export class GoogleAuthService {
     private http: HttpClient,
     private authService: AuthSignalService
   ) { }
+
   /**
-   * Inicia el proceso de autenticación con Google redirigiendo al endpoint de login
+   * Inicia el proceso de autenticación con Google
+   * Redirige directamente al endpoint del backend que maneja todo el flujo OAuth
    */
   signInWithGoogle(): void {
-    // Generar un estado aleatorio para prevenir ataques CSRF
-    const state = this.generateRandomState();
-    localStorage.setItem('google_auth_state', state);
-    
-    // Redirigir al endpoint de login de Google
-    const loginUrl = `${environment.apiUrl}/auth/google/login?state=${encodeURIComponent(state)}`;
+    const loginUrl = `${environment.apiUrl}/auth/google/login`;
     console.log('🚀 Redirigiendo a Google Auth:', loginUrl);
     
+    // El backend maneja todo el flujo OAuth y redirige de vuelta al frontend
     window.location.href = loginUrl;
   }
 
   /**
-   * Maneja el callback de Google OAuth después de la autenticación
-   * @param code - Código de autorización de Google
-   * @param state - Estado para verificación CSRF
-   * @returns Observable con la respuesta de autenticación
+   * Maneja el éxito de la autenticación desde los parámetros de la URL
+   * Este método se llama cuando el backend redirige a /auth/success
+   * @param token - Token JWT recibido del backend
+   * @param userInfo - Información del usuario recibida del backend
    */
-  handleGoogleCallback(code: string, state: string): Observable<AuthResponse> {
-    // Verificar el estado para prevenir ataques CSRF
-    const storedState = localStorage.getItem('google_auth_state');
-    if (state !== storedState) {
-      throw new Error('Estado inválido - posible ataque CSRF');
+  handleAuthSuccess(token: string, userInfo: any): void {
+    try {
+      console.log('✅ Procesando autenticación exitosa con Google');
+      
+      // Crear la respuesta en el formato esperado por el AuthSignalService
+      const authResponse: AuthResponse = {
+        success: true,
+        message: 'Autenticación exitosa',
+        data: {
+          token: token,
+          user: userInfo
+        }
+      };
+
+      // Procesar la autenticación exitosa
+      this.authService.handleGoogleAuthSuccess(authResponse);
+      
+    } catch (error) {
+      console.error('❌ Error procesando autenticación exitosa:', error);
+      throw error;
     }
+  }
 
-    // Limpiar el estado almacenado
-    localStorage.removeItem('google_auth_state');
-
-    // Llamar al endpoint de callback
-    const callbackUrl = `${environment.apiUrl}/auth/google/callback?code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}`;
+  /**
+   * Maneja los errores de autenticación
+   * Este método se llama cuando el backend redirige a /auth/error
+   * @param errorCode - Código de error recibido del backend
+   */
+  handleAuthError(errorCode: string): void {
+    console.error('❌ Error en autenticación con Google:', errorCode);
     
-    return this.http.get<AuthResponse>(callbackUrl).pipe(
-      tap((response: AuthResponse) => {
-        if (response && response.data?.user && response.data?.token) {
-          console.log('✅ Autenticación con Google exitosa');
-          this.authService.handleGoogleAuthSuccess(response);
-        } else {
-          throw new Error('La respuesta del servidor no contiene los datos esperados');
-        }
-      }),
-      catchError((error) => {
-        console.error('❌ Error en callback de Google:', error);
-        throw error;
-      })
-    );
+    let errorMessage = 'Error desconocido en la autenticación';
+    
+    switch (errorCode) {
+      case 'no_code':
+        errorMessage = 'No se recibió el código de autorización de Google';
+        break;
+      case 'invalid_code':
+        errorMessage = 'El código de autorización es inválido o ha expirado';
+        break;
+      case 'server_error':
+        errorMessage = 'Error interno del servidor durante la autenticación';
+        break;
+      default:
+        errorMessage = `Error de autenticación: ${errorCode}`;
+    }
+    
+    // Aquí puedes emitir el error a través de un subject o mostrar un toast
+    throw new Error(errorMessage);
   }
 
   /**
-   * Inicia el proceso de autenticación con Google usando popup
-   * Este método abre un popup que redirige al endpoint de login
+   * Inicializa el servicio de Google Auth (método de compatibilidad)
+   * En esta versión simplificada no es necesario inicializar nada
    */
-  signInWithGooglePopup(): Observable<AuthResponse> {
+  async initGoogleAuth(): Promise<void> {
+    console.log('✅ Google Auth Service inicializado (modo simplificado)');
+    return Promise.resolve();
+  }
+
+  /**
+   * Método de compatibilidad para popup (simplificado)
+   * Usa el mismo flujo de redirección que signInWithGoogle
+   */
+  signInWithGooglePopup(): Observable<any> {
+    // En lugar de usar popup, usamos redirección completa
+    this.signInWithGoogle();
+    
+    // Retornamos un observable que nunca se completa para mantener compatibilidad
     return new Observable(observer => {
-      try {
-        const state = this.generateRandomState();
-        localStorage.setItem('google_auth_state', state);
-        
-        const loginUrl = `${environment.apiUrl}/auth/google/login?state=${encodeURIComponent(state)}`;
-        
-        // Abrir popup
-        const popup = window.open(
-          loginUrl,
-          'google-auth',
-          'width=500,height=600,scrollbars=yes,resizable=yes'
-        );
-
-        if (!popup) {
-          observer.error(new Error('El popup fue bloqueado. Por favor permite popups para este sitio.'));
-          return;
-        }
-
-        // Escuchar mensajes del popup
-        const messageListener = (event: MessageEvent) => {
-          if (event.origin !== window.location.origin) return;
-          
-          if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
-            window.removeEventListener('message', messageListener);
-            popup.close();
-            
-            // Manejar el callback con el código recibido
-            this.handleGoogleCallback(event.data.code, event.data.state).subscribe({
-              next: (response) => {
-                observer.next(response);
-                observer.complete();
-              },
-              error: (error) => observer.error(error)
-            });
-            
-          } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
-            window.removeEventListener('message', messageListener);
-            popup.close();
-            observer.error(new Error(event.data.error || 'Error en autenticación'));
-          }
-        };
-
-        window.addEventListener('message', messageListener);
-
-        // Verificar si el popup se cerró manualmente
-        const checkClosed = setInterval(() => {
-          if (popup.closed) {
-            clearInterval(checkClosed);
-            window.removeEventListener('message', messageListener);
-            observer.error(new Error('El popup fue cerrado por el usuario'));
-          }
-        }, 1000);
-
-        // Timeout después de 60 segundos
-        setTimeout(() => {
-          clearInterval(checkClosed);
-          if (!popup.closed) {
-            popup.close();
-            window.removeEventListener('message', messageListener);
-            observer.error(new Error('Tiempo de espera agotado'));
-          }
-        }, 60000);
-
-      } catch (error) {
-        console.error('Error en popup OAuth:', error);
-        observer.error(error);
-      }
+      console.log('🔄 Redirigiendo a Google Auth (modo simplificado)');
+      // No completamos el observable ya que la redirección maneja todo el flujo
     });
-  }
-
-  /**
-   * Genera un estado aleatorio para prevenir ataques CSRF
-   */
-  private generateRandomState(): string {
-    return Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
   }
 }

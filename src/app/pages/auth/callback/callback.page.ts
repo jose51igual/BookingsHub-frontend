@@ -26,11 +26,8 @@ export class CallbackPage implements OnInit {
     this.handleAuthCallback();
   }
   private async handleAuthCallback() {
-    try {
-      // Obtener parámetros de la URL
+    try {      // Obtener parámetros de la URL
       const queryParams = this.route.snapshot.queryParams;
-      
-      console.log('📥 Parámetros de callback recibidos:', queryParams);
 
       // Verificar si hay un error en la respuesta
       if (queryParams['error']) {
@@ -49,23 +46,21 @@ export class CallbackPage implements OnInit {
         return;
       }
 
-      throw new Error('Callback inválido: faltan parámetros requeridos');
-
-    } catch (error: any) {
-      console.error('❌ Error en callback de autenticación:', error);
+      throw new Error('Callback inválido: faltan parámetros requeridos');    } catch (error: any) {
+      console.error('Error en callback de autenticación:', error);
       this.handleCallbackError(error.message || 'Error durante la autenticación');
     }
   }
-
   private async handleGoogleAuthCode(params: any) {
     this.message.set('Procesando autenticación con Google...');
     
-    try {
-      // Verificar el state para prevenir ataques CSRF
+    try {      // Verificar el state para prevenir ataques CSRF
       const receivedState = params.state;
       const storedState = localStorage.getItem('google_auth_state');
       
-      if (receivedState !== storedState) {
+      if (!storedState) {
+        console.warn('No hay estado almacenado, continuando sin verificación');
+      } else if (receivedState !== storedState) {
         throw new Error('Estado de seguridad inválido');
       }
 
@@ -73,28 +68,35 @@ export class CallbackPage implements OnInit {
       localStorage.removeItem('google_auth_state');
 
       // Enviar mensaje al opener (ventana principal)
-      if (window.opener) {
+      if (window.opener && !window.opener.closed) {
         window.opener.postMessage({
           type: 'GOOGLE_AUTH_SUCCESS',
           code: params.code,
           state: params.state
         }, window.location.origin);
         
-        // Cerrar el popup
-        window.close();
+        // Cerrar el popup después de un pequeño delay
+        setTimeout(() => {
+          window.close();
+        }, 100);
       } else {
-        throw new Error('No se pudo comunicar con la ventana principal');
+        // Si no hay opener, redirigir al login con error
+        console.error('No se pudo comunicar con la ventana principal');
+        this.handleCallbackError('No se pudo completar la autenticación');
       }
 
     } catch (error: any) {
-      console.error('❌ Error procesando código de Google:', error);
+      console.error('Error procesando código de Google:', error);
       
-      if (window.opener) {
+      if (window.opener && !window.opener.closed) {
         window.opener.postMessage({
           type: 'GOOGLE_AUTH_ERROR',
           error: error.message
         }, window.location.origin);
-        window.close();
+        
+        setTimeout(() => {
+          window.close();
+        }, 100);
       } else {
         this.handleCallbackError(error.message);
       }
@@ -138,10 +140,8 @@ export class CallbackPage implements OnInit {
         } else {
           this.router.navigate(['/inicio'], { replaceUrl: true });
         }
-      }, 1500);
-
-    } catch (error: any) {
-      console.error('❌ Error procesando callback exitoso:', error);
+      }, 1500);    } catch (error: any) {
+      console.error('Error procesando callback exitoso:', error);
       this.handleCallbackError('Error procesando los datos de autenticación');
     }
   }

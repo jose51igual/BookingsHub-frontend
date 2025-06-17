@@ -161,22 +161,20 @@ export class GoogleAuthService {
         }
       })
     );
-  }
-  /**
+  }  /**
    * Método OAuth 2.0 popup más directo y confiable
    */
   private handleGoogleOAuthPopup(): Observable<any> {
     return new Observable(observer => {
       try {
         const clientId = environment.googleClientId;
-        // URI de redirección debe coincidir con Google Cloud Console
         const redirectUri = `${window.location.origin}/auth/callback`;
         const scope = 'openid email profile';
         const responseType = 'code';
         const state = this.generateRandomState();
         
-        console.log('🔧 Debug - Redirect URI:', redirectUri);
-        console.log('🔧 Debug - Client ID:', clientId);
+        // Guardar el state para verificación posterior
+        localStorage.setItem('google_auth_state', state);
         
         // Construir URL de autorización
         const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
@@ -187,9 +185,7 @@ export class GoogleAuthService {
           `state=${state}&` +
           `prompt=select_account`;
 
-        console.log('🚀 Abriendo popup de Google OAuth:', authUrl);
-        
-        // Abrir popup
+        // Abrir popup con configuración específica para evitar problemas CORS
         const popup = window.open(
           authUrl,
           'google-auth',
@@ -206,20 +202,35 @@ export class GoogleAuthService {
           
           if (event.data.type === 'GOOGLE_AUTH_SUCCESS') {
             window.removeEventListener('message', messageListener);
-            popup.close();
-            observer.next({ credential: event.data.token });
-            observer.complete();
+            
+            // Intercambiar código por token
+            this.exchangeCodeForToken(event.data.code).then(response => {
+              observer.next({ credential: response });
+              observer.complete();
+            }).catch(error => {
+              observer.error(error);
+            });
+            
           } else if (event.data.type === 'GOOGLE_AUTH_ERROR') {
             window.removeEventListener('message', messageListener);
-            popup.close();
             observer.error(new Error(event.data.error || 'Error en autenticación'));
           }
         };
 
         window.addEventListener('message', messageListener);
 
+        // Verificar si el popup se cerró manualmente
+        const checkClosed = setInterval(() => {
+          if (popup.closed) {
+            clearInterval(checkClosed);
+            window.removeEventListener('message', messageListener);
+            observer.error(new Error('El popup fue cerrado'));
+          }
+        }, 1000);
+
         // Timeout después de 60 segundos
         setTimeout(() => {
+          clearInterval(checkClosed);
           if (!popup.closed) {
             popup.close();
             window.removeEventListener('message', messageListener);
@@ -228,10 +239,31 @@ export class GoogleAuthService {
         }, 60000);
 
       } catch (error: any) {
-        console.error('❌ Error en popup OAuth:', error);
+        console.error('Error en popup OAuth:', error);
         observer.error(error);
       }
     });
+  }
+
+  /**
+   * Intercambia el código de autorización por un token JWT
+   */
+  private async exchangeCodeForToken(code: string): Promise<any> {
+    try {
+      const response = await this.http.post<AuthResponse>(`${environment.apiUrl}/auth/google/callback`, {
+        code: code
+      }).toPromise();
+
+      if (response && response.data?.user && response.data?.token) {
+        this.authService.handleGoogleAuthSuccess(response);
+        return response;
+      } else {
+        throw new Error('La respuesta del servidor no contiene los datos esperados');
+      }
+    } catch (error: any) {
+      console.error('Error intercambiando código por token:', error);
+      throw new Error('Error procesando la autenticación con Google');
+    }
   }
 
   /**

@@ -118,13 +118,7 @@ export class LoginPage {
       }
       
       this.errorMessage.set(errorMessage);
-    }
-  };
-
-  loginWithGoogleRedirect = (): void => {
-    // Método alternativo usando redirección completa
-    this.googleAuthService.redirectToGoogleAuth();
-  };
+    }  };
 
  clearError = (): void => {
     this.errorMessage.set(null);

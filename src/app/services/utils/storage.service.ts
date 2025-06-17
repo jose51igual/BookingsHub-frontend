@@ -6,8 +6,8 @@ import { Storage } from '@ionic/storage';
 })
 export class StorageService {
   private _storage: Storage | null = null;
-  private cookieKeys = ['auth_token', 'user_data']; // Datos que queremos persistir en cookies
-  private cookieExpireDays = 7; // Cookies expiran en 7 días
+  private cookieKeys = ['auth_token', 'user_data'];
+  private cookieExpireDays = 1;
   private initPromise: Promise<void> | null = null;
   private isInitialized = false;
 
@@ -42,9 +42,8 @@ export class StorageService {
   }
 
   public async set(key: string, value: any): Promise<any> {
-    await this.initPromise; // Asegurar que esté inicializado
+    await this.initPromise;
     
-    // Si es una clave que queremos persistir, la guardamos en cookie también
     if (this.cookieKeys.includes(key)) {
       this.setCookie(key, typeof value === 'string' ? value : JSON.stringify(value), this.cookieExpireDays);
     }
@@ -52,14 +51,12 @@ export class StorageService {
   }
 
   public async get(key: string): Promise<any> {
-    await this.initPromise; // Asegurar que esté inicializado
+    await this.initPromise;
     return this._storage?.get(key) || Promise.resolve(null);
   }
 
   public async remove(key: string): Promise<any> {
-    await this.initPromise; // Asegurar que esté inicializado
-    
-    // Si es una clave que queremos persistir, la eliminamos de las cookies también
+    await this.initPromise;
     if (this.cookieKeys.includes(key)) {
       this.deleteCookie(key);
     }
@@ -67,19 +64,17 @@ export class StorageService {
   }
 
   public async clear(): Promise<void> {
-    await this.initPromise; // Asegurar que esté inicializado
-    
-    // Limpiamos todas las cookies de la lista
+    await this.initPromise;
+
     this.cookieKeys.forEach(key => this.deleteCookie(key));
     return this._storage?.clear() || Promise.resolve();
   }
 
   public async keys(): Promise<string[]> {
-    await this.initPromise; // Asegurar que esté inicializado
+    await this.initPromise;
     return this._storage?.keys() || Promise.resolve([]);
   }
 
-  // Métodos para manejar cookies
   private setCookie(name: string, value: string, days: number): void {
     let expires = '';
     if (days) {
@@ -87,9 +82,6 @@ export class StorageService {
       date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
       expires = '; expires=' + date.toUTCString();
     }
-    
-    // Configuración segura de cookies con SameSite=Lax para permitir
-    // el envío de cookies en navegaciones entre páginas
     document.cookie = name + '=' + encodeURIComponent(value) + 
                       expires + 
                       '; path=/; SameSite=Lax';

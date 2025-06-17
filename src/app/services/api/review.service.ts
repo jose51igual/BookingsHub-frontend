@@ -104,7 +104,6 @@ export class ReviewService extends BaseApiService {
         next: (existingReview) => {
           if (existingReview && existingReview.id) {
             // Ya existe una reseña, actualizarla
-            console.log('🔄 Actualizando reseña existente:', existingReview.id);
             this.updateReview(
               existingReview.id, 
               reviewData.rating, 
@@ -120,13 +119,11 @@ export class ReviewService extends BaseApiService {
                 observer.complete();
               },
               error: (error) => {
-                console.error('❌ Error al actualizar reseña:', error);
                 observer.error(error);
               }
             });
           } else {
             // No existe una reseña, crear una nueva
-            console.log('➕ Creando nueva reseña');
             this.createReview(reviewData).subscribe({
               next: (newReview) => {
                 observer.next({
@@ -138,15 +135,12 @@ export class ReviewService extends BaseApiService {
                 observer.complete();
               },
               error: (error) => {
-                console.error('❌ Error al crear reseña:', error);
                 observer.error(error);
               }
             });
           }
         },
         error: (error) => {
-          // Si hay error al verificar, intentar crear la reseña directamente
-          console.log('⚠️ Error al verificar reseña existente, intentando crear:', error);
           this.createReview(reviewData).subscribe({
             next: (newReview) => {
               observer.next({
@@ -158,7 +152,6 @@ export class ReviewService extends BaseApiService {
               observer.complete();
             },
             error: (createError) => {
-              console.error('❌ Error al crear reseña:', createError);
               observer.error(createError);
             }
           });
@@ -167,10 +160,6 @@ export class ReviewService extends BaseApiService {
     });
   }
 
-  /**
-   * Método alternativo: Upsert de reseña (crear o actualizar)
-   * Usa un endpoint específico del backend si está disponible
-   */
   upsertReview(reviewData: { 
     business_id: number; 
     rating: number; 

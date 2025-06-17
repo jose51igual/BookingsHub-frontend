@@ -73,11 +73,9 @@ import { ServiceBusiness } from '@interfaces/index';
   styleUrls: ['./service-card.component.css']
 })
 export class ServiceCardComponent {
-  // Input signals
    business = input.required<ServiceBusiness>();
    animationOrder = input<number>(0);
   
-  // Output events
    cardClick = output<ServiceBusiness>();
 
   onCardClick(): void {

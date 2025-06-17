@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { LoadingController, AlertController, ActionSheetController, IonicModule, ModalController } from '@ionic/angular';
 import { BookingService } from '@services/api';
 import { AuthSignalService, BaseDataLoaderService, NotificationService } from '@services/index';
@@ -9,11 +9,9 @@ import {
   getStatusColor, 
   getStatusText, 
   mapBackendStatusToFrontend,
-  formatDate,
   formatTime12Hour,
   isToday,
   isFutureDate,
-  isPastDate,
   createAlertHelper,
   APP_ROUTES
 } from '@utils/index';
@@ -30,30 +28,24 @@ import {
   ]
 })
 export class ClientBookingsPage {
-  // Inyección de dependencias con inject()
   private bookingService = inject(BookingService);
   private authService = inject(AuthSignalService);
-  private loadingController = inject(LoadingController);
   private alertController = inject(AlertController);
   private actionSheetController = inject(ActionSheetController);
-  private modalController = inject(ModalController);
   private router = inject(Router);
   private dataLoader = inject(BaseDataLoaderService);
   private notificationService = inject(NotificationService);
   private alertHelper = createAlertHelper(this.alertController, this.actionSheetController);
 
-  // Estado reactivo con signals
   bookings = signal<any[]>([]);
   isLoading = signal<boolean>(false);
   selectedSegment = signal<string>('upcoming');
   errorMessage = signal<string>('');
   
-  // Filtros
   searchTerm = signal<string>('');
   statusFilter = signal<string>('');
   sortBy = signal<string>('date');
 
-  // Computed properties para filtrar reservas usando utilidades de fecha
   upcomingBookings = computed(() => {
     return this.bookings().filter(booking => {
       if (!booking.booking_date) return false;
@@ -76,12 +68,10 @@ export class ClientBookingsPage {
     });
   });
 
-  // Computed para verificar si hay reservas
   hasBookings = computed(() => this.bookings().length > 0);
   hasUpcomingBookings = computed(() => this.upcomingBookings().length > 0);
   hasPastBookings = computed(() => this.pastBookings().length > 0);
 
-  // Computed para filtros
   filteredUpcomingBookings = computed(() => {
     return this.filterAndSortBookings(this.upcomingBookings());
   });
@@ -90,7 +80,6 @@ export class ClientBookingsPage {
     return this.filterAndSortBookings(this.pastBookings());
   });
 
-  // Computed para reservas mostradas según el segmento
   displayedBookings = computed(() => {
     return this.selectedSegment() === 'upcoming' 
       ? this.filteredUpcomingBookings() 
@@ -98,7 +87,6 @@ export class ClientBookingsPage {
   });
 
   constructor() {
-    // Inicializar carga de reservas
     setTimeout(() => {
       const user = this.authService.user;
       const isAuthenticated = this.authService.isAuthenticated;
@@ -124,7 +112,6 @@ export class ClientBookingsPage {
     );
 
     if (response) {
-      // Extraer el array de reservas de la respuesta según la estructura de la API
       let bookings: any[] = [];
       
       if (response && typeof response === 'object') {
@@ -135,13 +122,11 @@ export class ClientBookingsPage {
         }
       }
       
-      // Normalizar datos de reservas con utilidades
       const normalizedBookings = bookings.map(booking => ({
         ...booking,
         status: mapBackendStatusToFrontend(booking.status || 'pendiente'),
         booking_date: booking.booking_date || booking.date,
         booking_time: formatTime12Hour(booking.booking_time || booking.time),
-        // Extraer datos de las relaciones anidadas
         service_name: booking.services?.name || 'Servicio no disponible',
         business_name: booking.businesses?.name || 'Negocio no disponible',
         employee_name: booking.employees?.name || null,
@@ -193,7 +178,7 @@ export class ClientBookingsPage {
         default:
           const dateA = new Date(a.booking_date + ' ' + a.booking_time);
           const dateB = new Date(b.booking_date + ' ' + b.booking_time);
-          return dateB.getTime() - dateA.getTime(); // Orden inverso: más reciente primero
+          return dateB.getTime() - dateA.getTime();
       }
     });
 
@@ -207,7 +192,6 @@ export class ClientBookingsPage {
   segmentChanged(event: any) {
     this.selectedSegment.set(event.detail.value);
     
-    // Animación suave para cambio de segmento
     const bookingsContainer = document.querySelector('.bookings-container');
     if (bookingsContainer) {
       bookingsContainer.classList.add('fade-out');
@@ -221,7 +205,6 @@ export class ClientBookingsPage {
     }
   }
 
-  // Usar utilidades centralizadas para estado
   getStatusColor = getStatusColor;
   getStatusText = getStatusText;
 
@@ -247,7 +230,6 @@ export class ClientBookingsPage {
       
       await firstValueFrom(apiCall);
       
-      // Actualizar el booking en el estado
       const updatedBookings = this.bookings().map(b =>
         b.id === booking.id ? { ...b, status: normalizedStatus } : b
       );
@@ -275,10 +257,9 @@ export class ClientBookingsPage {
     });
   }
 
-  private isNavigating = false; // Flag para evitar navegaciones múltiples
+  private isNavigating = false;
 
   async reviewBooking(booking: any) {
-    // Evitar navegaciones múltiples
     if (this.isNavigating) return;
     
     this.isNavigating = true;
@@ -290,14 +271,12 @@ export class ClientBookingsPage {
         return;
       }
 
-      // Navegar de forma optimizada
       await this.router.navigate([APP_ROUTES.CREATE_REVIEW], {
         queryParams: {
           businessId: booking.business_id,
           bookingId: booking.id,
           businessName: booking.business_name || 'Negocio'
         },
-        // Optimizar la navegación
         replaceUrl: false,
         skipLocationChange: false
       });
@@ -305,7 +284,6 @@ export class ClientBookingsPage {
       console.error('Error navegando a reseñas:', error);
       await this.notificationService.showError('Error de Navegación', 'Error al abrir formulario de reseña');
     } finally {
-      // Reset flag después de un pequeño delay
       setTimeout(() => {
         this.isNavigating = false;
       }, 1000);
@@ -319,6 +297,5 @@ export class ClientBookingsPage {
     }
   }
 
-  // Usar utilidad centralizada para formateo de tiempo
   formatBookingTime = formatTime12Hour;
 }

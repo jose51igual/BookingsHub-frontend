@@ -18,60 +18,53 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() lng: number = -3.703790;
   @Input() title: string = 'Ubicación';
   @Input() height: string = '200px';
-  @Output() mapLoadError = new EventEmitter<string>(); // Nuevo evento para errores
-  @Output() mapLoaded = new EventEmitter<boolean>(); // Evento cuando el mapa se carga exitosamente
+  @Output() mapLoadError = new EventEmitter<string>();
+  @Output() mapLoaded = new EventEmitter<boolean>();
   
   private map: GoogleMap | undefined;
   private markerId: string | undefined;
   private apiKey = environment.googleMapsApiKey;
   public hasError = false;
   public errorMessage = '';
-  public isMapLoaded = false;  // Nuevo estado para controlar la carga
-  private resizeTimeout: any; // Para debounce del resize
+  public isMapLoaded = false; 
+  private resizeTimeout: any;
 
   constructor(private cdr: ChangeDetectorRef) { }
 
-  // Listener para detectar cambios de tamaño de ventana
   @HostListener('window:resize', ['$event'])
   onWindowResize(event: any) {
-    // Debounce para evitar demasiadas llamadas
     clearTimeout(this.resizeTimeout);
     this.resizeTimeout = setTimeout(() => {
-      // Solo redimensionar si el mapa está cargado y funcionando
       if (this.map && this.isMapLoaded && !this.hasError) {
         this.handleResize();
       } else {
       }
-    }, 500); // Aumentar el debounce time
+    }, 500);
   }
 
   async ngAfterViewInit() {
     // Verificar que hay una API key válida antes de intentar cargar el mapa
     if (!this.apiKey || this.apiKey === 'YOUR_GOOGLE_MAPS_API_KEY' || this.apiKey.trim() === '') {
-      this.setError('⚠️ API key de Google Maps no configurada.\n\nPara configurar Google Maps:\n1. Ve a Google Cloud Console\n2. Habilita Maps JavaScript API\n3. Crea una API key\n4. Actualiza environment.ts\n\nVer docs/google-maps-setup.md para más detalles.');
+      this.setError('API key de Google Maps no configurada.\n\nPara configurar Google Maps:\n1. Ve a Google Cloud Console\n2. Habilita Maps JavaScript API\n3. Crea una API key\n4. Actualiza environment.ts\n\nVer docs/google-maps-setup.md para más detalles.');
       return;
     }
 
-    // Esperar un poco más para asegurar que el DOM esté completamente renderizado
     setTimeout(async () => {
       if (this.lat && this.lng) {
         await this.createMap();
       } else {
         this.setError('No se proporcionaron coordenadas válidas para el mapa');
       }
-    }, 100); // Reducido el tiempo de espera inicial
+    }, 100);
   }
 
   async ngOnChanges(changes: SimpleChanges) {
-    // Si cambian las coordenadas y el mapa ya está creado, solo actualizarlo
     if ((changes['lat'] || changes['lng']) && this.map && this.isMapLoaded) {
       await this.updateMapPosition();
     }
-    // No recrear el mapa por cambios en otras propiedades
   }
 
   async createMap() {
-    // Si ya hay un mapa creado y funcionando, no intentar recrearlo
     if (this.map && this.isMapLoaded) {
       return;
     }
@@ -81,16 +74,14 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       return;
     }
 
-    // Verificar que el elemento esté visible y montado en el DOM
     const element = this.mapRef.nativeElement;
     let retryCount = 0;
-    const maxRetries = 10; // Reducir intentos
+    const maxRetries = 10; 
     
     const checkElementVisibility = () => {
       const rect = element.getBoundingClientRect();
       const computedStyle = window.getComputedStyle(element);
       
-      // Mejorar la detección de visibilidad
       const isVisible = element.offsetParent !== null && 
                        rect.width > 0 && 
                        rect.height > 0 &&
@@ -100,12 +91,12 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       if (!isVisible && retryCount < maxRetries) {
         retryCount++;
         console.warn(`El elemento del mapa no está visible, reintentando... (${retryCount}/${maxRetries})`);
-        setTimeout(() => checkElementVisibility(), 300); // Reducir tiempo entre intentos
+        setTimeout(() => checkElementVisibility(), 300);
         return false;
       }
       
       if (!isVisible && retryCount >= maxRetries) {
-        console.warn('⚠️ Elemento no visible después de varios intentos, pero continuando...');
+        console.warn('Elemento no visible después de varios intentos, pero continuando...');
         return true;
       }
       
@@ -117,29 +108,24 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     if (!this.apiKey || this.apiKey === 'YOUR_GOOGLE_MAPS_API_KEY') {
-      this.setError('⚠️ No se ha configurado una API key válida para Google Maps.\n\nRevisa environment.ts y configura tu API key.');
+      this.setError('No se ha configurado una API key válida para Google Maps.\n\nRevisa environment.ts y configura tu API key.');
       return;
     }
 
     try {
-      // Emitir evento de carga iniciada
       this.isMapLoaded = false;
       this.mapLoaded.emit(false);      
-      // Detectar si estamos en móvil
-      const isMobile = window.innerWidth <= 768;
+      const isMobile = false;
       
-      // Asegurar que el contenedor tenga las dimensiones correctas
       const element = this.mapRef.nativeElement;
       if (isMobile) {
-        // Forzar dimensiones en móvil
         element.style.width = '100%';
         element.style.height = '250px';
         element.style.minHeight = '250px';
       }
       
-      // Crear el mapa siguiendo la documentación oficial de Capacitor
       this.map = await GoogleMap.create({
-        id: `business-location-map-${Date.now()}`, // ID único para evitar conflictos
+        id: `business-location-map-${Date.now()}`,
         element: element,
         apiKey: this.apiKey,
         config: {
@@ -147,24 +133,20 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
             lat: this.lat,
             lng: this.lng
           },
-          zoom: isMobile ? 15 : 14, // Zoom apropiado para cada dispositivo
-          disableDefaultUI: false, // Deshabilitar UI en móvil para más espacio
-          // Opciones adicionales optimizadas para móvil
+          zoom: isMobile ? 15 : 14,
+          disableDefaultUI: false,
           gestureHandling: isMobile ? 'greedy' : 'cooperative',
           zoomControl: !isMobile,
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
-          // Mejoras para dispositivos táctiles
           scrollwheel: true,
           disableDoubleClickZoom: false,
           draggable: true,
-          // Asegurar que el mapa sea responsive
           styles: []
         }
       });
 
-      // Añadir marcador
       this.markerId = await this.map.addMarker({
         coordinate: {
           lat: this.lat,
@@ -174,12 +156,11 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
         draggable: false
       });
 
-      // Establecer evento para mapa cargado con más tiempo en móvil
       const loadTimeout = isMobile ? 1200 : 800;
       setTimeout(() => {
         this.isMapLoaded = true;
         this.hasError = false;
-        this.cdr.detectChanges(); // Forzar detección de cambios
+        this.cdr.detectChanges(); 
         this.mapLoaded.emit(true);
       }, loadTimeout);
       
@@ -196,7 +177,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     try {
-      // Actualizar la posición del mapa
       await this.map.setCamera({
         coordinate: {
           lat: this.lat,
@@ -206,12 +186,10 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
         animate: true
       });
 
-      // Eliminar el marcador anterior
       if (this.markerId) {
         await this.map.removeMarker(this.markerId);
       }
 
-      // Añadir un nuevo marcador
       this.markerId = await this.map.addMarker({
         coordinate: {
           lat: this.lat,
@@ -221,7 +199,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
         draggable: false
       });
       
-      // Resetear estado de error si anteriormente hubo un error
       if (this.hasError) {
         this.hasError = false;
         this.errorMessage = '';
@@ -232,7 +209,6 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
-  // Método para manejar el resize de la ventana
   private async handleResize() {
     if (!this.map || !this.isMapLoaded || this.hasError) {
       return;
@@ -243,14 +219,13 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
       
       await new Promise(resolve => setTimeout(resolve, 200));
       
-      // Solo recentrar el mapa (esto fuerza el redibujado sin recrear)
       await this.map.setCamera({
         coordinate: {
           lat: this.lat,
           lng: this.lng
         },
         zoom: isMobile ? 16 : 15,
-        animate: false // Sin animación para evitar conflictos durante resize
+        animate: false
       });
       
       
@@ -263,12 +238,11 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.hasError = true;
     this.errorMessage = message;
     this.isMapLoaded = false;
-    this.cdr.detectChanges(); // Forzar detección de cambios
+    this.cdr.detectChanges();
     this.mapLoadError.emit(message);
     this.mapLoaded.emit(false);
   }
 
-  // Método para ser llamado externamente para reintentar cargar el mapa
   public retryLoadMap() {
     this.hasError = false;
     this.errorMessage = '';
@@ -277,12 +251,10 @@ export class MapComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy() {
-    // Limpiar timeout del resize
     if (this.resizeTimeout) {
       clearTimeout(this.resizeTimeout);
     }
     
-    // Limpiar el mapa al destruir el componente
     if (this.map) {
       this.map.destroy();
     }

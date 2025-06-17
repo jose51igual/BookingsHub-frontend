@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
 import { firstValueFrom } from 'rxjs';
 import { AuthSignalService, NotificationService } from '@services/index';
 import { IonicModule } from '@ionic/angular';
@@ -23,21 +22,18 @@ import { AccountType, BaseFormData, ClientFormData, BusinessFormData } from '@in
   ]
 })
 export class RegisterPage {
-  // Servicios inyectados con inject()
   private formBuilder = inject(FormBuilder);
   private authService = inject(AuthSignalService);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  // Signals para estado reactivo
  accountType = signal<AccountType>('client');
  termsAccepted = signal(false);
  isSubmitting = signal(false);
  errorMessage = signal<string>('');
  formValid = signal<boolean>(false);
 
-  // Computed signals
  pageTitle = computed(() => 
     this.accountType() === 'business' ? 'Registro de Negocio' : 'Registro de Cliente'
   );
@@ -60,7 +56,6 @@ export class RegisterPage {
 
   registerForm!: FormGroup;
 
-  // Categorías de negocio como
  businessCategories = [
     'Belleza y cuidado personal',
     'Salud y bienestar',
@@ -75,18 +70,14 @@ export class RegisterPage {
   ] as const;
 
   constructor() {
-    // Inicializar el formulario inmediatamente con todos los campos
     this.initializeForm();
     
-    // Suscribirse a cambios del formulario para actualizar el signal
     this.registerForm.statusChanges.subscribe(() => {
       this.formValid.set(this.registerForm.valid);
     });
     
-    // También actualizar inmediatamente
     this.formValid.set(this.registerForm.valid);
     
-    // Efecto para manejar parámetros de ruta
     effect(() => {
       this.route.queryParams.subscribe(params => {
         if (params['type'] && (params['type'] === 'client' || params['type'] === 'business')) {
@@ -98,20 +89,16 @@ export class RegisterPage {
   }
 
   private initializeForm(): void {
-    // Crear formulario con TODOS los campos desde el inicio
     this.registerForm = this.formBuilder.group({
-      // Campos base
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       phone: ['', [Validators.required, Validators.pattern(/^[\d]{7,15}$/)]],
       role: ['cliente', [Validators.required]],
       
-      // Campos específicos de cliente
       last_name: ['', [Validators.required]],
       birth_date: ['', [Validators.required]],
       
-      // Campos específicos de negocio
       business_name: ['', [Validators.required]],
       business_address: ['', [Validators.required]],
       business_city: ['', [Validators.required]],
@@ -123,23 +110,19 @@ export class RegisterPage {
   private updateFormForAccountType(): void {
     const accountType = this.accountType();
     
-    // Actualizar el valor del rol
     this.registerForm.get('role')?.setValue(accountType === 'client' ? 'cliente' : 'negocio');
     
     if (accountType === 'business') {
-      // Deshabilitar campos de cliente
       this.registerForm.get('last_name')?.clearValidators();
       this.registerForm.get('birth_date')?.clearValidators();
       this.registerForm.get('last_name')?.updateValueAndValidity();
       this.registerForm.get('birth_date')?.updateValueAndValidity();
       
-      // Habilitar validadores de negocio
       this.registerForm.get('business_name')?.setValidators([Validators.required]);
       this.registerForm.get('business_address')?.setValidators([Validators.required]);
       this.registerForm.get('business_city')?.setValidators([Validators.required]);
       this.registerForm.get('business_category')?.setValidators([Validators.required]);
     } else {
-      // Deshabilitar campos de negocio
       this.registerForm.get('business_name')?.clearValidators();
       this.registerForm.get('business_address')?.clearValidators();
       this.registerForm.get('business_city')?.clearValidators();
@@ -149,12 +132,10 @@ export class RegisterPage {
       this.registerForm.get('business_city')?.updateValueAndValidity();
       this.registerForm.get('business_category')?.updateValueAndValidity();
       
-      // Habilitar validadores de cliente
       this.registerForm.get('last_name')?.setValidators([Validators.required]);
       this.registerForm.get('birth_date')?.setValidators([Validators.required]);
     }
     
-    // Actualizar validaciones
     this.registerForm.get('last_name')?.updateValueAndValidity();
     this.registerForm.get('birth_date')?.updateValueAndValidity();
     this.registerForm.get('business_name')?.updateValueAndValidity();
@@ -162,7 +143,6 @@ export class RegisterPage {
     this.registerForm.get('business_city')?.updateValueAndValidity();
     this.registerForm.get('business_category')?.updateValueAndValidity();
     
-    // Actualizar el signal del estado del formulario
     this.formValid.set(this.registerForm.valid);
   }
 
@@ -205,7 +185,6 @@ export class RegisterPage {
     const formValue = this.registerForm.value;
     const accountType = this.accountType();
     
-    // Mapear el tipo de cuenta al rol del backend
     const role = accountType === 'business' ? 'negocio' : 'cliente';
     
     const userData: BaseFormData = {
@@ -216,7 +195,6 @@ export class RegisterPage {
       role: role
     };
 
-    // Datos específicos según el tipo de cuenta
     if (accountType === 'business') {
       return {
         ...userData,
@@ -233,7 +211,6 @@ export class RegisterPage {
     }
   }
 
-  // Métodos helper para el template
   isFieldInvalid(fieldName: string): boolean {
     const field = this.registerForm.get(fieldName);
     return !!(field && field.invalid && field.touched);

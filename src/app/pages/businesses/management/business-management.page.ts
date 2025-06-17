@@ -21,7 +21,6 @@ import { formatRating } from '@utils/common.utils';
   ]
 })
 export class BusinessManagementPage {
-  // Signals reactivos para el estado
  businessData = signal<Business | null>(null);
  services = signal<Service[]>([]);
  employees = signal<Employee[]>([]);
@@ -30,13 +29,11 @@ export class BusinessManagementPage {
  isLoading = signal<boolean>(false);
  errorMessage = signal<string | null>(null);
   
-  // Computed signals
  hasBusinessData = computed(() => !!this.businessData());
  servicesCount = computed(() => this.services().length);
  employeesCount = computed(() => this.employees().length);
  bookingsCount = computed(() => this.recentBookings().length);
   
-  // Inyección moderna de servicios
   private router = inject(Router);
   private businessService = inject(BusinessService);
   private serviceService = inject(ServiceService);
@@ -50,10 +47,8 @@ export class BusinessManagementPage {
     this.loadAllData();
   }
 
-  // Método centralizado para cargar todos los datos
   private async loadAllData(): Promise<void> {
     try {
-      // Paso 1: Cargar datos del negocio
       const businessResponse = await this.dataLoader.fromObservable(
         this.businessService.getBusinessByUserId(),
         {
@@ -70,7 +65,6 @@ export class BusinessManagementPage {
       this.businessData.set(businessResponse);
       const businessId = businessResponse.id;
 
-      // Paso 2: Cargar datos relacionados en paralelo
       await this.loadBusinessRelatedData(businessId);
 
     } catch (error) {
@@ -79,7 +73,6 @@ export class BusinessManagementPage {
     }
   }
 
-  // Cargar datos relacionados del negocio en paralelo
   private async loadBusinessRelatedData(businessId: number): Promise<void> {
     try {
       const [servicesResult, employeesResult, bookingsResult, statsResult] = await Promise.all([
@@ -101,7 +94,6 @@ export class BusinessManagementPage {
         )
       ]);
 
-      // Actualizar signals con resultados (usando arrays vacíos como fallback)
       this.services.set(servicesResult || []);
       this.employees.set(employeesResult || []);
       this.recentBookings.set(bookingsResult || []);
@@ -109,7 +101,6 @@ export class BusinessManagementPage {
 
     } catch (error) {
       console.error('Error loading business related data:', error);
-      // Establecer valores por defecto en caso de error
       this.services.set([]);
       this.employees.set([]);
       this.recentBookings.set([]);
@@ -117,7 +108,6 @@ export class BusinessManagementPage {
     }
   }
 
-  // Manejar caso cuando no se encuentra negocio
   private async handleNoBusinessFound(): Promise<void> {
     const shouldCreate = await this.notificationService.showConfirmAlert(
       'No tienes un negocio',
@@ -133,7 +123,6 @@ export class BusinessManagementPage {
     }
   }
 
-  // Métodos de navegación simplificados usando constantes
  navigateToServices = (): void => {
     this.router.navigate([APP_ROUTES.BUSINESS_SERVICES]);
   };
@@ -179,6 +168,5 @@ export class BusinessManagementPage {
     this.errorMessage.set(null);
   };
 
-  // Utilidades para el template
  formatRating = formatRating;
 }

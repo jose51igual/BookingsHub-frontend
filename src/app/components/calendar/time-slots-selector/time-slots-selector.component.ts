@@ -13,25 +13,20 @@ import { NotificationService } from '@services/index';
   styleUrls: ['./time-slots-selector.component.css'],
 })
 export class TimeSlotsSelectorComponent {
-  // Servicios inyectados
   private  availabilityService = inject(AvailabilityService);
   private  notificationService = inject(NotificationService);
 
-  // Inputs
   serviceId = input.required<number>();
   employeeId = input<number | null>(null);
   selectedDate = input<Date | null>(null);
 
-  // Outputs
   timeSelected = output<string>();
 
-  // Estado interno
   availableTimeSlots = signal<string[]>([]);
   isLoading = signal<boolean>(false);
   selectedTimeSlot = signal<string | null>(null);
 
   constructor() {
-    // Cargar horarios cuando cambia la fecha seleccionada
     effect(() => {
       const date = this.selectedDate();
       const serviceId = this.serviceId();

@@ -22,7 +22,6 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 export class AppComponent {
   currentRoute = signal<string>('');
   
-  // Inyección moderna de servicios
   private router = inject(Router);
   private authService = inject(AuthSignalService);
   private storageService = inject(StorageService);
@@ -30,7 +29,6 @@ export class AppComponent {
   constructor() {
     this.initializeApp();
     
-    // Efecto para manejar cambios de ruta
     effect(() => {
       this.router.events.pipe(
         filter(event => event instanceof NavigationEnd)
@@ -51,7 +49,6 @@ export class AppComponent {
   async initializeApp() {
     try {
       await this.storageService.init();
-      // El AuthSignalService ya se inicializa automáticamente
       await this.authService.loadTokenAndUser();
     } catch (error) {
       console.error('Error al inicializar la aplicación: ', error);

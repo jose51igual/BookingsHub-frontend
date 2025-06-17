@@ -108,10 +108,6 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/analytics/analytics.page').then(m => m.AnalyticsPage)
       },
       {
-        path: 'configuracion',
-        loadComponent: () => import('./pages/businesses/management/business-settings.page').then(m => m.BusinessSettingsPage)
-      },
-      {
         path: 'crear-servicio',
         loadComponent: () => import('./pages/services/management/service-editor.page').then(m => m.ServiceCreatePage)
       },

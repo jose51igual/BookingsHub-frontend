@@ -24,9 +24,9 @@ export class CallbackPage implements OnInit {
 
   ngOnInit() {
     this.handleAuthCallback();
-  }
-  private async handleAuthCallback() {
-    try {      // Obtener parámetros de la URL
+  }  private async handleAuthCallback() {
+    try {
+      // Obtener parámetros de la URL
       const queryParams = this.route.snapshot.queryParams;
 
       // Verificar si hay un error en la respuesta
@@ -40,74 +40,13 @@ export class CallbackPage implements OnInit {
         return;
       }
 
-      // Si hay código de autorización de Google, procesarlo
-      if (queryParams['code']) {
-        await this.handleGoogleAuthCode(queryParams);
-        return;
-      }
+      throw new Error('Callback inválido: faltan parámetros requeridos');
 
-      throw new Error('Callback inválido: faltan parámetros requeridos');    } catch (error: any) {
+    } catch (error: any) {
       console.error('Error en callback de autenticación:', error);
       this.handleCallbackError(error.message || 'Error durante la autenticación');
     }
-  }  private async handleGoogleAuthCode(params: any) {
-    this.message.set('Procesando autenticación con Google...');
-    
-    try {
-      console.log('📝 Parámetros recibidos en callback:', params);
-      console.log('🔑 Código:', params.code);
-      console.log('🏷️ Estado:', params.state);
-      
-      // Verificar el state para prevenir ataques CSRF
-      const receivedState = params.state;
-      const storedState = localStorage.getItem('google_auth_state');
-      
-      if (!storedState) {
-        console.warn('No hay estado almacenado, continuando sin verificación');
-      } else if (receivedState !== storedState) {
-        throw new Error('Estado de seguridad inválido');
-      }
-
-      // Limpiar el state almacenado
-      localStorage.removeItem('google_auth_state');
-
-      // Enviar mensaje al opener (ventana principal)
-      if (window.opener && !window.opener.closed) {
-        console.log('📤 Enviando mensaje al opener con código:', params.code);
-        window.opener.postMessage({
-          type: 'GOOGLE_AUTH_SUCCESS',
-          code: params.code,
-          state: params.state
-        }, window.location.origin);
-        
-        // Cerrar el popup después de un pequeño delay
-        setTimeout(() => {
-          window.close();
-        }, 100);
-      } else {
-        // Si no hay opener, redirigir al login con error
-        console.error('No se pudo comunicar con la ventana principal');
-        this.handleCallbackError('No se pudo completar la autenticación');
-      }
-
-    } catch (error: any) {
-      console.error('Error procesando código de Google:', error);
-      
-      if (window.opener && !window.opener.closed) {
-        window.opener.postMessage({
-          type: 'GOOGLE_AUTH_ERROR',
-          error: error.message
-        }, window.location.origin);
-        
-        setTimeout(() => {
-          window.close();
-        }, 100);      } else {
-        this.handleCallbackError(error.message);
-      }
-    }
-  }
-
-  private async handleSuccessCallback(params: any) {
+  }  private async handleSuccessCallback(params: any) {
     try {
       this.message.set('¡Autenticación exitosa! Redirigiendo...');
       

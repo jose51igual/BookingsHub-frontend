@@ -7,7 +7,6 @@ const config: CapacitorConfig = {
   webDir: 'dist/app',
   server: {
     androidScheme: 'https',
-    // Configuración para desarrollo en dispositivos
     cleartext: true
   },
   plugins: {
@@ -17,14 +16,7 @@ const config: CapacitorConfig = {
       showSpinner: false
     },
     CapacitorGoogleMaps: {
-      apiKey: environment.googleMapsApiKey, // Reemplazar con tu clave de API
     }
-    // GoogleAuth deshabilitado temporalmente para evitar crashes
-    // GoogleAuth: {
-    //   scopes: ["profile", "email"],
-    //   serverClientId: "YOUR_SERVER_CLIENT_ID",
-    //   forceCodeForRefreshToken: true
-    // }
   }
 };
 

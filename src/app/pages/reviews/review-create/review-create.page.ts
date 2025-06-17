@@ -18,7 +18,7 @@ import { getRatingArray, getRatingText } from '@utils/rating.utils';
   ]
 })
 export class CreateReviewPage {
-  // Signals para estado reactivo
+  
  businessId = signal<number>(0);
  bookingId = signal<number | undefined>(undefined);
  businessName = signal<string>('');
@@ -31,7 +31,6 @@ export class CreateReviewPage {
  alertType = signal<'success' | 'error'>('success');
  alertMessage = signal<string>('');
 
-  // Servicios inyectados
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private reviewService = inject(ReviewService);
@@ -39,7 +38,6 @@ export class CreateReviewPage {
   private dataLoader = inject(BaseDataLoaderService);
 
   constructor() {
-    // Cargar datos desde los query params de la URL
     this.route.queryParams.subscribe(params => {
       console.log('Query params recibidos:', params);
       
@@ -93,19 +91,16 @@ export class CreateReviewPage {
 
     const currentReview = this.review();
     const trimmedComment = currentReview.comment.trim();
-    
-    // Construir datos limpios para el backend
+
     const reviewData: any = {
       business_id: this.businessId(),
       rating: currentReview.rating
     };
     
-    // Solo incluir comentario si no está vacío
     if (trimmedComment.length > 0) {
       reviewData.comment = trimmedComment;
     }
     
-    // Solo incluir booking_id si existe y es válido
     const bookingId = this.bookingId();
     if (bookingId && bookingId > 0) {
       reviewData.booking_id = bookingId;
@@ -123,14 +118,12 @@ export class CreateReviewPage {
     );
 
     if (created) {
-      // Redirigir después de un breve delay
       setTimeout(() => {
         this.router.navigate([APP_ROUTES.BOOKINGS]);
       }, 1500);
     }
   };
 
-  // Utilidades de rating
  getRatingText = (): string => getRatingText(this.review().rating);
  getRatingArray = getRatingArray;
 
@@ -138,12 +131,10 @@ export class CreateReviewPage {
     const currentReview = this.review();
     const businessId = this.businessId();
     
-    // Validaciones básicas
     if (this.isSubmitting()) return false;
     if (businessId <= 0) return false;
     if (currentReview.rating <= 0 || currentReview.rating > 5) return false;
     
-    // Validar comentario si existe (mínimo 10 caracteres si no está vacío)
     const trimmedComment = currentReview.comment.trim();
     if (trimmedComment.length > 0 && trimmedComment.length < 10) return false;
     

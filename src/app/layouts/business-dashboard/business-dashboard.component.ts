@@ -6,21 +6,6 @@ import {
   IonIcon,
   ActionSheetController
 } from '@ionic/angular/standalone';
-import { 
-  homeOutline,
-  calendarOutline,
-  listOutline,
-  timeOutline,
-  peopleOutline,
-  analyticsOutline,
-  settingsOutline,
-  logOutOutline,
-  notificationsOutline,
-  businessOutline,
-  ellipsisHorizontal,
-  personOutline,
-  close
-} from 'ionicons/icons';
 import { FooterComponent } from '@app/components';
 import { MenuItem } from '@interfaces/index';
 
@@ -87,7 +72,6 @@ export class BusinessDashboardComponent {
   logout() {
     this.authService.logout().subscribe({
       next: () => {
-        // Logout exitoso
       },
       error: (error) => {
         console.error('❌ Error al cerrar sesión:', error);
@@ -107,8 +91,6 @@ export class BusinessDashboardComponent {
   }
 
   getBookingsBadge(): number | undefined {
-    // Aquí puedes implementar la lógica para obtener el número de reservas pendientes
-    // Por ahora retornamos el valor del menú original
     const bookingsItem = this.menuItems.find(item => item.title === 'Reservas');
     return bookingsItem?.badge;
   }
@@ -121,7 +103,6 @@ export class BusinessDashboardComponent {
           text: 'Disponibilidad',
           icon: 'time-outline',
           handler: () => {
-            // Navegar a disponibilidad
             window.location.href = '/business-dashboard/availability';
           }
         },
@@ -129,7 +110,6 @@ export class BusinessDashboardComponent {
           text: 'Analíticas',
           icon: 'analytics-outline',
           handler: () => {
-            // Navegar a analíticas
             window.location.href = '/business-dashboard/analytics';
           }
         },
@@ -137,7 +117,6 @@ export class BusinessDashboardComponent {
           text: 'Configuración',
           icon: 'settings-outline',
           handler: () => {
-            // Navegar a configuración
             window.location.href = '/business-dashboard/settings';
           }
         },

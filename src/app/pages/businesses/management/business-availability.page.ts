@@ -27,7 +27,7 @@ interface BusinessHourTemplate {
   ]
 })
 export class BusinessAvailabilityPage {
-  // Signals para estado reactivo
+  
  businessId = signal<number>(0);
  services = signal<Service[]>([]);
  selectedServices = signal<number[]>([]);
@@ -43,7 +43,7 @@ export class BusinessAvailabilityPage {
     { name: 'Domingo', key: 'sunday', enabled: false, slots: [] }
   ]);
 
-  // Computed signals
+  
  hasServices = computed(() => this.services().length > 0);
  hasSelectedServices = computed(() => this.selectedServices().length > 0);
  enabledDays = computed(() => this.weekDays().filter(day => day.enabled && day.slots.length > 0));

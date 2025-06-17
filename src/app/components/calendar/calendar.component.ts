@@ -24,13 +24,11 @@ export class CalendarComponent{
   @Output() dateSelected = new EventEmitter<string>();
   @Output() timeSelected = new EventEmitter<string>();
   
-  // Internal state
   currentDate = signal<Date>(new Date());
   selectedDate = signal<Date | null>(null);
   selectedTime = signal<string>('');
   
   ngOnInit() {
-    // Set default minDate if not provided
     if (!this.minDate) {
       this.minDate = new Date().toISOString().split('T')[0];
     }
@@ -38,9 +36,8 @@ export class CalendarComponent{
 
   onDateSelected(date: Date) {
     this.selectedDate.set(date);
-    this.selectedTime.set(''); // Reset time when date changes
+    this.selectedTime.set('');
     
-    // Convert Date to string for external consumers
     const dateString = date.toISOString().split('T')[0];
     this.dateSelected.emit(dateString);
   }
@@ -50,7 +47,6 @@ export class CalendarComponent{
     this.timeSelected.emit(time);
   }
 
-  // Getters for template
   get serviceIdValue(): number | undefined {
     return this.serviceId;
   }

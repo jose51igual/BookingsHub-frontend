@@ -26,11 +26,9 @@ export class AuthSignalService {
     error: null
   });
 
-  // Observables para compatibilidad - se inicializan en el constructor
   public isAuthenticated$!: Observable<boolean>;
   public userId$!: Observable<number | null>;
 
-  // Propiedades públicas simplificadas
   get user() { return this.state().user; }
   get token() { return this.state().token; }
   get isAuthenticated() { return this.state().isAuthenticated; }
@@ -39,7 +37,6 @@ export class AuthSignalService {
   get userId() { return this.state().user?.id || null; }
 
   constructor() {
-    // Inicializar observables dentro del contexto de inyección
     this.isAuthenticated$ = toObservable(computed(() => this.state().isAuthenticated));
     this.userId$ = toObservable(computed(() => this.state().user?.id || null));
     
@@ -108,8 +105,7 @@ export class AuthSignalService {
     return of(null).pipe(
       tap(() => {
         this.storage.remove('auth_token');
-        this.storage.remove('current_user'); // Limpiar clave del AuthService
-        this.storage.remove('user_data');    // Limpiar clave del AuthSignalService
+        this.storage.remove('user_data');
         
         this.state.set({
           user: null,
@@ -157,11 +153,9 @@ export class AuthSignalService {
 
   private handleAuthSuccess(response: any) {
     const { token, user } = response.data;
-    
-    // Guardar en storage usando ambas claves para compatibilidad
+
     this.storage.set('auth_token', token);
-    this.storage.set('current_user', user); // Clave usada por AuthService
-    this.storage.set('user_data', user);    // Clave nueva para AuthSignalService
+    this.storage.set('user_data', user); 
         
     // Actualizar estado
     this.state.update(state => ({

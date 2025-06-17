@@ -58,13 +58,9 @@ export class BusinessDashboardMainPage {
     }
   ]);
 
-  // Reservas recientes (mantener para compatibilidad futura si se necesita)
-  
-  // Inyección de dependencias con inject()
   private router = inject(Router);
   private authService = inject(AuthSignalService);
   private analyticsService = inject(AnalyticsService);
-  private businessService = inject(BusinessService);
   private notificationService = inject(NotificationService);
 
   constructor() {
@@ -131,7 +127,6 @@ export class BusinessDashboardMainPage {
     } catch (error) {
       console.error('Error al cargar datos del dashboard:', error);
       await this.notificationService.showError('Error', 'No se pudieron cargar los datos del dashboard');
-      // Mantener datos de muestra en caso de error
     }
   }
 

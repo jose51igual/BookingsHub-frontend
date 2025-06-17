@@ -84,7 +84,6 @@ export class AnalyticsService extends BaseApiService {
     if (businessId) {
       return this.getWithAuth(`${this.apiUrl}/businesses/${businessId}/bookings/recent?limit=${limit}`);
     }
-    // Si no se especifica businessId, usar el endpoint general (si existe)
     return this.getWithAuth(`${this.apiUrl}/bookings/recent?limit=${limit}`);
   }
 }

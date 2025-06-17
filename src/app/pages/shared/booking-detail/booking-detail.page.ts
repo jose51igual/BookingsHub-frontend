@@ -20,7 +20,7 @@ import { showConfirmAlert } from '@utils/alert.utils';
   ]
 })
 export class BookingDetailPage {
-  // Signals para estado reactivo
+  
  booking = signal<any>(null);
  business = signal<any>(null);
  isLoading = signal<boolean>(false);

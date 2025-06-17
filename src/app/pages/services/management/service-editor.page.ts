@@ -20,7 +20,6 @@ import { ServiceFormData } from '@interfaces/index';
   ]
 })
 export class ServiceCreatePage {
-  // Servicios inyectados con inject()
   private serviceService = inject(ServiceService);
   private businessService = inject(BusinessService);
   private authService = inject(AuthSignalService);
@@ -30,14 +29,13 @@ export class ServiceCreatePage {
   private route = inject(ActivatedRoute);
   private formBuilder = inject(FormBuilder);
 
-  // Signals para estado reactivo
+  
  errorMessage = signal<string>('');
  isSubmitting = signal(false);
  businessId = signal<number | null>(null);
  serviceId = signal<number | null>(null);
  isEditMode = signal(false);
 
-  // Computed signals para validaciones y UI
  pageTitle = computed(() => 
     this.isEditMode() ? 'Editar Servicio' : 'Crear Servicio'
   );
@@ -73,7 +71,6 @@ export class ServiceCreatePage {
     return hasBusinessId && isFormValid && isNotSubmitting;
   }
 
-  // Formulario reactivo usando validadores centralizados
  serviceForm: FormGroup = this.formBuilder.group({
     name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
     description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(500)]],
@@ -84,7 +81,6 @@ export class ServiceCreatePage {
     benefits: ['']
   });
 
-  // Categorías como
  categories = [
     'Belleza y cuidado personal',
     'Salud y bienestar', 
@@ -133,13 +129,10 @@ export class ServiceCreatePage {
         if (apiResponse.success && apiResponse.data) {
           const businessData = apiResponse.data;
           
-          // Verificar si data contiene un negocio directamente o es un array
           if (businessData.id) {
-            // Si data es un objeto negocio directamente
             this.businessId.set(businessData.id);
             this.errorMessage.set('');
           } else if (Array.isArray(businessData) && businessData.length > 0) {
-            // Si data es un array de negocios
             this.businessId.set(businessData[0].id);
             this.errorMessage.set('');
           } else {
@@ -151,7 +144,6 @@ export class ServiceCreatePage {
           this.errorMessage.set('No se encontró información del negocio');
         }
       } else if (Array.isArray(response) && response.length > 0) {
-        // Si la respuesta es directamente un array de negocios
         this.businessId.set(response[0].id);
         this.businessId.set(response[0].id);
         this.errorMessage.set('');
@@ -187,18 +179,15 @@ export class ServiceCreatePage {
         price: Number(service.price) || 0,
         category: service.category || '',
         image: service.image || '',
-        benefits: '' // Los benefits no están en el servicio, mantener vacío
+        benefits: ''
       };
       this.serviceForm.patchValue(formData);
       
-      // Marcar todos los campos como touched para que las validaciones se activen
       this.serviceForm.markAllAsTouched();
       
-      // En modo edición, usar el business_id del servicio
       if (service.business_id) {
         this.businessId.set(service.business_id);
       } else {
-        // Si no hay business_id en el servicio, intentar cargar del usuario
         await this.loadBusinessInfo();
       }
     }
@@ -263,7 +252,6 @@ export class ServiceCreatePage {
     });
   }
 
-  // Métodos helper para validaciones del template usando computed
  getFieldErrors = computed(() => {
     const errors: Record<string, string> = {};
     

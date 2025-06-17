@@ -61,8 +61,6 @@ export class BusinessServicesPage {
         this.errorMessage.set('Usuario no autenticado. Por favor, inicia sesión nuevamente.');
         return;
       }
-
-      // Obtener el negocio del usuario
       const response = await firstValueFrom(this.businessService.getBusinessByUserId());
       
       let business;

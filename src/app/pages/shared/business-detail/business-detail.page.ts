@@ -26,32 +26,26 @@ import { APP_ROUTES } from '../../../utils/constants';
   ]
 })
 export class BusinessDetailPage implements OnDestroy {
-  // Propiedades principales
   business = signal<Business | null>(null);
   services = signal<Service[]>([]);
   mockReviews = signal<Review[]>([]); // Mantengo el nombre para compatibilidad con el template
   
-  // Estado del componente
   businessId = signal<number>(0);
   isOwner = signal<boolean>(false);
   isLoading = signal<boolean>(false);
   
-  // Computed signals que se actualizan automáticamente cuando cambia el auth service
   isAuthenticated = computed(() => this.authService.isAuthenticated);
   userRole = computed(() => this.authService.user?.role || '');
   currentUserId = computed(() => this.authService.user?.id || null);
   
-  // Propiedades del mapa
   mapLat = signal<number>(0);
   mapLng = signal<number>(0);
   hasMapCoordinates = signal<boolean>(false);
   isMapLoading = signal<boolean>(true);
   mapError = signal<string>('');
 
-  // Subject para manejar la limpieza de suscripciones
   private destroy$ = new Subject<void>();
 
-  // Inyección moderna de servicios
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private businessService = inject(BusinessService);
@@ -82,15 +76,12 @@ export class BusinessDetailPage implements OnDestroy {
       return;
     }
 
-    // Configurar estado de carga inicial
     this.isLoading.set(true);
     this.checkUserAuthentication();
     this.loadAllData();
   }
 
   private checkUserAuthentication(): void {
-    // Los computed signals se actualizan automáticamente
-    // Solo necesitamos verificar si el usuario es propietario
     if (this.isAuthenticated() && this.currentUserId()) {
       this.checkIfUserIsOwner(this.currentUserId()!);
     }
@@ -129,11 +120,8 @@ export class BusinessDetailPage implements OnDestroy {
   private async loadBusinessServices(): Promise<void> {
     try {
       const response = await firstValueFrom(this.serviceService.getServicesByBusiness(this.businessId()));
+            this.services.set(response || []);
       
-      // Usar directamente la respuesta del servicio
-      this.services.set(response || []);
-      
-      // Asegurar que services es un array
       if (!Array.isArray(response)) {
         this.services.set([]);
       }
@@ -146,7 +134,6 @@ export class BusinessDetailPage implements OnDestroy {
   private async loadBusinessReviews(): Promise<void> {
     try {
       const response = await firstValueFrom(this.reviewService.getBusinessReviews(this.businessId()));      
-      // Extraer los datos del response del API
       const reviews = response || [];
       this.mockReviews.set(this.mapReviewsToViewModel(reviews));
     } catch (error) {
@@ -169,7 +156,6 @@ export class BusinessDetailPage implements OnDestroy {
   }
 
   private mapReviewsToViewModel(reviews: any[]): Review[] {
-    // Asegurar que reviews es un array
     if (!Array.isArray(reviews)) {
       console.warn('Reviews no es un array:', reviews);
       return [];
@@ -195,7 +181,6 @@ export class BusinessDetailPage implements OnDestroy {
     const numericRating = typeof rating === 'string' ? parseFloat(rating) : rating;
     if (isNaN(numericRating)) return '0.0';
     
-    // Usar formatNumber de Angular para formatear con 1 decimal
     return formatNumber(numericRating, 'es-ES', '1.1-1');
   }
 
@@ -239,7 +224,6 @@ export class BusinessDetailPage implements OnDestroy {
     this.mapError.set(message);
   }
 
-  // Métodos públicos para la interfaz
   navigateToServiceDetail(serviceId: number): void {
     if (!this.isAuthenticated()) {
       this.showLoginRequiredAlert();

@@ -16,7 +16,6 @@ export class ServiceService extends BaseApiService {
     return this.http.get<ApiResponse<Service>>(`${this.apiUrl}/services/${id}`, this.httpOptions).pipe(
       retry(2),
       map((response: ApiResponse<Service>) => {
-        // Extraer el servicio de la respuesta estándar del backend
         return response.data || response as any;
       }),
       catchError(error => this.handleError(error))

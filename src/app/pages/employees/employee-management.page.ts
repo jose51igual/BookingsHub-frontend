@@ -24,19 +24,18 @@ import { showConfirmAlert } from '@utils/alert.utils';
   ]
 })
 export class EmployeeManagementPage {
-  // Signals para estado reactivo
+  
  employees = signal<Employee[]>([]);
  businessId = signal<number | null>(null);
  isLoading = signal<boolean>(false);
  isEditing = signal<boolean>(false);
  editingEmployeeId = signal<number | null>(null);
 
-  // Computed signals
+  
  hasEmployees = computed(() => this.employees().length > 0);
  canAddEmployee = computed(() => !!this.businessId() && !this.isLoading());
  employeesValid = computed(() => Array.isArray(this.employees()));
 
-  // Servicios inyectados
   private employeeService = inject(EmployeeService);
   private businessService = inject(BusinessService);
   private authService = inject(AuthSignalService);
@@ -44,10 +43,8 @@ export class EmployeeManagementPage {
   private router = inject(Router);
   private formBuilder = inject(FormBuilder);
 
-  // Formulario reactivo
  employeeForm: FormGroup = createEmployeeForm(this.formBuilder);
 
-  // Constantes
  specialtyOptions = EMPLOYEE_SPECIALTIES;
 
   constructor() {
@@ -59,20 +56,15 @@ export class EmployeeManagementPage {
     console.log('🔍 Usuario actual:', user);
     
     if (!user) {
-      console.log('❌ No hay usuario autenticado');
       this.router.navigate([APP_ROUTES.HOME]);
       return;
     }
 
     if (user.role !== 'negocio') {
-      console.log('❌ Usuario no es negocio. Rol actual:', user.role);
       this.router.navigate([APP_ROUTES.HOME]);
       return;
     }
 
-    console.log('✅ Usuario válido, obteniendo negocio...');
-
-    // Obtener el negocio del usuario autenticado
     const business = await this.dataLoader.fromObservable(
       this.businessService.getBusinessByUserId(),
       {
@@ -81,10 +73,7 @@ export class EmployeeManagementPage {
       }
     );
 
-    console.log('🏢 Negocio obtenido:', business);
-
     if (business) {
-      // Manejar diferentes formatos de respuesta
       let businessId = null;
       
       if (business.id) {
@@ -95,17 +84,12 @@ export class EmployeeManagementPage {
         businessId = business[0].id;
       }
 
-      console.log('🆔 Business ID extraído:', businessId);
-
       if (businessId) {
         this.businessId.set(businessId);
         await this.loadEmployees();
         return;
       }
     }
-
-    console.log('❌ No se pudo obtener el negocio válido');
-    // Por ahora, en lugar de redirigir, usamos un ID temporal para debugging
     this.businessId.set(1);
     await this.loadEmployees();
   }
@@ -123,16 +107,12 @@ export class EmployeeManagementPage {
     );
 
     if (employees) {
-      // Extraer los datos correctamente según el formato de respuesta
       let employeesArray = [];
       if (Array.isArray(employees)) {
-        // Si ya es un array directamente
         employeesArray = employees;
       } else if ((employees as any).success && Array.isArray((employees as any).data)) {
-        // Si viene en formato {success: true, data: [...]}
         employeesArray = (employees as any).data;
       } else if ((employees as any).data && Array.isArray((employees as any).data)) {
-        // Si tiene propiedad data que es array
         employeesArray = (employees as any).data;
       }
 

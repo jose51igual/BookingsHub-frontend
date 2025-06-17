@@ -35,25 +35,20 @@ export class ProfilePage {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
-  // Signals de estado
  isLoading = signal<boolean>(true);
  showPasswordForm = signal<boolean>(false);
  errorMessage = signal<string | null>(null);
  isUpdatingProfile = signal<boolean>(false);
  isUpdatingPassword = signal<boolean>(false);
 
-  // linkedSignal para derivar automáticamente el usuario actual del AuthService
  currentUser = linkedSignal(() => this.authService.user);
 
-  // Signals locales para mostrar información actualizada en la UI
  displayName = signal<string>('');
  displayEmail = signal<string>('');
 
-  // Signals para la validez de los formularios
   private profileFormValid = signal<boolean>(false);
   private passwordFormValid = signal<boolean>(false);
 
-  // Computed signals para la UI
  canUpdateProfile = computed(() => 
     this.profileFormValid() && !this.isUpdatingProfile()
   );
@@ -72,9 +67,6 @@ export class ProfilePage {
     return createdAt ? new Date(createdAt).toLocaleDateString('es-ES') : '';
   });
 
-  // Validador personalizado para contraseñas coincidentes usando utilidad centralizada
-  
-  // Formularios reactivos
  profileForm = this.formBuilder.group({
     name: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]]
@@ -89,18 +81,15 @@ export class ProfilePage {
   });
 
   constructor() {
-    // Effect para cargar el perfil cuando el usuario cambia
     effect(() => {
       const user = this.currentUser();
       if (user) {
-        // Inicializar los signals de display
         this.displayName.set(user.name || '');
         this.displayEmail.set(user.email || '');
         this.loadUserProfile();
       }
     });
 
-    // Effect para actualizar la validez de los formularios
     effect(() => {
       this.profileFormValid.set(this.profileForm.valid);
     });
@@ -109,7 +98,6 @@ export class ProfilePage {
       this.passwordFormValid.set(this.passwordForm.valid);
     });
 
-    // Observar cambios en los formularios para actualizar los signals
     this.profileForm.statusChanges.subscribe(() => {
       this.profileFormValid.set(this.profileForm.valid);
     });
@@ -117,14 +105,8 @@ export class ProfilePage {
     this.passwordForm.statusChanges.subscribe(() => {
       this.passwordFormValid.set(this.passwordForm.valid);
     });
-
-    // Debug effect para monitorear cambios en el displayEmail
-    effect(() => {
-      console.log('DisplayEmail signal changed to:', this.displayEmail());
-    });
   }
 
-  // Método para limpiar errores cuando se cierra la alerta
  clearError = () => this.errorMessage.set(null);
 
   async loadUserProfile(): Promise<void> {
@@ -137,7 +119,6 @@ export class ProfilePage {
         email: user.email
       });
 
-      // Actualizar los signals de display
       this.displayName.set(user.name || '');
       this.displayEmail.set(user.email || '');
       
@@ -148,7 +129,6 @@ export class ProfilePage {
       this.isLoading.set(false);
       this.errorMessage.set('No se pudo cargar la información del perfil');
       
-      // Verificar si el error es por token inválido
       if (error.status === 401) {
         await handleAuthError(this.authService, this.router);
       }
@@ -162,35 +142,19 @@ export class ProfilePage {
       this.isUpdatingProfile.set(true);
 
       const formValue = this.profileForm.value;
-      console.log('Form value before update:', formValue);
       
       const updateData: UpdateUserData = {
         name: formValue.name || undefined,
         email: formValue.email || undefined
       };
       
-      console.log('Update data being sent:', updateData);
-
       await firstValueFrom(this.authService.updateUserProfile(updateData));
       
-      console.log('Update successful, updating display signals');
-      console.log('Form values:', formValue);
-      
-      // Actualizar los signals de display con los nuevos valores del formulario
-      console.log('Updating display name to:', formValue.name);
       this.displayName.set(formValue.name || 'Usuario');
-      
-      console.log('Updating display email to:', formValue.email);
+
       this.displayEmail.set(formValue.email || 'Email no disponible');
-      
-      // Verificar que los signals se actualizaron
-      console.log('Display name after update:', this.displayName());
-      console.log('Display email after update:', this.displayEmail());
-      
-      // Forzar detección de cambios
       this.cdr.detectChanges();
       
-      // Recargar datos de autenticación para refrescar la UI
       await this.authService.reloadAuthData();
       
       await this.notificationService.showSuccess('Éxito', 'Perfil actualizado con éxito');

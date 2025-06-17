@@ -23,7 +23,7 @@ import { firstValueFrom } from 'rxjs';
   ]
 })
 export class ReviewsListPage {
-  // Signals para estado reactivo
+  
  businessId = signal<number | undefined>(undefined);
  business = signal<Business | undefined>(undefined);
  allReviews = signal<Review[]>([]);
@@ -91,12 +91,10 @@ export class ReviewsListPage {
     const id = this.route.snapshot.paramMap.get('id');
     
     if (id) {
-      // Viene con ID de parámetro (ruta pública)
       this.businessId.set(parseInt(id));
       this.isFromBusinessPanel.set(false);
       this.loadData();
     } else {
-      // Viene del panel de negocio, obtener businessId del usuario logueado
       this.isFromBusinessPanel.set(true);
       this.loadBusinessFromUser();
     }
@@ -113,10 +111,8 @@ export class ReviewsListPage {
         return;
       }
 
-      // Obtener el negocio del usuario logueado
       const response = await firstValueFrom(this.businessService.getBusinessByUserId());
       
-      // Verificar si la respuesta tiene la estructura esperada
       const businessData = (response as any)?.success ? (response as any).data : response;
       
       if (!businessData?.id) {
@@ -127,7 +123,6 @@ export class ReviewsListPage {
       this.businessId.set(businessData.id);
       this.business.set(businessData);
       
-      // Cargar las reseñas
       await this.loadReviews();
       
     } catch (error) {
@@ -145,11 +140,9 @@ export class ReviewsListPage {
     this.isLoading.set(true);
     
     try {
-      // Si venimos del panel de negocio y ya tenemos el business, solo cargar reseñas
       if (this.isFromBusinessPanel() && this.business()) {
         await this.loadReviews();
       } else {
-        // Cargar información del negocio y reviews en paralelo
         const [businessResponse, reviewsResponse] = await Promise.all([
           this.dataLoader.fromObservable(
             this.businessService.getBusinessById(businessId),
@@ -174,7 +167,6 @@ export class ReviewsListPage {
         }
       }
     } catch (error) {
-      console.error('Error al cargar datos:', error);
       this.error.set('Error al cargar los datos');
     } finally {
       this.isLoading.set(false);
@@ -198,7 +190,6 @@ export class ReviewsListPage {
         this.allReviews.set([]);
       }
     } catch (error) {
-      console.error('❌ [ReviewsListPage] Error al cargar reseñas:', error);
       this.notificationService.showError('Error', 'Error al cargar las reseñas');
     }
   }
@@ -222,16 +213,13 @@ export class ReviewsListPage {
 
  goBack = (): void => {
     if (this.isFromBusinessPanel()) {
-      // Si viene del panel de negocio, regresar al dashboard
       this.router.navigate(['/panel-negocio/principal']);
     } else {
-      // Si viene de la ruta pública, regresar al detalle del negocio
       const businessId = this.businessId();
       this.router.navigate([APP_ROUTES.BUSINESS_DETAIL(businessId || 0)]);
     }
   };
 
-  // Utilidades disponibles en el template
  getStarArray = getStarArray;
  getRelativeTime = getRelativeTime;
  formatRating = formatRating;

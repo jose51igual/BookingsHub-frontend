@@ -4,16 +4,6 @@ import { AuthSignalService } from '@services/index';
 
 /**
  * Guard de autenticación que maneja todos los casos de protección de rutas
- * 
- * Configuraciones disponibles en route.data:
- * - requireAuth: boolean (default: true) - Requiere autenticación
- * - requiredRole: 'cliente' | 'negocio' | null - Rol específico requerido
- * - redirectTo: string - Ruta de redirección personalizada para usuarios no autorizados
- * - allowUnauthenticated: boolean - Permite acceso sin autenticación (para rutas públicas)
- * - redirectAuthenticated: boolean - Redirije usuarios autenticados (para páginas de auth)
- * - roleRedirect: boolean - Redirije automáticamente según el rol del usuario
- * - clientRedirect: string - Ruta de redirección para clientes
- * - businessRedirect: string - Ruta de redirección para negocios
  */
 export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const authService = inject(AuthSignalService);
@@ -31,7 +21,6 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
     businessRedirect: route.data?.['businessRedirect'] || '/panel-negocio/principal'
   };
 
-  // Si el servicio está cargando, esperar un momento
   if (authService.isLoading) {
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -112,21 +101,17 @@ export const AuthGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   }
 };
 
-// Guards específicos para compatibilidad (funcionan como aliases)
 export const clientGuard: CanActivateFn = (route, state) => {
-  // Configurar datos de ruta para cliente
   route.data = { ...route.data, requiredRole: 'cliente' };
   return AuthGuard(route, state);
 };
 
 export const businessGuard: CanActivateFn = (route, state) => {
-  // Configurar datos de ruta para negocio
   route.data = { ...route.data, requiredRole: 'negocio' };
   return AuthGuard(route, state);
 };
 
 export const roleRedirectGuard: CanActivateFn = (route, state) => {
-  // Configurar datos de ruta para redirección automática
   route.data = { ...route.data, roleRedirect: true };
   return AuthGuard(route, state);
 };

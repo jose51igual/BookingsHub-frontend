@@ -22,7 +22,7 @@ export function authInterceptor(
   const publicRoutes = [
     '/api/auth/login',
     '/api/auth/register',
-    '/api/businesses', // GET público
+    '/api/businesses',
     '/api/businesses/featured',
     '/api/businesses/search',
     '/api/businesses/category/'
@@ -67,7 +67,7 @@ export function authInterceptor(
         if (!isProfilePasswordError) {
           storageService.remove('auth_token');
           storageService.remove('user_data');
-          router.navigate(['/login'], { 
+          router.navigate(['/iniciar-sesion'], { 
             queryParams: { session_expired: 'true' } 
           });
         }

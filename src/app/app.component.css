@@ -14,12 +14,11 @@ html, body{
     border: 1px solid red;
     overflow:hidden;
 }
-/* Estilos para pantallas grandes - eliminar restricción de ancho */
 @media (min-width: 992px) {
   ion-router-outlet {
-    max-width: 100%; /* Cambiado de 1200px para usar todo el ancho */
+    max-width: 100%;
     margin: 0 auto;
-    box-shadow: none; /* Eliminar sombra que creaba efecto de "caja" */
+    box-shadow: none;
   }
 
   ion-content {
@@ -40,8 +39,8 @@ html, body{
   ion-router-outlet {
     flex: 1;
     overflow-y: auto;
-    margin-top: 0; /* Espacio para el tab bar superior */
-    margin-bottom: 0; /* Espacio para el toolbar inferior */
+    margin-top: 0;
+    margin-bottom: 0; 
   }
 }
 

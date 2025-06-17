@@ -21,14 +21,10 @@ import { BUSINESS_CATEGORIES } from '@utils/constants';
   ]
 })
 export class HomePage {
-  // Servicios inyectados con inject()
   private  authService = inject(AuthSignalService);
   private  router = inject(Router);
 
-  // Signal para el estado de carga de categorías
    categoriesLoaded = signal<boolean>(false);
-
-  // Categorías populares usando las categorías unificadas
    popularCategories = signal< CategoryData[]>(
     BUSINESS_CATEGORIES.slice(0, 6).map(cat => ({
       id: cat.id,
@@ -39,7 +35,6 @@ export class HomePage {
     }))
   );
 
-  // Computed signals para estado derivado
    isAuthenticated = computed(() => !!this.authService.user);
   
    userName = computed(() => 
@@ -61,17 +56,14 @@ export class HomePage {
   });
 
   constructor() {
-    // Cargar categorías al inicializar
     this.loadCategories();
   }
 
-  // Cargar categorías (simulamos una carga de datos)
   private loadCategories = (): void => {
     console.log('Categorías cargadas:', this.popularCategories().length);
     this.categoriesLoaded.set(true);
   };
 
-  // Obtener descripción para cada categoría
   private getCategoryDescription(categoryId: string): string {
     const descriptions: Record<string, string> = {
       'belleza-y-cuidado-personal': 'Salones, peluquerías, spas',
@@ -88,7 +80,6 @@ export class HomePage {
     return descriptions[categoryId] || 'Servicios profesionales';
   }
 
-  // Obtener color para cada categoría
   private getCategoryColor(categoryId: string): string {
     const colors: Record<string, string> = {
       'belleza-y-cuidado-personal': '#ff6b6b',
@@ -105,7 +96,6 @@ export class HomePage {
     return colors[categoryId] || '#74b9ff';
   }
 
-  // Navegar a una categoría específica
    navigateToCategory = (category: CategoryData): void => {
     console.log('Navegando a categoría:', category.name);
     this.router.navigate(['/negocios'], { 
@@ -113,17 +103,14 @@ export class HomePage {
     });
   };
 
-  // Navegación a la página de servicios
    navigateToServices = (): void => {
     this.router.navigate(['/negocios']);
   };
 
-  // Navegación al login
    navigateToLogin = (): void => {
     this.router.navigate(['/iniciar-sesion']);
   };
 
-  // Navegación al registro
    navigateToRegister = (): void => {
     this.router.navigate(['/tipo-registro']);
   };

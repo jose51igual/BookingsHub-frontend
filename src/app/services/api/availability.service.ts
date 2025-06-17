@@ -54,7 +54,6 @@ export class AvailabilityService extends BaseApiService {
     
     return this.http.get<any>(url).pipe(
       map(response => {
-        // Manejar respuesta del backend que puede tener success/data structure
         return response.data || response || [];
       }),
       catchError((error) => {
@@ -71,7 +70,7 @@ export class AvailabilityService extends BaseApiService {
     // Extraer año y mes de la fecha
     const dateObj = new Date(date);
     const year = dateObj.getFullYear();
-    const month = dateObj.getMonth() + 1; // getMonth() retorna 0-11, necesitamos 1-12
+    const month = dateObj.getMonth() + 1; 
     
     const params = new URLSearchParams({ 
       year: year.toString(), 

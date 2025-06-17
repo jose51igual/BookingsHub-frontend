@@ -2,25 +2,15 @@ import { Component, signal, computed, inject, CUSTOM_ELEMENTS_SCHEMA, effect, af
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { 
-  LoadingController,
-  AlertController,
-  ToastController,
-} from '@ionic/angular/standalone';
-
-// Services
+import { LoadingController, AlertController, ToastController} from '@ionic/angular/standalone';
 import { ServiceService } from '@services/api/service.service';
 import { BusinessService } from '@services/api/business.service';
 import { BookingService } from '@services/api/booking.service';
 import { EmployeeService } from '@services/api/employee.service';
 import { AvailabilityService } from '@services/api/availability.service';
 import { AuthSignalService } from '@services/index';
-
-// Types
 import { Service, Business } from '../../../models/business.types';
 import { Employee } from '../../../models/employee.interface';
-
-// Constants
 import { APP_ROUTES } from '@utils/constants';
 import { IonicModule } from '@ionic/angular';
 
@@ -49,7 +39,6 @@ export class ServiceDetailPage {
   private employeeService = inject(EmployeeService);
   private availabilityService = inject(AvailabilityService);
 
-  // Signals
   isInitialized = signal<boolean>(false);
   service = signal<Service | null>(null);
   business = signal<Business | null>(null);
@@ -64,13 +53,11 @@ export class ServiceDetailPage {
   availableDates = signal<string[]>([]);
   availableTimes = signal<string[]>([]);
   
-  // Nueva lógica para calendario y horarios
   isLoadingAvailability = signal<boolean>(false);
   availabilityData = signal<any[]>([]);
   currentMonth = signal<number>(new Date().getMonth() + 1);
   currentYear = signal<number>(new Date().getFullYear());
   
-  // Time slots from 9:00 to 21:00 with 30-minute intervals
   public timeSlots = [
     '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
     '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
@@ -78,15 +65,12 @@ export class ServiceDetailPage {
     '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'
   ];
   
-  // Getter para usar en el template (alias para timeSlots)
   public get hours(): string[] {
     return this.timeSlots;
   }
   
-  // Available time slots for selected date
   availableTimeSlots = signal<string[]>([]);
 
-  // Computed values
   isAuthenticated = computed(() => this.authService.isAuthenticated);
   currentUser = computed(() => this.authService.user);
   
@@ -104,12 +88,10 @@ export class ServiceDetailPage {
     const isClient = this.currentUser()?.role === 'cliente';
     const notOwner = !this.isOwner();
     
-    // Verificar si hay empleados y si es requerido seleccionar uno
-    const employees = this.employees() || []; // Asegurar que siempre sea un array
+    const employees = this.employees() || [];
     const employeesLength = employees.length;
     const selectedEmployee = this.selectedEmployee();
     
-    // Si hay empleados, debe haber uno seleccionado; si no hay empleados, no es necesario
     const hasEmployeeIfRequired = employeesLength === 0 || !!selectedEmployee;
     
     const canBookResult = hasDate && hasTime && hasService && isAuthenticatedUser && isClient && notOwner && hasEmployeeIfRequired;
@@ -119,13 +101,11 @@ export class ServiceDetailPage {
 
   hasEmployees = computed(() => this.employees().length > 0);
   
-  // Computed para contar días disponibles
   availableDaysCount = computed(() => {
     const availability = this.availabilityData();
     return availability.filter(day => day.available && day.availableSlots && day.availableSlots.length > 0).length;
   });
   
-  // Computed for calendar date filtering
   isDateAvailable = computed(() => {
     return (dateStr: string) => {
       const availability = this.availabilityData();
@@ -133,7 +113,6 @@ export class ServiceDetailPage {
     };
   });
   
-  // Combined datetime computed value
   combinedDateTime = computed(() => {
     const date = this.selectedDate();
     const time = this.selectedTime();
@@ -143,23 +122,13 @@ export class ServiceDetailPage {
     return null;
   });
 
-  // Date constraints
   public minDateTime = new Date().toISOString();
   public maxDateTime = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(); // 90 días
 
   constructor() {
-    // Cargar datos después del render inicial (reemplaza ngOnInit)
     afterNextRender(() => {
       this.loadServiceData();
       this.isInitialized.set(true);
-    });
-
-    // Efecto para monitorear cambios en datos de disponibilidad
-    effect(() => {
-      const availability = this.availabilityData();
-      if (availability.length > 0) {
-        console.log('Availability data changed, calendar should update');
-      }
     });
   }
 
@@ -175,31 +144,24 @@ export class ServiceDetailPage {
     this.error.set(null);
 
     try {
-      // Cargar servicio usando el observable
       this.serviceService.getServiceById(parseInt(serviceId, 10)).subscribe({
         next: (serviceData) => {
           this.service.set(serviceData);
-          
-          // Cargar negocio si existe business_id
+
           if (serviceData.business_id) {
             this.loadBusinessData(serviceData.business_id);
           }
-          
-          // Cargar empleados del servicio
+
           this.loadServiceEmployees(parseInt(serviceId, 10));
-          
-          // Cargar disponibilidad inicial para el mes actual
           this.loadAvailabilityData(parseInt(serviceId, 10));
           this.isLoading.set(false);
         },
         error: (error) => {
-          console.error('Error loading service:', error);
           this.error.set('Error al cargar el servicio');
           this.isLoading.set(false);
         }
       });
     } catch (error) {
-      console.error('Error loading service:', error);
       this.error.set('Error de conexión. Inténtalo de nuevo.');
       this.isLoading.set(false);
     }
@@ -219,18 +181,15 @@ export class ServiceDetailPage {
   private loadServiceEmployees(serviceId: number) {
     this.employeeService.getServiceEmployees(serviceId).subscribe({
       next: (response) => {
-        // Extraer los datos del array de empleados de la respuesta
         const employees = response?.data || [];
         this.employees.set(employees);
         
-        // Si solo hay un empleado, seleccionarlo automáticamente
         if (employees.length === 1) {
           this.selectedEmployee.set(employees[0]);
         }
       },
       error: (error) => {
         console.error('Error loading service employees:', error);
-        // Si no hay empleados específicos, continuar sin error
         this.employees.set([]);
       }
     });
@@ -244,26 +203,12 @@ export class ServiceDetailPage {
     
     this.availabilityService.getServiceAvailability(serviceId, year, month, employeeId).subscribe({
       next: (availabilityData) => {
-        console.log('Raw availability data loaded:', availabilityData);
-        console.log('Number of days with data:', availabilityData.length);
-        
-        // Log some sample days to see the format
-        if (availabilityData.length > 0) {
-          console.log('Sample day data:', availabilityData[0]);
-          console.log('First 5 days:', availabilityData.slice(0, 5));
-        }
-        
         this.availabilityData.set(availabilityData);
         this.isLoadingAvailability.set(false);
-        
-        // Forzar actualización del calendario después de cargar datos
-        console.log('Availability data set, should trigger calendar update');
+
       },
       error: (error) => {
-        console.error('Error loading availability data:', error);
-        // En caso de error, crear disponibilidad por defecto para los próximos 30 días
         const defaultAvailability = this.generateDefaultAvailability();
-        console.log('Using default availability:', defaultAvailability.length, 'days');
         this.availabilityData.set(defaultAvailability);
         this.isLoadingAvailability.set(false);
       }
@@ -295,10 +240,8 @@ export class ServiceDetailPage {
   formatDuration(duration?: number | string | null): string {
     if (duration === undefined || duration === null || duration === '') return 'No especificada';
     
-    // Convertir a número si es string
     const numDuration = typeof duration === 'string' ? parseInt(duration, 10) : duration;
     
-    // Verificar que sea un número válido
     if (isNaN(numDuration) || numDuration <= 0) return 'No especificada';
     
     const hours = Math.floor(numDuration / 60);
@@ -316,10 +259,8 @@ export class ServiceDetailPage {
   formatPrice(price?: number | string | null): string {
     if (price === undefined || price === null || price === '') return 'Consultar precio';
     
-    // Convertir a número si es string
     const numPrice = typeof price === 'string' ? parseFloat(price) : price;
     
-    // Verificar que sea un número válido
     if (isNaN(numPrice) || numPrice < 0) return 'Consultar precio';
     
     return `€${numPrice.toFixed(2)}`;
@@ -370,15 +311,12 @@ export class ServiceDetailPage {
         throw new Error('Datos de reserva incompletos');
       }
 
-      // Enviar los datos en el formato que espera el backend
       const bookingData = {
         service_id: service.id,
         business_id: business.id,
         booking_date: date,
         booking_time: time,
-        // Incluir empleado si fue seleccionado
         ...(this.selectedEmployee() && { employee_id: this.selectedEmployee()!.id }),
-        // Incluir notas si hay
         ...(this.notes() && { notes: this.notes() })
       };
 
@@ -386,7 +324,6 @@ export class ServiceDetailPage {
 
       this.bookingService.createBooking(bookingData).subscribe({
         next: (response) => {
-          // Actualizar la disponibilidad eliminando la hora reservada
           this.updateAvailability(date, time);
           
           this.showToast('¡Reserva confirmada exitosamente!', 'success');
@@ -438,7 +375,6 @@ export class ServiceDetailPage {
     const employee = this.employees().find(emp => emp.id === employeeId);
     this.selectedEmployee.set(employee || null);
     
-    // Recargar disponibilidad para el empleado seleccionado
     const service = this.service();
     if (service && employeeId) {
       this.loadAvailabilityData(service.id!, employeeId);
@@ -473,27 +409,21 @@ export class ServiceDetailPage {
     
     if (!service) return;
     
-    // Primero verificar si tenemos los datos de disponibilidad cargados
     const availability = this.availabilityData();
     const dayAvailability = availability.find(day => day.date === date);
     
     if (dayAvailability && dayAvailability.availableSlots) {
-      // Usar los datos ya cargados
       this.availableTimeSlots.set(dayAvailability.availableSlots);
     } else {
-      // Cargar desde el servidor
       this.availabilityService.getServiceTimeSlots(
         service.id!, 
         date, 
         selectedEmployee?.id
       ).subscribe({
         next: (availableSlots) => {
-          console.log('Time slots loaded for', date, ':', availableSlots);
           this.availableTimeSlots.set(availableSlots);
         },
         error: (error) => {
-          console.error('Error loading time slots:', error);
-          // En caso de error, usar horarios por defecto
           this.availableTimeSlots.set(this.timeSlots);
         }
       });
@@ -526,7 +456,6 @@ export class ServiceDetailPage {
                 this.router.navigate(['/business/services']);
               },
               error: (error) => {
-                console.error('Error deleting service:', error);
                 this.showToast('Error al eliminar el servicio', 'danger');
               }
             });
@@ -555,7 +484,6 @@ export class ServiceDetailPage {
         await this.loadServiceData();
         this.loadAvailabilityData(serviceId);
       } catch (error) {
-        console.error('Error loading initial data:', error);
         this.showToast('Error al cargar los datos', 'danger');
       }
     }
@@ -569,7 +497,6 @@ export class ServiceDetailPage {
     }
   }
 
-  // Métodos para el template del calendario y horarios
   public isDateEnabled = (dateStr: string): boolean => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -577,18 +504,15 @@ export class ServiceDetailPage {
     const checkDate = new Date(dateStr);
     checkDate.setHours(0, 0, 0, 0);
     
-    // No permitir fechas pasadas
     if (checkDate < today) {
       return false;
     }
     
     const availability = this.availabilityData();
     if (availability.length === 0) {
-      // Si no hay datos de disponibilidad, permitir cualquier fecha futura (excepto domingos)
-      return checkDate.getDay() !== 0; // No domingos
+      return checkDate.getDay() !== 0; 
     }
     
-    // Verificar disponibilidad real
     return availability.some(day => day.date === dateStr && day.available && day.availableSlots?.length > 0);
   };
 
@@ -596,20 +520,17 @@ export class ServiceDetailPage {
     const selectedDate = this.selectedDate();
     if (!selectedDate) return false;
     
-    // Primero verificar en availableTimeSlots (calculado para la fecha seleccionada)
     const availableSlots = this.availableTimeSlots();
     if (availableSlots.length > 0) {
       return availableSlots.includes(hour);
     }
     
-    // Si no hay availableTimeSlots, verificar en availabilityData
     const availability = this.availabilityData();
     const dayData = availability.find(day => day.date === selectedDate);
     if (dayData && dayData.availableSlots) {
       return dayData.availableSlots.includes(hour);
     }
     
-    // Por defecto, no disponible
     return false;
   }
 
@@ -621,12 +542,10 @@ export class ServiceDetailPage {
     return this.isSlotAvailable(hour);
   }
   
-  // Método para verificar si un slot de tiempo está disponible (alias)
   public isTimeSlotAvailable(timeSlot: string): boolean {
     return this.isSlotAvailable(timeSlot);
   }
 
-  // Método para generar disponibilidad por defecto
   private generateDefaultAvailability() {
     const availability = [];
     const today = new Date();
@@ -635,21 +554,19 @@ export class ServiceDetailPage {
       const date = new Date(today);
       date.setDate(today.getDate() + i);
       
-      // Saltar domingos (día 0)
       if (date.getDay() === 0) continue;
       
       const dateStr = date.toISOString().split('T')[0];
       availability.push({
         date: dateStr,
         available: true,
-        availableSlots: this.timeSlots.slice() // Copia de todos los horarios
+        availableSlots: this.timeSlots.slice()
       });
     }
     
     return availability;
   }
 
-  // Método para actualizar disponibilidad después de una reserva
   private updateAvailability(date: string, time: string) {
     const availability = this.availabilityData();
     const updatedAvailability = availability.map(day => {
@@ -664,7 +581,6 @@ export class ServiceDetailPage {
     
     this.availabilityData.set(updatedAvailability);
     
-    // También actualizar los slots disponibles si es la fecha seleccionada
     if (this.selectedDate() === date) {
       const updatedSlots = this.availableTimeSlots().filter(slot => slot !== time);
       this.availableTimeSlots.set(updatedSlots);

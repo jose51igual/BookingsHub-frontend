@@ -32,7 +32,7 @@ export class ServicesPage {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  // Signals para estado reactivo
+  
  services = signal<ServiceBusiness[]>([]);
  featuredServices = signal<ServiceBusiness[]>([]);
  isLoading = signal<boolean>(false);
@@ -49,7 +49,6 @@ export class ServicesPage {
     }))
   ] as const;
 
-  // Computed signals para datos derivados
  userRole = computed(() => this.authService.user?.role || '');
   
  isBusinessOwner = computed(() => this.userRole() === 'negocio');

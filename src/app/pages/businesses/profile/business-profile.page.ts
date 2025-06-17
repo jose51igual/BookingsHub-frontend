@@ -60,7 +60,6 @@ export class BusinessProfilePage {
     category: ['']
   });
 
-  // Computed signals - patrón estándar
  isFormValid = computed(() => this.businessForm.valid);
  canSave = computed(() => this.isFormValid() && !this.isSaving());
  hasBusinessData = computed(() => !!this.businessData());
@@ -70,7 +69,6 @@ export class BusinessProfilePage {
   });
   
   constructor() {
-    // Registrar iconos// Effect para cargar datos cuando cambia el usuario - Angular 19
     effect(() => {
       const user = this.currentUser();
       if (user?.role === 'negocio') {
@@ -79,12 +77,10 @@ export class BusinessProfilePage {
     });
   }
 
-  // Método para limpiar errores - patrón estándar
  clearError = (): void => {
     this.errorMessage.set(null);
   };
 
-  // Método principal para cargar perfil del negocio - async/await pattern
  loadBusinessProfile = async (): Promise<void> => {
     try {
       this.isLoading.set(true);
@@ -96,16 +92,12 @@ export class BusinessProfilePage {
         return;
       }
 
-      // Usar NotificationService para loading - patrón estándar
-        // Llamada real al API para obtener el negocio del usuario
         const response: any = await firstValueFrom(this.businessService.getBusinessByUserId());
         
-        // Manejar tanto el formato {success: true, data: {...}} como el formato directo
         let businessInfo;
         if (response && response.success && response.data) {
           businessInfo = response.data;
         } else if (response && response.id) {
-          // Formato directo (por si acaso)
           businessInfo = response;
         } else {
           businessInfo = null;
@@ -118,25 +110,22 @@ export class BusinessProfilePage {
             description: businessInfo.description || '',
             phone: businessInfo.phone || '',
             address: businessInfo.address || '',
-            city: '', // No está en la interfaz Business
+            city: '',
             category: businessInfo.category || '',
             email: businessInfo.email || '',
-            created_at: '', // No está en la interfaz Business
-            updated_at: '' // No está en la interfaz Business
+            created_at: '',
+            updated_at: '' 
           };
           
           this.businessData.set(business);
           this.populateForm(business);
-          // Asegurar que esté en modo vista cuando hay datos
           this.isEditMode.set(false);
         } else {
-          // Si no tiene negocio, activar modo de creación
           this.isEditMode.set(true);
         }
       
     } catch (error: any) {
       console.error('Error loading business profile:', error);
-      // Si es error 404, significa que no tiene negocio creado
       if (error.status === 404) {
         this.isEditMode.set(true);
         await this.notificationService.showInfo('Crear Negocio', 'Aún no tienes un perfil de negocio. ¡Crea uno ahora!');
@@ -149,7 +138,6 @@ export class BusinessProfilePage {
     }
   };
 
-  // Método helper para popular el formulario - patrón estándar
   private populateForm = (business: BusinessProfile): void => {
     this.businessForm.patchValue({
       name: business.name,
@@ -161,14 +149,12 @@ export class BusinessProfilePage {
     });
   };
 
-  // Métodos de navegación y control - patrón estándar
  enterEditMode = (): void => {
     this.isEditMode.set(true);
   };
 
  cancelEdit = (): void => {
     this.isEditMode.set(false);
-    // Recargar los datos originales desde el signal
     const business = this.businessData();
     if (business) {
       this.populateForm(business);
@@ -179,7 +165,6 @@ export class BusinessProfilePage {
     this.router.navigate(['/panel-negocio/estadisticas']);
   };
 
-  // Método principal para guardar negocio - async/await pattern
  saveBusiness = async (): Promise<void> => {
     if (!this.canSave()) return;
 
@@ -194,12 +179,10 @@ export class BusinessProfilePage {
             description: businessData.description || '',
             phone: businessData.phone || '',
             address: businessData.address || '',
-            // city: businessData.city || '',
             category: businessData.category || ''
           };
           const response: any = await firstValueFrom(this.businessService.updateBusiness(currentBusiness.id, businessDataClean));
           
-          // Actualizar el signal local con los datos actualizados
           const updatedBusiness: BusinessProfile = {
             ...currentBusiness,
             name: businessData.name || currentBusiness.name,

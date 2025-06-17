@@ -40,7 +40,6 @@ export class AnalyticsPage {
     try {
       this.isLoading.set(true);
       
-      // Obtener datos reales del API
       const response = await firstValueFrom(this.analyticsService.getBusinessAnalytics(this.selectedPeriod));
       
       if (response && response.success && response.data) {
@@ -53,7 +52,6 @@ export class AnalyticsPage {
       console.error('Error loading analytics:', error);
       await this.notificationService.showError('Error', 'Error al cargar las estadísticas');
       
-      // En caso de error, cargar datos de muestra como fallback
       await this.loadSampleAnalytics();
     } finally {
       this.isLoading.set(false);
@@ -61,8 +59,7 @@ export class AnalyticsPage {
   }
 
   private async loadSampleAnalytics() {
-    // Simular tiempo de carga
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve));
     
     this.analyticsData = {
       totalBookings: 156,
@@ -107,14 +104,12 @@ export class AnalyticsPage {
   }
 
   exportData() {
-    // Implementar exportación de datos
     if (!this.analyticsData) {
       this.notificationService.showWarning('Sin datos', 'No hay datos de analíticas para exportar');
       return;
     }
 
     try {
-      // Crear un objeto con todos los datos de analíticas
       const dataToExport = {
         businessId: this.businessId,
         period: this.selectedPeriod,
@@ -122,22 +117,18 @@ export class AnalyticsPage {
         analytics: this.analyticsData
       };
 
-      // Convertir a JSON y crear blob
       const jsonData = JSON.stringify(dataToExport, null, 2);
       const blob = new Blob([jsonData], { type: 'application/json' });
       
-      // Crear enlace de descarga
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `analytics-${this.businessId}-${this.selectedPeriod}-${new Date().toISOString().split('T')[0]}.json`;
       
-      // Ejecutar descarga
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       
-      // Limpiar URL del objeto
       window.URL.revokeObjectURL(url);
       
       this.notificationService.showSuccess('Éxito', 'Datos de analíticas exportados exitosamente');

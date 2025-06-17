@@ -257,28 +257,6 @@ cd android
 | `npm run prepare-android` | Preparar archivos para Android |
 | `npm run android` | Ejecutar en Android con live reload |
 
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -m 'Añadir nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 🆘 Soporte
-
-Si tienes problemas:
-1. Revisa la sección de [Solución de Problemas](#-solución-de-problemas)
-2. Verifica que tengas las versiones correctas de Node.js y npm
-3. Asegúrate de que el backend esté ejecutándose
-4. Revisa los logs de la consola para errores específicos
-
-## 📱 Capturas de Pantalla
-
 ### Desarrollo con Emulador
 ```bash
 # Crear emulador en Android Studio

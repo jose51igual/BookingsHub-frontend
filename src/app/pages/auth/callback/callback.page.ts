@@ -50,11 +50,15 @@ export class CallbackPage implements OnInit {
       console.error('Error en callback de autenticación:', error);
       this.handleCallbackError(error.message || 'Error durante la autenticación');
     }
-  }
-  private async handleGoogleAuthCode(params: any) {
+  }  private async handleGoogleAuthCode(params: any) {
     this.message.set('Procesando autenticación con Google...');
     
-    try {      // Verificar el state para prevenir ataques CSRF
+    try {
+      console.log('📝 Parámetros recibidos en callback:', params);
+      console.log('🔑 Código:', params.code);
+      console.log('🏷️ Estado:', params.state);
+      
+      // Verificar el state para prevenir ataques CSRF
       const receivedState = params.state;
       const storedState = localStorage.getItem('google_auth_state');
       
@@ -69,6 +73,7 @@ export class CallbackPage implements OnInit {
 
       // Enviar mensaje al opener (ventana principal)
       if (window.opener && !window.opener.closed) {
+        console.log('📤 Enviando mensaje al opener con código:', params.code);
         window.opener.postMessage({
           type: 'GOOGLE_AUTH_SUCCESS',
           code: params.code,
@@ -96,8 +101,7 @@ export class CallbackPage implements OnInit {
         
         setTimeout(() => {
           window.close();
-        }, 100);
-      } else {
+        }, 100);      } else {
         this.handleCallbackError(error.message);
       }
     }

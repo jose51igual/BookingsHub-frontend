@@ -243,13 +243,21 @@ export class GoogleAuthService {
         observer.error(error);
       }
     });
-  }
-  /**
+  }  /**
    * Intercambia el código de autorización por un token JWT
    */
   private async exchangeCodeForToken(code: string): Promise<any> {
     try {
-      const response = await this.http.get<AuthResponse>(`${environment.apiUrl}/auth/google/callback?code=${encodeURIComponent(code)}`).toPromise();
+      console.log('🔍 Código recibido para intercambio:', code);
+      
+      if (!code || code === 'undefined') {
+        throw new Error('Código de autorización inválido');
+      }
+
+      const url = `${environment.apiUrl}/auth/google/callback?code=${encodeURIComponent(code)}`;
+      console.log('🌐 URL de intercambio:', url);
+      
+      const response = await this.http.get<AuthResponse>(url).toPromise();
 
       if (response && response.data?.user && response.data?.token) {
         this.authService.handleGoogleAuthSuccess(response);

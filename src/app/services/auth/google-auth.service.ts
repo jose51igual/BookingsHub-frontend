@@ -162,7 +162,6 @@ export class GoogleAuthService {
       })
     );
   }
-
   /**
    * Método OAuth 2.0 popup más directo y confiable
    */
@@ -170,10 +169,14 @@ export class GoogleAuthService {
     return new Observable(observer => {
       try {
         const clientId = environment.googleClientId;
-        const redirectUri = window.location.origin + '/auth/callback';
+        // URI de redirección debe coincidir con Google Cloud Console
+        const redirectUri = `${window.location.origin}/auth/callback`;
         const scope = 'openid email profile';
         const responseType = 'code';
         const state = this.generateRandomState();
+        
+        console.log('🔧 Debug - Redirect URI:', redirectUri);
+        console.log('🔧 Debug - Client ID:', clientId);
         
         // Construir URL de autorización
         const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +

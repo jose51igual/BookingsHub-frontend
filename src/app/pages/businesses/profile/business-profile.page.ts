@@ -4,18 +4,6 @@ import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
-import {
-  saveOutline,
-  createOutline,
-  storefrontOutline,
-  locationOutline,
-  callOutline,
-  documentTextOutline,
-  checkmarkOutline,
-  alertCircleOutline,
-  analyticsOutline,
-  closeOutline
-} from 'ionicons/icons';
 import { BusinessService } from '@services/api';
 import { AuthSignalService, NotificationService } from '@services/index';
 import { BusinessProfile } from '@interfaces/index';
@@ -33,24 +21,20 @@ import { BusinessProfile } from '@interfaces/index';
   ]
 })
 export class BusinessProfilePage {
-  // Servicios inyectados con inject() - patrón estándar
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
   private businessService = inject(BusinessService);
   private authService = inject(AuthSignalService);
   private notificationService = inject(NotificationService);
 
-  // LinkedSignal para derivar automáticamente del AuthService - Angular 19
  currentUser = linkedSignal(() => this.authService.user);
 
-  // Signals de estado - patrón estándar
  isLoading = signal<boolean>(true);
  isEditMode = signal<boolean>(false);
  isSaving = signal<boolean>(false);
  errorMessage = signal<string | null>(null);
  businessData = signal<BusinessProfile | null>(null);
 
-  // Formulario reactivo - patrón estándar
  businessForm = this.formBuilder.group({
     name: ['', [Validators.required]],
     description: [''],

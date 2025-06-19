@@ -124,23 +124,40 @@
             <!-- Selector de Hora Predefinida (solo si hay fecha seleccionada) -->
             @if (selectedDate()) {
               <div class="time-selector">
-                <ion-label>Selecciona una hora:</ion-label>
-                  <div class="time-slots-grid">
+                <ion-label>Selecciona una hora:</ion-label>                  <div class="time-slots-grid">
                     @for (hour of hours; track hour) {
                       <ion-button
                         [fill]="selectedTime() === hour ? 'solid' : 'outline'"
-                        [color]="selectedTime() === hour ? 'primary' : (isSlotAvailable(hour) ? 'success' : 'danger')"
+                        [color]="selectedTime() === hour ? 'primary' : (isSlotAvailable(hour) ? 'success' : (isHourPassed(hour) ? 'medium' : 'danger'))"
                         [disabled]="!isAvailable(hour)"
-                        [class]="isAvailable(hour) ? 'available-slot' : 'unavailable-slot'"
+                        [class]="isAvailable(hour) ? 'available-slot' : (isHourPassed(hour) ? 'passed-slot' : 'unavailable-slot')"
                         (click)="onTimeSelect(hour)"
                         size="small">
                         @if (isHourAvailable(hour)) {
                           {{ hour }}
+                        } @else if (isHourPassed(hour)) {
+                          <s>{{ hour }}</s>
                         } @else {
                           <s>{{ hour }}</s>
                         }
                       </ion-button>
                     }
+                  </div>
+                  
+                  <!-- Leyenda de horarios -->
+                  <div class="time-legend">
+                    <div class="legend-item">
+                      <div class="legend-dot time-available"></div>
+                      <span>Disponible</span>
+                    </div>
+                    <div class="legend-item">
+                      <div class="legend-dot time-reserved"></div>
+                      <span>Reservado</span>
+                    </div>
+                    <div class="legend-item">
+                      <div class="legend-dot time-passed"></div>
+                      <span>Hora pasada</span>
+                    </div>
                   </div>
               </div>
             }

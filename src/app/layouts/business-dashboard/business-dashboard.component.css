@@ -21,12 +21,25 @@
   z-index: 1000;
 }
 
+/* Safe area para móviles */
+@supports (padding: max(0px)) {
+  .business-nav-bar {
+    padding-top: max(12px, var(--safe-area-top));
+    padding-left: max(20px, var(--safe-area-left));
+    padding-right: max(20px, var(--safe-area-right));
+  }
+}
+
 /* Adaptativo para pantallas pequeñas */
 @media (max-width: 768px) {
   .business-nav-bar {
     padding: 10px 16px;
     flex-direction: column;
     gap: 12px;
+    /* Asegurar safe area en dispositivos móviles */
+    padding-top: max(10px, var(--safe-area-top));
+    padding-left: max(16px, var(--safe-area-left));
+    padding-right: max(16px, var(--safe-area-right));
   }
 }
 

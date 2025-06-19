@@ -302,6 +302,35 @@ ion-datetime {
   --background: transparent;
 }
 
+.unavailable-slot s {
+  color: var(--ion-color-danger);
+  text-decoration: line-through;
+  text-decoration-color: var(--ion-color-danger);
+  text-decoration-thickness: 2px;
+}
+
+/* Horas que ya pasaron */
+.passed-slot {
+  --color: var(--ion-color-medium);
+  --border-color: var(--ion-color-medium);
+  --background: var(--ion-color-light);
+  text-decoration: line-through;
+  opacity: 0.4;
+  position: relative;
+}
+
+.passed-slot:disabled {
+  --color: var(--ion-color-medium);
+  --background: var(--ion-color-light);
+}
+
+.passed-slot s {
+  color: var(--ion-color-medium);
+  text-decoration: line-through;
+  text-decoration-color: var(--ion-color-medium);
+  text-decoration-thickness: 2px;
+}
+
 /* Estilos para horarios disponibles/no disponibles */
 .available-slot {
   --background: var(--ion-color-success-tint);
@@ -355,6 +384,46 @@ ion-datetime {
   margin: 1rem 0;
   font-size: 0.9rem;
   color: var(--ion-color-medium);
+}
+
+/* Leyenda de horarios */
+.time-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  font-size: 0.85rem;
+}
+
+.time-legend .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.time-legend .legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid;
+}
+
+.legend-dot.time-available {
+  background: var(--ion-color-success);
+  border-color: var(--ion-color-success-shade);
+}
+
+.legend-dot.time-reserved {
+  background: var(--ion-color-danger);
+  border-color: var(--ion-color-danger-shade);
+}
+
+.legend-dot.time-passed {
+  background: var(--ion-color-medium);
+  border-color: var(--ion-color-medium-shade);
 }
 
 /* Responsive design */

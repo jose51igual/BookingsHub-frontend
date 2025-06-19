@@ -16,6 +16,10 @@ const config: CapacitorConfig = {
       showSpinner: false
     },
     CapacitorGoogleMaps: {
+    },
+    StatusBar: {
+      style: 'dark',
+      backgroundColor: '#667eea'
     }
   }
 };

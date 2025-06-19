@@ -38,6 +38,12 @@
   /* Fuente principal */
   --ion-font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 
+  /* Safe Area para dispositivos móviles */
+  --safe-area-top: env(safe-area-inset-top);
+  --safe-area-bottom: env(safe-area-inset-bottom);
+  --safe-area-left: env(safe-area-inset-left);
+  --safe-area-right: env(safe-area-inset-right);
+
   /* Colores principales */
   --ion-color-primary: #667eea;
   --ion-color-primary-rgb: 102, 126, 234;
@@ -160,38 +166,65 @@ html, body {
   background-color: var(--bg-primary);
 }
 
-ion-content {
-  --overflow: auto !important;
-  overflow: auto !important;
-  --background: var(--bg-primary);
-  --color: var(--text-color-primary);
-  scroll-behavior: smooth;
+/* ===== SOPORTE PARA SAFE AREA EN MÓVILES ===== */
+@supports (padding: max(0px)) {
+  .safe-top {
+    padding-top: max(12px, var(--safe-area-top));
+  }
+  
+  .safe-bottom {
+    padding-bottom: max(12px, var(--safe-area-bottom));
+  }
+  
+  .safe-left {
+    padding-left: max(12px, var(--safe-area-left));
+  }
+  
+  .safe-right {
+    padding-right: max(12px, var(--safe-area-right));
+  }
+  
+  .safe-horizontal {
+    padding-left: max(20px, var(--safe-area-left));
+    padding-right: max(20px, var(--safe-area-right));
+  }
 }
 
-::-webkit-scrollbar,
-*::-webkit-scrollbar {
-  display: none;
+/* Fallback para navegadores que no soportan env() */
+.safe-top {
+  padding-top: 12px;
 }
 
-/* Para modo oscuro */
-@media (prefers-color-scheme: dark) {
-  ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-  }
+.safe-bottom {
+  padding-bottom: 12px;
+}
 
-  ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-  }
+.safe-left {
+  padding-left: 12px;
+}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
+.safe-right {
+  padding-right: 12px;
+}
+
+.safe-horizontal {
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 /* ===== MEJORAR COMPONENTES IONIC ===== */
 ion-header ion-toolbar ion-title {
   color: var(--text-color-white) !important;
   font-weight: 700;
+}
+
+/* Safe area para todos los headers Ionic */
+@supports (padding: max(0px)) {
+  ion-header ion-toolbar {
+    padding-top: max(12px, var(--safe-area-top));
+    padding-left: max(12px, var(--safe-area-left));
+    padding-right: max(12px, var(--safe-area-right));
+  }
 }
 
 ion-card {
@@ -286,6 +319,34 @@ ion-toast {
 .shadow-sm { box-shadow: var(--shadow-sm) !important; }
 .shadow-md { box-shadow: var(--shadow-md) !important; }
 .shadow-lg { box-shadow: var(--shadow-lg) !important; }
+
+/* ===== CLASES ADICIONALES PARA SAFE AREA ===== */
+/* Para headers que necesiten safe area */
+.header-safe-top {
+  padding-top: max(12px, var(--safe-area-top));
+}
+
+/* Para contenido que necesite evitar la barra de estado */
+.content-safe-top {
+  margin-top: max(0px, var(--safe-area-top));
+}
+
+/* Para elementos fijos que necesiten safe area */
+.fixed-safe-top {
+  top: max(0px, var(--safe-area-top));
+}
+
+.fixed-safe-bottom {
+  bottom: max(0px, var(--safe-area-bottom));
+}
+
+/* Para páginas completas con safe area */
+.page-safe-all {
+  padding-top: max(12px, var(--safe-area-top));
+  padding-bottom: max(12px, var(--safe-area-bottom));
+  padding-left: max(12px, var(--safe-area-left));
+  padding-right: max(12px, var(--safe-area-right));
+}
 
 /* ===== OCULTAR TOOLBARS GLOBALMENTE ===== */
 ion-toolbar {

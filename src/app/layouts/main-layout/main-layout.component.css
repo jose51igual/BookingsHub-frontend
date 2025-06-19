@@ -20,6 +20,15 @@
   top: 0;
 }
 
+/* Safe area para móviles */
+@supports (padding: max(0px)) {
+  .top-nav-bar {
+    padding-top: max(12px, var(--safe-area-top));
+    padding-left: max(20px, var(--safe-area-left));
+    padding-right: max(20px, var(--safe-area-right));
+  }
+}
+
 .nav-brand {
   display: flex;
   align-items: center;
@@ -100,6 +109,10 @@
 @media (max-width: 768px) {
   .top-nav-bar {
     padding: 8px 12px;
+    /* Asegurar safe area en dispositivos móviles */
+    padding-top: max(8px, var(--safe-area-top));
+    padding-left: max(12px, var(--safe-area-left));
+    padding-right: max(12px, var(--safe-area-right));
   }
   
   .nav-tabs {

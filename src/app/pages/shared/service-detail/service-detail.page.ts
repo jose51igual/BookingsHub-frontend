@@ -515,10 +515,14 @@ export class ServiceDetailPage {
     
     return availability.some(day => day.date === dateStr && day.available && day.availableSlots?.length > 0);
   };
-
   public isSlotAvailable(hour: string): boolean {
     const selectedDate = this.selectedDate();
     if (!selectedDate) return false;
+    
+    // Verificar si la hora ya pasó en el día de hoy
+    if (this.isHourInPast(hour, selectedDate)) {
+      return false;
+    }
     
     const availableSlots = this.availableTimeSlots();
     if (availableSlots.length > 0) {
@@ -585,5 +589,64 @@ export class ServiceDetailPage {
       const updatedSlots = this.availableTimeSlots().filter(slot => slot !== time);
       this.availableTimeSlots.set(updatedSlots);
     }
+  }
+
+  /**
+   * Verifica si una hora específica ya pasó en la fecha seleccionada (solo para hoy)
+   */
+  private isHourInPast(hour: string, selectedDate: string): boolean {
+    const today = new Date();
+    const selectedDateObj = new Date(selectedDate);
+    
+    // Solo verificar horas pasadas si la fecha seleccionada es hoy
+    if (selectedDateObj.toDateString() !== today.toDateString()) {
+      return false;
+    }
+    
+    // Convertir la hora del slot a minutos desde medianoche
+    const [hours, minutes] = hour.split(':').map(Number);
+    const slotTimeInMinutes = hours * 60 + minutes;
+    
+    // Obtener la hora actual en minutos desde medianoche
+    const currentTimeInMinutes = today.getHours() * 60 + today.getMinutes();
+    
+    // La hora ya pasó si es menor o igual a la hora actual
+    return slotTimeInMinutes <= currentTimeInMinutes;
+  }
+
+  /**
+   * Verifica si una hora está en el pasado (para aplicar estilos diferentes)
+   */
+  public isHourPassed(hour: string): boolean {
+    const selectedDate = this.selectedDate();
+    if (!selectedDate) return false;
+    
+    return this.isHourInPast(hour, selectedDate);
+  }
+
+  /**
+   * Verifica si una hora está reservada (no disponible por estar ocupada)
+   */
+  public isHourReserved(hour: string): boolean {
+    const selectedDate = this.selectedDate();
+    if (!selectedDate) return false;
+    
+    // Si la hora ya pasó, no la consideramos reservada sino pasada
+    if (this.isHourInPast(hour, selectedDate)) {
+      return false;
+    }
+    
+    const availableSlots = this.availableTimeSlots();
+    if (availableSlots.length > 0) {
+      return !availableSlots.includes(hour);
+    }
+    
+    const availability = this.availabilityData();
+    const dayData = availability.find(day => day.date === selectedDate);
+    if (dayData && dayData.availableSlots) {
+      return !dayData.availableSlots.includes(hour);
+    }
+    
+    return true; // Por defecto, consideramos que está reservada si no hay datos
   }
 }
